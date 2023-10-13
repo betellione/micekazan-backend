@@ -30,7 +30,7 @@ public class EmailSender : IEmailSender
             From = { new MailboxAddress(smtpOptions.Username, smtpOptions.Address) },
             Subject = subject,
             Body = new TextPart(TextFormat.Html) { Text = message, },
-            To = { new MailboxAddress("Подпивас", toEmail) },
+            To = { new MailboxAddress("", toEmail) },
         };
         using var client = new SmtpClient();
         await client.ConnectAsync(smtpOptions.Host, smtpOptions.Port, true);
