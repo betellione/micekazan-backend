@@ -1,28 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-WebApp1-72fc20a5-25d8-4918-ae0f-f76b6913df52</UserSecretsId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>aspnet-WebApp1-72fc20a5-25d8-4918-ae0f-f76b6913df52</UserSecretsId>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10" />
-    <PackageReference Include="MimeKit" Version="4.2.0" />
-    <PackageReference Include="SendGrid" Version="9.28.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MailKit" Version="4.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.10"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10"/>
+        <PackageReference Include="MimeKit" Version="4.2.0"/>
+        <PackageReference Include="SendGrid" Version="9.28.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0"/>
+    </ItemGroup>
 
 </Project>

@@ -1,19 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using WebApp1.Services;
 using WebApp1.Data;
 using WebApp1.Options;
+using WebApp1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     {
@@ -26,12 +23,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
         options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddRazorPages();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-builder.Services.AddEndpointsApiExplorer().AddSwaggerGen();
+builder.Services.AddRazorPages();
 
+builder.Services.AddEndpointsApiExplorer().AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -45,11 +42,13 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
+
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
