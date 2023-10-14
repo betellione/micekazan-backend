@@ -7,10 +7,8 @@ using WebApp1.Models;
 
 namespace WebApp1.Data;
 
-
 public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }

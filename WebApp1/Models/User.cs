@@ -2,10 +2,9 @@
 
 namespace WebApp1.Models;
 
-public class User: IdentityUser<Guid>
+public class User : IdentityUser<Guid>
 {
-
-    public string Token { get; set; } = null!;
+    public string? Token { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime ExpiresAt { get; set; }
 
