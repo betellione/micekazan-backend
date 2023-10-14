@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 
 // Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
 builder.Services.AddDefaultIdentity<User>(options =>
     {
@@ -47,8 +47,6 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -56,5 +54,17 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+try
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+}
+catch (Exception e)
+{
+    Console.WriteLine($"Cannot create DB: {e}");
+    return;
+}
 
 app.Run();

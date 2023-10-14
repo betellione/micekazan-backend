@@ -9,7 +9,7 @@ namespace WebApp1.Services;
 
 public class EmailSender : IEmailSender
 {
-    private readonly SmtpOptions _options; //Set with Secret Manager.
+    private readonly SmtpOptions _options;
 
     public EmailSender(IOptions<SmtpOptions> optionsAccessor)
     {
@@ -31,11 +31,9 @@ public class EmailSender : IEmailSender
             To = { new MailboxAddress("", toEmail), },
         };
         using var client = new SmtpClient();
+
         await client.ConnectAsync(smtpOptions.Host, smtpOptions.Port, true);
-
-        // Note: only needed if the SMTP server requires authentication
         await client.AuthenticateAsync(smtpOptions.Address, smtpOptions.Password);
-
         await client.SendAsync(msg);
         await client.DisconnectAsync(true);
     }
