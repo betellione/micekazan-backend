@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.Api", "Micekazan.Api\Micekazan.Api.csproj", "{4A489C7A-D5E6-44CE-8FCA-BCA5E9B8C9AE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp1", "WebApp1\WebApp1.csproj", "{F780C297-451A-4EB4-9EA7-E957D809212F}"
 EndProject
 Global
@@ -10,10 +8,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4A489C7A-D5E6-44CE-8FCA-BCA5E9B8C9AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A489C7A-D5E6-44CE-8FCA-BCA5E9B8C9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A489C7A-D5E6-44CE-8FCA-BCA5E9B8C9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A489C7A-D5E6-44CE-8FCA-BCA5E9B8C9AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Release|Any CPU.ActiveCfg = Release|Any CPU
