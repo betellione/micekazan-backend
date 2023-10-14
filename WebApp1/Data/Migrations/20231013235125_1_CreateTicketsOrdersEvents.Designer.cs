@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp1.Data;
 
@@ -10,9 +11,11 @@ using WebApp1.Data;
 namespace WebApp1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231013235125_1_CreateTicketsOrdersEvents")]
+    partial class _1_CreateTicketsOrdersEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
@@ -222,9 +225,6 @@ namespace WebApp1.Data.Migrations
                     b.Property<long>("ForeignId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("OrderId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
@@ -235,8 +235,6 @@ namespace WebApp1.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("Tickets");
                 });
@@ -382,23 +380,10 @@ namespace WebApp1.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApp1.Models.Order", "Order")
-                        .WithMany("Tickets")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Event");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Event", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("WebApp1.Models.Order", b =>
                 {
                     b.Navigation("Tickets");
                 });

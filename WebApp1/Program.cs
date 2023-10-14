@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
+using WebApp1.Models;
 using WebApp1.Options;
 using WebApp1.Services;
 
@@ -12,7 +13,7 @@ builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp")
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<User>(options =>
     {
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 8;
