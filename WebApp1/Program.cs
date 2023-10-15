@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
@@ -26,6 +28,8 @@ builder.Services.AddDefaultIdentity<User>(options =>
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+// builder.Services.AddIdentityApiEndpoints<User>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddEndpointsApiExplorer().AddSwaggerGen();
@@ -52,6 +56,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapIdentityApi<User>();
 
 app.MapRazorPages();
 
