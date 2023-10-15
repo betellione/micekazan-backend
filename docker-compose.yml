@@ -1,5 +1,6 @@
 ﻿services:
   api:
+    user: root
     container_name: mice_kazan_api
     build:
       context: .
