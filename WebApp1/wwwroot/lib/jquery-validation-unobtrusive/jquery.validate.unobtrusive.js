@@ -3,7 +3,7 @@
  * Unobtrusive validation support library for jQuery and jQuery Validate
  * Copyright (c) .NET Foundation. All rights reserved.
  * Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
- * @version v4.0.0
+ * @version <placeholder>
  */
 
 /*jslint white: true, browser: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: false */
@@ -55,7 +55,7 @@
     function onError(error, inputElement) {  // 'this' is the form element
         var container = $(this).find("[data-valmsg-for='" + escapeAttributeValue(inputElement[0].name) + "']"),
             replaceAttrValue = container.attr("data-valmsg-replace"),
-            replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) !== false : null;
+            replace = replaceAttrValue ? JSON.parse(replaceAttrValue) !== false : null;
 
         container.removeClass("field-validation-valid").addClass("field-validation-error");
         error.data("unobtrusiveContainer", container);
@@ -63,7 +63,8 @@
         if (replace) {
             container.empty();
             error.removeClass("input-validation-error").appendTo(container);
-        } else {
+        }
+        else {
             error.hide();
         }
     }
@@ -87,7 +88,7 @@
 
         if (container) {
             var replaceAttrValue = container.attr("data-valmsg-replace"),
-                replace = replaceAttrValue ? $.parseJSON(replaceAttrValue) : null;
+                replace = replaceAttrValue ? JSON.parse(replaceAttrValue) : null;
 
             container.addClass("field-validation-valid").removeClass("field-validation-error");
             error.removeData("unobtrusiveContainer");
@@ -130,7 +131,7 @@
             defaultOptions = $jQval.unobtrusive.options || {},
             execInContext = function (name, args) {
                 var func = defaultOptions[name];
-                func && $.isFunction(func) && func.apply(form, args);
+                func && typeof func === "function" && func.apply(form, args);
             };
 
         if (!result) {
@@ -217,7 +218,7 @@
                 }
             });
 
-            $.extend(rules, {"__dummy__": true});
+            $.extend(rules, { "__dummy__": true });
 
             if (!skipAttach) {
                 valInfo.attachValidation();
@@ -270,7 +271,7 @@
             fn = params;
             params = [];
         }
-        this.push({name: adapterName, params: params, adapt: fn});
+        this.push({ name: adapterName, params: params, adapt: fn });
         return this;
     };
 
@@ -310,9 +311,11 @@
 
             if (min && max) {
                 setValidationValues(options, minMaxRuleName, [min, max]);
-            } else if (min) {
+            }
+            else if (min) {
                 setValidationValues(options, minRuleName, min);
-            } else if (max) {
+            }
+            else if (max) {
                 setValidationValues(options, maxRuleName, max);
             }
         });
@@ -399,7 +402,8 @@
                 // For checkboxes and radio buttons, only pick up values from checked fields.
                 if (field.is(":checkbox")) {
                     return field.filter(":checked").val() || field.filter(":hidden").val() || '';
-                } else if (field.is(":radio")) {
+                }
+                else if (field.is(":radio")) {
                     return field.filter(":checked").val() || '';
                 }
                 return field.val();
