@@ -7,14 +7,22 @@ html {
 body {
 	background-image: url(/images/base-background.jpg);
 	object-fit: contain;
-	color: #ffca2c;
+	color: var(--main-color);
 	height: 100%;
+}
+
+:root {
+	--main-color: #ffca2c;
 }
 
 a.navbar-brand {
 	white-space: normal;
 	text-align: center;
 	word-break: break-all;
+}
+
+a {
+	color: var(--main-color);
 }
 
 button.accept-policy {
@@ -32,8 +40,8 @@ button.accept-policy {
 
 /* Buttons */
 .btn-primary {
-	background-color: #ffca2c;
-	border-color: #ffca2c;
+	background-color: var(--main-color);
+	border-color: var(--main-color);
 	color: black;
 }
 
@@ -44,13 +52,13 @@ button.accept-policy {
 }
 
 .btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    background-color: #ffca2c;
+    background-color: var(--main-color);
     color: black;
 }
 
 .btn:focus-visible {
-    background-color: #ffca2c;
-    border-color: #ffca2c;
+    background-color: var(--main-color);
+    border-color: var(--main-color);
     outline: 0;
     color: black;
     box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
@@ -61,27 +69,27 @@ button.accept-policy {
 }
 
 .btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    border-color: #ffca2c;
+    border-color: var(--main-color);
 }
 
 
 /* Forms */
 .form-control {
-	border-color: #ffca2c;
+	border-color: var(--main-color);
 	background-color: black;
-	color: #ffca2c;
+	color: var(--main-color);
 }
 
 .form-control:focus {
 	border-color: #ffcf3e;
 	background-color: black;
 	box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
-	color: white;
+	color: #ffcf3e;
 }
 
 .form-check-input {
 	background-color: black;
-	border-color: #ffca2c;
+	border-color: var(--main-color);
 }
 
 .form-check-input:focus {
