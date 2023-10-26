@@ -12,5 +12,5 @@ public class Event
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     
     public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+    public User? User { get; set; }
 }
