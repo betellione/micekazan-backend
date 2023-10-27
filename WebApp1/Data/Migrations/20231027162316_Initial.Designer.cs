@@ -12,15 +12,15 @@ using WebApp1.Data;
 namespace WebApp1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231014044238_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20231027162316_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -159,101 +159,146 @@ namespace WebApp1.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebApp1.Models.Event", b =>
+            modelBuilder.Entity("WebApp1.Models.CreatorToken", b =>
                 {
-                    b.Property<long>("EventId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("EventId"));
-
-                    b.Property<string>("City")
+                    b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("Token");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.HasKey("CreatorId")
+                        .HasName("CreatorToken_pk");
 
-                    b.Property<DateTime>("FinishesAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EventId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Events");
+                    b.ToTable("CreatorToken", (string)null);
                 });
 
-            modelBuilder.Entity("WebApp1.Models.Order", b =>
+            modelBuilder.Entity("WebApp1.Models.Event", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("City");
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
 
-                    b.Property<long>("ForeignId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
 
-                    b.Property<bool>("IsPayed")
-                        .HasColumnType("boolean");
+                    b.Property<DateTime>("FinishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("FinishedAt");
 
-                    b.Property<DateTime>("PayedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("Name");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("StartedAt");
 
-                    b.ToTable("Orders");
+                    b.HasKey("Id")
+                        .HasName("Event_pk");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Event", (string)null);
+                });
+
+            modelBuilder.Entity("WebApp1.Models.EventCollector", b =>
+                {
+                    b.Property<Guid>("CollectorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CollectorId");
+
+                    b.Property<long>("EventId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("EventId");
+
+                    b.HasKey("CollectorId", "EventId")
+                        .HasName("EventCollector_pk");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventCollector", (string)null);
                 });
 
             modelBuilder.Entity("WebApp1.Models.Ticket", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Barcode")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("Barcode");
 
                     b.Property<long>("EventId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("EventId");
 
-                    b.Property<long>("ForeignId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("SeatName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("Ticket_pk");
 
                     b.HasIndex("EventId");
 
-                    b.HasIndex("OrderId");
+                    b.ToTable("Ticket", (string)null);
+                });
 
-                    b.ToTable("Tickets");
+            modelBuilder.Entity("WebApp1.Models.TokenUpdate", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("Token");
+
+                    b.Property<Guid>("TokenUpdate_User_CreatorId_fk")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UpdatedAt");
+
+                    b.HasKey("Id")
+                        .HasName("TokenUpdate_pk");
+
+                    b.HasIndex("TokenUpdate_User_CreatorId_fk");
+
+                    b.ToTable("TokenUpdate", (string)null);
                 });
 
             modelBuilder.Entity("WebApp1.Models.User", b =>
@@ -306,9 +351,6 @@ namespace WebApp1.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Token")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -381,15 +423,49 @@ namespace WebApp1.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApp1.Models.CreatorToken", b =>
+                {
+                    b.HasOne("WebApp1.Models.User", "Creator")
+                        .WithMany("Tokens")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CreatorToken_User_CreatorId_fk");
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("WebApp1.Models.Event", b =>
                 {
-                    b.HasOne("WebApp1.Models.User", "User")
-                        .WithMany("Event")
-                        .HasForeignKey("UserId")
+                    b.HasOne("WebApp1.Models.User", "Creator")
+                        .WithMany("EventsCreated")
+                        .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("Event_User_CreatorId_fk");
 
-                    b.Navigation("User");
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("WebApp1.Models.EventCollector", b =>
+                {
+                    b.HasOne("WebApp1.Models.User", "Collector")
+                        .WithMany("EventsToCollect")
+                        .HasForeignKey("CollectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("EventCollector_User_CollectorId_fk");
+
+                    b.HasOne("WebApp1.Models.Event", "Event")
+                        .WithMany("Collectors")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("EventCollector_Event_EventId_fk");
+
+                    b.Navigation("Collector");
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Ticket", b =>
@@ -398,32 +474,39 @@ namespace WebApp1.Data.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("Ticket_Event_EventId_fk");
 
-                    b.HasOne("WebApp1.Models.Order", "Order")
-                        .WithMany("Tickets")
-                        .HasForeignKey("OrderId")
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("WebApp1.Models.TokenUpdate", b =>
+                {
+                    b.HasOne("WebApp1.Models.User", "Creator")
+                        .WithMany("TokenUpdates")
+                        .HasForeignKey("TokenUpdate_User_CreatorId_fk")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Event");
-
-                    b.Navigation("Order");
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Event", b =>
                 {
-                    b.Navigation("Tickets");
-                });
+                    b.Navigation("Collectors");
 
-            modelBuilder.Entity("WebApp1.Models.Order", b =>
-                {
                     b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("WebApp1.Models.User", b =>
                 {
-                    b.Navigation("Event");
+                    b.Navigation("EventsCreated");
+
+                    b.Navigation("EventsToCollect");
+
+                    b.Navigation("TokenUpdates");
+
+                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

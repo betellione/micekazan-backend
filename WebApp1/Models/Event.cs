@@ -2,15 +2,15 @@
 
 public class Event
 {
-    public long EventId { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; } = null!;
     public string City { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime StartedAt { get; set; }
-    public DateTime FinishesAt { get; set; }
-    
+    public DateTime FinishedAt { get; set; }
+    public Guid CreatorId { get; set; }
+
+    public User Creator { get; set; } = null!;
+    public ICollection<EventCollector> Collectors { get; set; } = new List<EventCollector>();
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
-    
-    public Guid UserId { get; set; }
-    public User? User { get; set; }
 }
