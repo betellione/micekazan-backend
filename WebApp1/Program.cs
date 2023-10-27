@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
@@ -23,6 +24,8 @@ builder.Services.AddDefaultIdentity<User>(options =>
         options.SignIn.RequireConfirmedAccount = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -58,6 +61,8 @@ app.UseAuthorization();
 app.MapIdentityApi<User>();
 
 app.MapRazorPages();
+
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 try
 {
