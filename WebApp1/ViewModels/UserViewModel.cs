@@ -14,5 +14,5 @@ public class UserViewModel
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
-    public DateTime? ExpirationDateTime { get; set; }
+    public DateTime? ExpiresAt { get; set; }
 }
