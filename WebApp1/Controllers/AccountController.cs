@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -281,6 +282,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         await userManager.SetEmailAsync(user, vm.Email);
 
         var result = await userManager.CreateAsync(user, vm.Password);
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
 
         if (!result.Succeeded)
         {
