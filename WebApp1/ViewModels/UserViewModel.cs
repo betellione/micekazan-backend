@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace WebApp1.ViewModels;
 
 public class UserViewModel
 {
+    public Guid Id { get; set; }
     [Display(Name = "Email")]
     [EmailAddress]
     [DataType(DataType.EmailAddress)]

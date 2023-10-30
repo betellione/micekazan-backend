@@ -160,5 +160,13 @@ namespace WebApp1.Controllers
         {
             return _context.Events.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EventLoad()
+        {
+            TempData["StatusMessage"] = "Чамарчик превратился в баребулу (все хорошо).";
+            return RedirectToAction("Index");
+        }
     }
 }

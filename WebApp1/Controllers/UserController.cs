@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
+using WebApp1.Mapping;
 using WebApp1.Models;
 using WebApp1.ViewModels;
 
@@ -24,9 +25,10 @@ public class UserController : Controller
     }
 
     // GET: User
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Users.ToListAsync());
+        return View(await _context.Users.Select(x => x.UserMapping()).ToListAsync());
     }
 
     // GET: User/Details/5
@@ -81,11 +83,11 @@ public class UserController : Controller
     // GET: User/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id is null) return NotFound();
 
         var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
-        return View(user);
+        if (user is null) return NotFound();
+        return View(user.UserMapping());
     }
 
     // POST: User/Edit/5
@@ -100,24 +102,21 @@ public class UserController : Controller
     {
         if (id != user.Id) return NotFound();
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid) return View(user.UserMapping());
+        try
         {
-            try
-            {
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(user.Id))
-                    return NotFound();
-                throw;
-            }
-
-            return RedirectToAction(nameof(Index));
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UserExists(user.Id))
+                return NotFound();
+            throw;
         }
 
-        return View(user);
+        return RedirectToAction(nameof(Index));
+
     }
 
     // GET: User/Delete/5
