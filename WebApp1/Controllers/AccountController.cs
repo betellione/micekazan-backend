@@ -197,6 +197,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         var result = await userManager.CreateAsync(user, vm.Password);
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email!));
 
         if (!result.Succeeded)
         {

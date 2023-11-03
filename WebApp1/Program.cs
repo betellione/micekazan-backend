@@ -63,6 +63,8 @@ try
     using var scope = app.Services.CreateScope();
     await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
+
+    await Seeding.SeedAdmin(scope.ServiceProvider);
 }
 catch (Exception e)
 {
