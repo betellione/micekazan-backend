@@ -1,0 +1,27 @@
+﻿@using WebApp1.Views.Manage
+@model TokenViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Change token";
+    ViewData["ActivePage"] = ManageNavPages.ChangeToken;
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Manage" asp-action="Token" method="post">
+            <div class="form-floating mb-3">
+                <input asp-for="Token" class="form-control" autocomplete="token" aria-required="true"/>
+                <label asp-for="Token" class="form-label"></label>
+                <span asp-validation-for="Token" class="text-danger"></span>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Update Token</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}

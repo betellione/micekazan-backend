@@ -148,6 +148,30 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
     }
 
     #endregion
+    
+    #region Token
+
+    [HttpGet]
+    public IActionResult Token()
+    {
+        return View();
+    }
+
+    [Authorize(Roles = "Organizer")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Token(TokenViewModel vm)
+    {
+        if (!ModelState.IsValid) return View(vm);
+
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+        user.Tokens.Add(new CreatorToken());
+
+        TempData["StatusMessage"] = "Your token has been changed.";
+        return RedirectToAction("Token");
+    }
+
+    #endregion
 
     #region TwoFactorAuthentication
 

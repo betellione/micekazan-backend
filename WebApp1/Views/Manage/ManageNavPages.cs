@@ -8,6 +8,7 @@ public static class ManageNavPages
     public const string Email = "Email";
     public const string ChangePassword = "ChangePassword";
     public const string TwoFactorAuthentication = "TwoFactorAuthentication";
+    public const string ChangeToken = "ChangeToken";
 
     public static string ProfileNavClass(ViewContext viewContext)
     {
@@ -27,6 +28,11 @@ public static class ManageNavPages
     public static string TwoFactorAuthenticationNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, TwoFactorAuthentication);
+    }
+    
+    public static string ChangeTokenNavClass(ViewContext viewContext)
+    {
+        return PageNavClass(viewContext, ChangeToken);
     }
 
     private static string PageNavClass(ViewContext viewContext, string page)
