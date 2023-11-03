@@ -15,101 +15,6 @@ namespace WebApp1.Controllers;
 public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
     : Controller
 {
-    /*[HttpGet]
-    [AllowAnonymous]
-    public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
-    {
-        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
-        if (user == null) return View("Error");
-        var userFactors = await userManager.GetValidTwoFactorProvidersAsync(user);
-        var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose })
-            .ToList();
-        return View(new SendCodeViewModel
-            { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
-    }
-
-    [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl = null)
-    {
-        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
-        if (user == null) return View("Error");
-        return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> VerifyCode(VerifyCodeViewModel model)
-    {
-        if (!ModelState.IsValid) return View(model);
-
-        var result =
-            await signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe,
-                model.RememberBrowser);
-        if (result.Succeeded) return RedirectToLocalOrIndex(model.ReturnUrl);
-        if (result.IsLockedOut)
-        {
-            _logger.LogWarning(7, "User account locked out.");
-            return View("Lockout");
-        }
-
-        ModelState.AddModelError(string.Empty, "Invalid code.");
-        return View(model);
-    }
-
-    [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnUrl = null)
-    {
-        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
-        if (user == null) return View("Error");
-        return View(new VerifyAuthenticatorCodeViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> VerifyAuthenticatorCode(VerifyAuthenticatorCodeViewModel model)
-    {
-        if (!ModelState.IsValid) return View(model);
-
-        var result =
-            await signInManager.TwoFactorAuthenticatorSignInAsync(model.Code, model.RememberMe, model.RememberBrowser);
-        if (result.Succeeded) return RedirectToLocalOrIndex(model.ReturnUrl);
-        if (result.IsLockedOut)
-        {
-            _logger.LogWarning(7, "User account locked out.");
-            return View("Lockout");
-        }
-
-        ModelState.AddModelError(string.Empty, "Invalid code.");
-        return View(model);
-    }
-
-    [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> UseRecoveryCode(string returnUrl = null)
-    {
-        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
-        if (user == null) return View("Error");
-        return View(new UseRecoveryCodeViewModel { ReturnUrl = returnUrl });
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UseRecoveryCode(UseRecoveryCodeViewModel model)
-    {
-        if (!ModelState.IsValid) return View(model);
-
-        var result = await signInManager.TwoFactorRecoveryCodeSignInAsync(model.Code);
-        if (result.Succeeded) return RedirectToLocalOrIndex(model.ReturnUrl);
-
-        ModelState.AddModelError(string.Empty, "Invalid code.");
-        return View(model);
-    }*/
-
     /// <summary>
     ///     Try to get 2FA Authentication User.
     /// </summary>
@@ -190,7 +95,14 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [AllowAnonymous]
     public async Task<IActionResult> LoginWith2Fa(bool rememberMe, string? returnUrl = null)
     {
-        _ = await TryExtract2FaUser();
+        try
+        {
+            _ = await TryExtract2FaUser();
+        }
+        catch (InvalidOperationException)
+        {
+            return RedirectToAction("Login", new { returnUrl, });
+        }
 
         var vm = new LoginWith2FaViewModel
         {
@@ -228,7 +140,15 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [AllowAnonymous]
     public async Task<IActionResult> LoginWithRecoveryCode(string? returnUrl = null)
     {
-        _ = await TryExtract2FaUser();
+        try
+        {
+            _ = await TryExtract2FaUser();
+        }
+        catch (InvalidOperationException)
+        {
+            return RedirectToAction("Login", new { returnUrl, });
+        }
+
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
@@ -250,12 +170,6 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
 
         return View(vm);
-    }
-
-    [HttpGet]
-    public IActionResult LoinWithRecoveryCode()
-    {
-        throw new NotImplementedException();
     }
 
     #endregion

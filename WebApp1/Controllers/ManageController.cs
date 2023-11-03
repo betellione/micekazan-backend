@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -39,16 +40,6 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
         };
 
         return View(vm);
-    }
-
-    #endregion
-
-    #region ForgetMachine
-
-    [HttpPost]
-    public IActionResult ForgetMachine()
-    {
-        throw new NotImplementedException();
     }
 
     #endregion
@@ -175,54 +166,194 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
 
     #region TwoFactorAuthentication
 
+    private const int TwoFactorRecoveryCodes = 8;
+
     [HttpGet]
-    public IActionResult TwoFactorAuthentication()
+    public async Task<IActionResult> TwoFactorAuthentication()
     {
-        var vm = new TwoFactorAuthenticationViewModel();
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+        var vm = new TwoFactorAuthenticationViewModel
+        {
+            HasAuthenticator = await userManager.GetAuthenticatorKeyAsync(user) is not null,
+            Is2FaEnabled = await userManager.GetTwoFactorEnabledAsync(user),
+            IsMachineRemembered = await signInManager.IsTwoFactorClientRememberedAsync(user),
+            RecoveryCodesLeft = await userManager.CountRecoveryCodesAsync(user),
+        };
+
         return View(vm);
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResetAuthenticatorKey()
+    [HttpGet]
+    public IActionResult RecoveryCodes()
     {
-        var user = await GetCurrentUserAsyncOrThrowIfNull();
-        await userManager.ResetAuthenticatorKeyAsync(user);
-
-        return RedirectToAction("Index", "Manage");
+        var codes = (IList<string>)(TempData["RecoveryCodes"] ?? Array.Empty<string>());
+        return codes.Count == 0 ? RedirectToAction("TwoFactorAuthentication") : View();
     }
 
     [HttpGet]
-    public IActionResult ShowRecoveryCodes(ShowRecoveryCodesViewModel? vm)
+    public async Task<IActionResult> GenerateRecoveryCodes()
     {
-        return vm is null || vm.RecoveryCodes.Count == 0 ? RedirectToAction("TwoFactorAuthentication") : View(vm);
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+
+        var isTwoFactorEnabled = await userManager.GetTwoFactorEnabledAsync(user);
+        if (!isTwoFactorEnabled)
+            throw new InvalidOperationException(
+                "Cannot generate recovery codes for user because they do not have 2FA enabled.");
+
+        return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> GenerateRecoveryCode()
+    public async Task<IActionResult> GenerateRecoveryCodesPost()
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
-        var codes = (await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 5))?.ToArray() ?? Array.Empty<string>();
-        return View("ShowRecoveryCodes", new ShowRecoveryCodesViewModel { RecoveryCodes = codes, });
+
+        if (!await userManager.GetTwoFactorEnabledAsync(user))
+            throw new InvalidOperationException("Cannot generate recovery codes for user as they do not have 2FA enabled.");
+
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
+
+        TempData["RecoveryCodes"] = recoveryCodes?.ToList();
+        TempData["StatusMessage"] = "You have generated new recovery codes.";
+
+        return RedirectToAction("RecoveryCodes");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EnableAuthenticator()
+    {
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+        await LoadSharedKeyAndQrCodeUriAsync(user);
+        return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task EnableTwoFactorAuthentication()
+    public async Task<IActionResult> EnableAuthenticator(EnableAuthenticatorViewModel vm)
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
+        if (!ModelState.IsValid)
+        {
+            await LoadSharedKeyAndQrCodeUriAsync(user);
+            return View();
+        }
+
+        var verificationCode = vm.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+        var is2FaTokenValid = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+        if (!is2FaTokenValid)
+        {
+            ModelState.AddModelError(string.Empty, "Verification code is invalid.");
+            await LoadSharedKeyAndQrCodeUriAsync(user);
+            return View();
+        }
+
         await userManager.SetTwoFactorEnabledAsync(user, true);
-        await signInManager.SignInAsync(user, false);
+        TempData["StatusMessage"] = "Your authenticator app has been verified.";
+
+        if (await userManager.CountRecoveryCodesAsync(user) != 0) return RedirectToAction("TwoFactorAuthentication");
+
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
+        TempData["RecoveryCodes"] = recoveryCodes?.ToList();
+        return RedirectToAction("RecoveryCodes");
+    }
+
+    private async Task LoadSharedKeyAndQrCodeUriAsync(User user)
+    {
+        var unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
+
+        if (string.IsNullOrEmpty(unformattedKey))
+        {
+            await userManager.ResetAuthenticatorKeyAsync(user);
+            unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
+        }
+
+        ViewData["SharedKey"] = FormatKey(unformattedKey!);
+        ViewData["AuthenticatorUri"] = GenerateQrCodeUri(user.Email!, unformattedKey!);
+    }
+
+    private static string FormatKey(string unformattedKey)
+    {
+        var result = new StringBuilder();
+        var currentPosition = 0;
+
+        while (currentPosition + 4 < unformattedKey.Length)
+        {
+            result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');
+            currentPosition += 4;
+        }
+
+        if (currentPosition < unformattedKey.Length) result.Append(unformattedKey.AsSpan(currentPosition));
+
+        return result.ToString().ToLowerInvariant();
+    }
+
+    private static string GenerateQrCodeUri(string email, string unformattedKey)
+    {
+        const string format = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            format,
+            UrlEncoder.Default.Encode("Micekazan"),
+            UrlEncoder.Default.Encode(email),
+            unformattedKey);
+    }
+
+    [HttpGet]
+    public IActionResult ResetAuthenticatorKey()
+    {
+        return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task DisableTwoFactorAuthentication()
+    public async Task<IActionResult> ResetAuthenticatorKeyPost()
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
+
         await userManager.SetTwoFactorEnabledAsync(user, false);
-        await signInManager.SignInAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        await signInManager.RefreshSignInAsync(user);
+
+        TempData["StatusMessage"] = "Your authenticator app key has been reset, you will need to configure your " +
+                                    "authenticator app using the new key.";
+
+        return RedirectToAction("EnableAuthenticator");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgetMachine()
+    {
+        await signInManager.ForgetTwoFactorClientAsync();
+        TempData["StatusMessage"] = "The current browser has been forgotten. " +
+                                    "When you login again from this browser you will be prompted for your 2FA code.";
+        return RedirectToAction("TwoFactorAuthentication");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DisableTwoFactorAuthentication()
+    {
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+        if (!await userManager.GetTwoFactorEnabledAsync(user))
+            throw new InvalidOperationException("Cannot disable 2FA for user as it's not currently enabled.");
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DisableTwoFactorAuthenticationPost()
+    {
+        var user = await GetCurrentUserAsyncOrThrowIfNull();
+        var result = await userManager.SetTwoFactorEnabledAsync(user, false);
+
+        if (!result.Succeeded)
+            throw new InvalidOperationException("Unexpected error occurred disabling 2FA.");
+
+        TempData["StatusMessage"] = "2FA has been disabled. You can reenable 2FA when you setup an authenticator app.";
+
+        return RedirectToAction("TwoFactorAuthentication");
     }
 
     #endregion

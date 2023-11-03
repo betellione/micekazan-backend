@@ -18,19 +18,19 @@
                 case 0:
                     <div class="alert alert-danger">
                         <strong>You have no recovery codes left.</strong>
-                        <p>You must <a asp-controller="Manage" asp-action="GenerateRecoveryCode">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                        <p>You must <a asp-controller="Manage" asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
                     </div>
                     break;
                 case 1:
                     <div class="alert alert-danger">
                         <strong>You have 1 recovery code left.</strong>
-                        <p>You can <a asp-controller="Manage" asp-action="GenerateRecoveryCode">generate a new set of recovery codes</a>.</p>
+                        <p>You can <a asp-controller="Manage" asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
                     </div>
                     break;
                 case <= 3:
                     <div class="alert alert-warning">
                         <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
-                        <p>You should <a asp-controller="Manage" asp-action="GenerateRecoveryCode">generate a new set of recovery codes</a>.</p>
+                        <p>You should <a asp-controller="Manage" asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
                     </div>
                     break;
             }
@@ -43,17 +43,17 @@
             }
 
             <a asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" class="btn btn-primary">Disable 2FA</a>
-            <a asp-controller="Manage" asp-action="GenerateRecoveryCode" class="btn btn-primary">Reset recovery codes</a>
+            <a asp-controller="Manage" asp-action="GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
         }
 
         <h4>Authenticator app</h4>
         @if (!Model.HasAuthenticator)
         {
-            <a asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" id="enable-authenticator" class="btn btn-primary">Add authenticator app</a>
+            <a asp-controller="Manage" asp-action="EnableAuthenticator" id="enable-authenticator" class="btn btn-primary">Add authenticator app</a>
         }
         else
         {
-            <a asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" id="enable-authenticator" class="btn btn-primary">Set up authenticator app</a>
+            <a asp-controller="Manage" asp-action="EnableAuthenticator" id="enable-authenticator" class="btn btn-primary">Set up authenticator app</a>
             <a asp-controller="Manage" asp-action="ResetAuthenticatorKey" id="reset-authenticator" class="btn btn-primary">Reset authenticator app</a>
         }
     }

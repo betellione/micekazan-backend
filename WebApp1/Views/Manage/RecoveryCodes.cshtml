@@ -1,11 +1,11 @@
 ﻿@using WebApp1.Views.Manage
-@model ShowRecoveryCodesViewModel
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Recovery codes";
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<partial name="_StatusMessage" for="StatusMessage"/>
+<partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
 <h3>@ViewData["Title"]</h3>
 <div class="alert alert-warning" role="alert">
     <p>
@@ -17,12 +17,15 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        @for (var row = 0; row < Model.RecoveryCodes.Count; row += 2)
-        {
-            <code class="recovery-code">@Model.RecoveryCodes[row]</code>
-            <text>&nbsp;</text>
-            <code class="recovery-code">@Model.RecoveryCodes[row + 1]</code>
-            <br/>
+        @{
+            var codes = (IList<string>)(TempData["RecoveryCodes"] ?? Array.Empty<string>());
+            for (var row = 0; row < codes.Count; row += 2)
+            {
+                <code class="recovery-code">@codes[row]</code>
+                <text>&nbsp;</text>
+                <code class="recovery-code">@codes[row + 1]</code>
+                <br/>
+            }
         }
     </div>
 </div>
