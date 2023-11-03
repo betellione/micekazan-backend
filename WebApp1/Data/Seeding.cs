@@ -9,13 +9,12 @@ public static class Seeding
     public static async Task SeedAdmin(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-        var userStore = serviceProvider.GetRequiredService<IUserStore<User>>();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var email = configuration["Admin:Email"]!;
 
-        var exists = await userStore.FindByNameAsync("ADMIN", default);
+        var exists = await userManager.FindByEmailAsync(email);
         if (exists is null)
         {
-            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            var email = configuration["Admin:Email"]!;
             var password = configuration["Admin:Password"]!;
             await CreateAdmin(userManager, email, password);
         }
@@ -23,11 +22,9 @@ public static class Seeding
 
     private static async Task CreateAdmin(UserManager<User> userManager, string email, string password)
     {
-        const string username = "admin";
-
         var user = new User();
 
-        await userManager.SetUserNameAsync(user, username);
+        await userManager.SetUserNameAsync(user, email);
         await userManager.SetEmailAsync(user, email);
         _ = await userManager.CreateAsync(user, password);
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
