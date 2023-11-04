@@ -147,10 +147,7 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
     [Authorize(Roles = "Organizer")]
     public async Task<IActionResult> Token()
     {
-        var tokenService = sp.GetRequiredService<ITokenService>();
-        var userId = new Guid(userManager.GetUserId(User)!);
-
-        ViewData["CurrentToken"] = await tokenService.GetToken(userId);
+        await LoadToken();
         return View();
     }
 
@@ -159,7 +156,11 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
     [Authorize(Roles = "Organizer")]
     public async Task<IActionResult> Token(TokenViewModel vm)
     {
-        if (!ModelState.IsValid) return View(vm);
+        if (!ModelState.IsValid)
+        {
+            await LoadToken();
+            return View(vm);
+        }
 
         var tokenService = sp.GetRequiredService<ITokenService>();
         var userId = new Guid(userManager.GetUserId(User)!);
@@ -170,6 +171,13 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
             : "Error: Your token has not been changed. Try a different token or come back later.";
 
         return RedirectToAction("Token");
+    }
+
+    private async Task LoadToken()
+    {
+        var tokenService = sp.GetRequiredService<ITokenService>();
+        var userId = new Guid(userManager.GetUserId(User)!);
+        ViewData["CurrentToken"] = await tokenService.GetToken(userId);
     }
 
     #endregion
