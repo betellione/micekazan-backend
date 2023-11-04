@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
-using System.Runtime.InteropServices.JavaScript;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApp1.ViewModels;
 

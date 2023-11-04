@@ -13,14 +13,12 @@ namespace WebApp1.Controllers;
 public class UserController : Controller
 {
     private readonly ApplicationDbContext _context;
-    private readonly IUserEmailStore<User> _emailStore;
     private readonly UserManager<User> _userManager;
     private readonly IUserStore<User> _userStore;
 
     public UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager)
     {
         _context = context;
-        _emailStore = (IUserEmailStore<User>)_userStore!;
         _userStore = userStore;
         _userManager = userManager;
     }

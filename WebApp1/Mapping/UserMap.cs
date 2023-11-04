@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using WebApp1.Models;
+﻿using WebApp1.Models;
 using WebApp1.ViewModels;
 
 namespace WebApp1.Mapping;
