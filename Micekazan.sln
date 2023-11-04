@@ -5,11 +5,21 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{241433BE-B15C-4683-BBBE-A1B9B706F92D}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
-		api.env = api.env
-		api.env.example = api.env.example
-		postgres.env = postgres.env
-		postgres.env.example = postgres.env.example
+		.env = .env
+		.env.sample = .env.sample
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintDispatcher", "Micekazan.PrintDispatcher\Micekazan.PrintDispatcher.csproj", "{AFB68EF0-F902-4975-8FF6-6919E502157B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Micekazan.PrintService", "Micekazan.PrintService", "{69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService", "Micekazan.PrintService\Micekazan.PrintService\Micekazan.PrintService.csproj", "{802A105B-5124-47CA-BBA8-CE7F87969F9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Micekazan.PrintService.PrintProviders", "Micekazan.PrintService.PrintProviders", "{0551AA21-2979-48A7-9384-FD78C74C53F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService.PrintProvider", "Micekazan.PrintService\Micekazan.PrintService.PrintProviders\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj", "{9A6178FB-31F2-49F6-8D00-3626ADCE32B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService.PrintProvider.Windows", "Micekazan.PrintService\Micekazan.PrintService.PrintProviders\Micekazan.PrintService.PrintProvider.Windows\Micekazan.PrintService.PrintProvider.Windows.csproj", "{095FEA1C-353A-4DBE-BFD5-207F574D9B66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,5 +31,27 @@ Global
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F780C297-451A-4EB4-9EA7-E957D809212F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFB68EF0-F902-4975-8FF6-6919E502157B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFB68EF0-F902-4975-8FF6-6919E502157B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFB68EF0-F902-4975-8FF6-6919E502157B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFB68EF0-F902-4975-8FF6-6919E502157B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802A105B-5124-47CA-BBA8-CE7F87969F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802A105B-5124-47CA-BBA8-CE7F87969F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802A105B-5124-47CA-BBA8-CE7F87969F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802A105B-5124-47CA-BBA8-CE7F87969F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{095FEA1C-353A-4DBE-BFD5-207F574D9B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{095FEA1C-353A-4DBE-BFD5-207F574D9B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{095FEA1C-353A-4DBE-BFD5-207F574D9B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{095FEA1C-353A-4DBE-BFD5-207F574D9B66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{802A105B-5124-47CA-BBA8-CE7F87969F9F} = {69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}
+		{0551AA21-2979-48A7-9384-FD78C74C53F4} = {69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}
+		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5} = {0551AA21-2979-48A7-9384-FD78C74C53F4}
+		{095FEA1C-353A-4DBE-BFD5-207F574D9B66} = {0551AA21-2979-48A7-9384-FD78C74C53F4}
 	EndGlobalSection
 EndGlobal

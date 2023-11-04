@@ -9,7 +9,7 @@
       - 8080:8080
     environment:
       - HTTP_PORTS=8080
-    env_file: api.env
+    env_file: .env
     volumes:
       - api:/root/.aspnet/DataProtection-Keys
     depends_on:
@@ -18,7 +18,7 @@
     container_name: mice_kazan_db
     image: postgres:15-alpine
     restart: always
-    env_file: postgres.env
+    env_file: .env
     ports:
       - 6432:5432
     volumes:
