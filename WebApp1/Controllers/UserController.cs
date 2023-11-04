@@ -75,9 +75,10 @@ public class UserController : Controller
             return View(vm);
         }
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
         return RedirectToAction("Index");
     }
+    
 
     // GET: User/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
