@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
+dotn
 <div class="text-center">
     <h1 class="display-4">Отображение фронтальной камеры</h1>
 </div>
@@ -15,48 +15,29 @@
 
 @section Scripts {
 <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
-<script src="//unpkg.com/javascript-barcode-reader"></script>
 <script>
     function startCamera() {
         const videoElement = document.getElementById('videoElement');
         const resultElement = document.getElementById('result');
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(function (mediaStream) {
-                videoElement.srcObject = mediaStream;
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(function (mediaStream) {
+            videoElement.srcObject = mediaStream;
 
-                const canvasElement = document.createElement('canvas');
-                const canvasContext = canvasElement.getContext('2d');
+            const canvasElement = document.createElement('canvas');
+            const canvasContext = canvasElement.getContext('2d');
 
-                setInterval(async function () {
-                    canvasElement.width = videoElement.videoWidth;
-                    canvasElement.height = videoElement.videoHeight;
-                    canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            setInterval(async function () {
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+                canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
-                    const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    if (code != null) {
-                        resultElement.innerHTML = 'QR-код: ' + code.data;
-                    } else {
-                        const barcodeResult = await javascriptBarcodeReader({
-                        /* Image file Path || {data: Uint8ClampedArray, width, height} || HTML5 Canvas ImageData */
-                        image: "~/images/bc.png",
-                        barcode: 'code-2of5',
-                        barcodeType: 'Interleaved',
-                        options: {    
-                          // useAdaptiveThreshold: true // for images with shaded/ gradient portions
-                          // singlePass: true
-                        }
-                      })
-                      console.log('Лог1', barcodeResult.data);
-                      console.log('Лог2', barcodeResult);
-                        
-                      resultElement.innerHTML = 'Штрих-код: ' + barcodeResult.data;
-                    }
-                }, 1000 / 30);
-            })
-            .catch(function (error) {
-                console.error('Ошибка при получении доступа к камере:', error);
-            });
+                const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+            }, 1000 / 30);
+        })
+        .catch(function (error) {
+            console.error('Ошибка при получении доступа к камере:', error);
+        });
     }
 
     window.onload = function () {

@@ -78,7 +78,6 @@ public class UserController : Controller
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
         return RedirectToAction("Index");
     }
-    
 
     // GET: User/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
