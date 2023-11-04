@@ -253,4 +253,9 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\JOB-master\src\StreamDemo.html" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="External\Qtickets\Contracts\Requests\" />
+      <Folder Include="External\Qtickets\Contracts\Responses\" />
+    </ItemGroup>
+
 </Project>

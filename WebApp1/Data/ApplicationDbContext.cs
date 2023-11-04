@@ -29,6 +29,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.HasKey(x => x.CreatorId).HasName("CreatorToken_pk");
 
+            entity.HasIndex(x => x.Token).IsUnique();
+
             entity.Property(x => x.CreatorId).HasColumnName("CreatorId");
             entity.Property(x => x.Token).HasMaxLength(128).HasColumnName("Token");
 

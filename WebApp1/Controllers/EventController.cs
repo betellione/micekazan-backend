@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,159 +8,117 @@ using WebApp1.Models;
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer")]
-public class EventController : Controller
+public class EventController(ApplicationDbContext context) : Controller
 {
-    private readonly ApplicationDbContext _context;
-
-    public EventController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    // GET: Event
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var applicationDbContext = _context.Events.Include(x => x.Creator);
+        var applicationDbContext = context.Events.Include(x => x.Creator);
         return View(await applicationDbContext.ToListAsync());
     }
 
-    // GET: Event/Details/5
+    [HttpGet]
     public async Task<IActionResult> Details(long? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
-        var @event = await _context.Events
+        var @event = await context.Events
             .Include(x => x.Creator)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (@event == null)
-        {
-            return NotFound();
-        }
+        if (@event == null) return NotFound();
 
         return View(@event);
     }
 
-    // GET: Event/Create
+    [HttpGet]
     public IActionResult Create()
     {
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id");
         return View();
     }
 
-    // POST: Event/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Name,City,CreatedAt,StartedAt,FinishedAt,CreatorId")] Event @event)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(@event);
-            await _context.SaveChangesAsync();
+            context.Add(@event);
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
         return View(@event);
     }
 
-    // GET: Event/Edit/5
+    [HttpGet]
     public async Task<IActionResult> Edit(long? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
-        var @event = await _context.Events.FindAsync(id);
-        if (@event == null)
-        {
-            return NotFound();
-        }
+        var @event = await context.Events.FindAsync(id);
+        if (@event == null) return NotFound();
 
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
         return View(@event);
     }
 
-    // POST: Event/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(long id, [Bind("Id,Name,City,CreatedAt,StartedAt,FinishedAt,CreatorId")] Event @event)
     {
-        if (id != @event.Id)
-        {
-            return NotFound();
-        }
+        if (id != @event.Id) return NotFound();
 
         if (ModelState.IsValid)
         {
             try
             {
-                _context.Update(@event);
-                await _context.SaveChangesAsync();
+                context.Update(@event);
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!EventExists(@event.Id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
         return View(@event);
     }
 
-    // GET: Event/Delete/5
+    [HttpGet]
     public async Task<IActionResult> Delete(long? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
-        var @event = await _context.Events
+        var @event = await context.Events
             .Include(x => x.Creator)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (@event == null)
-        {
-            return NotFound();
-        }
+        if (@event == null) return NotFound();
 
         return View(@event);
     }
 
-    // POST: Event/Delete/5
-    [HttpPost, ActionName("Delete")]
+    [HttpPost]
+    [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
-        var @event = await _context.Events.FindAsync(id);
-        if (@event != null)
-        {
-            _context.Events.Remove(@event);
-        }
+        var @event = await context.Events.FindAsync(id);
+        if (@event != null) context.Events.Remove(@event);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private bool EventExists(long id)
     {
-        return _context.Events.Any(e => e.Id == id);
+        return context.Events.Any(e => e.Id == id);
     }
 
     [HttpPost]

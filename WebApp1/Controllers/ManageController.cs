@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Controllers.Types;
 using WebApp1.Models;
+using WebApp1.Services.TokenService;
 using WebApp1.ViewModels.Account.Manage;
 
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
-    : Controller
+public class ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
+    IServiceProvider sp) : Controller
 {
     /// <summary>
     ///     Get User from DB by current Claims Identity.
@@ -139,26 +140,35 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
     }
 
     #endregion
-    
+
     #region Token
 
     [HttpGet]
-    public IActionResult Token()
+    [Authorize(Roles = "Organizer")]
+    public async Task<IActionResult> Token()
     {
+        var tokenService = sp.GetRequiredService<ITokenService>();
+        var userId = new Guid(userManager.GetUserId(User)!);
+
+        ViewData["CurrentToken"] = await tokenService.GetToken(userId);
         return View();
     }
 
-    [Authorize(Roles = "Organizer")]
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Organizer")]
     public async Task<IActionResult> Token(TokenViewModel vm)
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var user = await GetCurrentUserAsyncOrThrowIfNull();
-        user.Tokens.Add(new CreatorToken());
+        var tokenService = sp.GetRequiredService<ITokenService>();
+        var userId = new Guid(userManager.GetUserId(User)!);
+        var result = await tokenService.SetToken(userId, vm.Token);
 
-        TempData["StatusMessage"] = "Your token has been changed.";
+        TempData["StatusMessage"] = result
+            ? "Your token has been changed."
+            : "Error: Your token has not been changed. Try a different token or come back later.";
+
         return RedirectToAction("Token");
     }
 

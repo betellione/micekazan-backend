@@ -4,8 +4,11 @@ using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Options;
 using WebApp1.Services;
+using WebApp1.Services.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 
