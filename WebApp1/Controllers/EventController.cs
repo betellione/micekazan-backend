@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Models;
+using WebApp1.Services.EventService;
 
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer")]
-public class EventController(ApplicationDbContext context) : Controller
+public class EventController(ApplicationDbContext context, IEventService eventService, UserManager<User> userManager)
+    : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -123,8 +126,11 @@ public class EventController(ApplicationDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EventLoad()
+    public async Task<IActionResult> EventLoad()
     {
+        var userId = new Guid(userManager.GetUserId(User)!);
+        await eventService.ImportEvents(userId);
+        
         TempData["StatusMessage"] = "Чамарчик превратился в баребулу (все хорошо).";
         return RedirectToAction("Index");
     }

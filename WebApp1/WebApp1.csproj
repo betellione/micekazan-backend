@@ -38,9 +38,4 @@
         </Content>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="External\Qtickets\Contracts\Requests\" />
-      <Folder Include="External\Qtickets\Contracts\Responses\" />
-    </ItemGroup>
-
 </Project>

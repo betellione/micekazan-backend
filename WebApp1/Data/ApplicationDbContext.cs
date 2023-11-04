@@ -45,8 +45,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.HasKey(x => x.Id).HasName("Event_pk");
 
-            entity.Property(x => x.Id).HasColumnName("Id");
-            entity.Property(x => x.Name).HasMaxLength(128).HasColumnName("Name");
+            entity.Property(x => x.Id).ValueGeneratedNever().HasColumnName("Id");
+            entity.Property(x => x.Name).HasMaxLength(256).HasColumnName("Name");
             entity.Property(x => x.City).HasMaxLength(128).HasColumnName("City");
             entity.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
             entity.Property(x => x.StartedAt).HasColumnName("StartedAt");
