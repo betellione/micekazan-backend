@@ -1,3 +1,4 @@
+/* ------------------------------base-------------------------------- */
 html {
 	font-size: 14px;
 	position: relative;
@@ -13,6 +14,7 @@ body {
 
 :root {
 	--main-color: #ffca2c;
+	--secondary-color: #ffcf3e
 	--bs-link-color: var(--main-color);
 	--bs-link-hover-color: white;
 }
@@ -32,13 +34,41 @@ button.accept-policy {
 	line-height: inherit;
 }
 
-@media (min-width: 768px) {
-	html {
-		font-size: 16px;
-	}
+
+/* tables */
+.custom-table {
+	border: 2px solid var(--main-color);
+	border-radius: 1em;
+	margin-bottom: 20px;
 }
 
-/* bootstrap-custom */
+.table-col-header {
+	font-size: large;
+	padding: 0px 10px;
+	color: var(--main-color);
+}
+
+.table-row {
+	height: 50px;
+}
+
+.table-col {
+	padding: 0px 10px;
+}
+
+
+/* Buttons */
+
+.exit-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* ------------------------------bootstrap-custom-------------------------------- */
+
 
 /* Buttons */
 .btn-primary {
@@ -47,31 +77,60 @@ button.accept-policy {
 	color: black;
 }
 
+.btn-outline-primary {
+	--bs-btn-color: var(--main-color);
+	--bs-btn-border-color: var(--main-color);
+	--bs-btn-hover-color: #000;
+	--bs-btn-hover-bg: var(--main-color);
+	--bs-btn-hover-border-color: var(--main-color);
+	--bs-btn-focus-shadow-rgb: 13, 110, 253;
+	--bs-btn-active-color: #000;
+	--bs-btn-active-bg: var(--main-color);
+	--bs-btn-active-border-color: var(--main-color);
+	--bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+	--bs-btn-disabled-color: var(--main-color);
+	--bs-btn-disabled-bg: transparent;
+	--bs-btn-disabled-border-color: var(--main-color);
+	--bs-gradient: none;
+  }
+
 .btn-primary:hover {
-	background-color: #ffcf3e;
-	border-color: #ffcf3e;
+	background-color: var(--secondary-color);
+	border-color: var(--secondary-color);
 	color: black;
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    background-color: var(--main-color);
-    color: black;
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check) + .btn:active {
+	background-color: var(--main-color);
+	color: black;
 }
 
 .btn:focus-visible {
-    background-color: var(--main-color);
-    border-color: var(--main-color);
-    outline: 0;
-    color: black;
-    box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
+	background-color: var(--main-color);
+	border-color: var(--main-color);
+	outline: 0;
+	color: black;
+	box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
 }
 
-.btn-check:checked+.btn:focus-visible, .btn.active:focus-visible, .btn.show:focus-visible, .btn:first-child:active:focus-visible, :not(.btn-check)+.btn:active:focus-visible {
-    box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
+.btn-check:checked + .btn:focus-visible,
+.btn.active:focus-visible,
+.btn.show:focus-visible,
+.btn:first-child:active:focus-visible,
+:not(.btn-check) + .btn:active:focus-visible {
+	box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
 }
 
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    border-color: var(--main-color);
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check) + .btn:active {
+	border-color: var(--main-color);
 }
 
 
@@ -86,7 +145,7 @@ button.accept-policy {
 	border-color: #211c0b;
 	background-color: black;
 	box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
-	color: #ffcf3e;
+	color: var(--secondary-color);
 }
 
 .form-check-input {
@@ -95,21 +154,21 @@ button.accept-policy {
 }
 
 .form-check-input:focus {
-	border-color: #ffcf3e;
+	border-color: var(--secondary-color);
 	outline: 0;
 	box-shadow: 0 0 0 0.25rem rgba(255, 233, 37, 0.25);
 }
 
 .form-check-input:checked {
 	background-color: black;
-	border-color: #ffcf3e;
+	border-color: var(--secondary-color);
 }
 
 .form-floating > .form-control:focus ~ label,
 .form-floating > .form-control:not(:placeholder-shown) ~ label,
 .form-floating > .form-control-plaintext ~ label,
 .form-floating > .form-select ~ label {
-	color: #ffcf3e;
+	color: var(--secondary-color);
 }
 
 .form-floating > .form-control:focus ~ label::after,
@@ -123,7 +182,6 @@ button.accept-policy {
 	--bs-nav-pills-border-radius: var(--bs-border-radius);
 	--bs-nav-pills-link-active-color: black;
 	--bs-nav-pills-link-active-bg: var(--main-color);
-	
 }
 
 /* Tables */
@@ -131,8 +189,59 @@ button.accept-policy {
 	margin-bottom: 0;
 }
 
-.custom-table {
-	border: 2px solid var(--main-color);
-	border-radius: 1em;
-	margin-bottom: 20px;
-}
+/* Alerts */
+.alert-primary {
+	--bs-alert-color: var(--bs-primary-text-emphasis);
+	--bs-alert-bg: var(--bs-primary-bg-subtle);
+	--bs-alert-border-color: var(--bs-primary-border-subtle);
+	--bs-alert-link-color: var(--bs-primary-text-emphasis);
+  }
+  
+  .alert-secondary {
+	--bs-alert-color: var(--bs-secondary-text-emphasis);
+	--bs-alert-bg: var(--bs-secondary-bg-subtle);
+	--bs-alert-border-color: var(--bs-secondary-border-subtle);
+	--bs-alert-link-color: var(--bs-secondary-text-emphasis);
+  }
+  
+  .alert-success {
+	--bs-alert-color: var(--bs-success-text-emphasis);
+	--bs-alert-bg: var(--bs-success-bg-subtle);
+	--bs-alert-border-color: var(--bs-success-border-subtle);
+	--bs-alert-link-color: var(--bs-success-text-emphasis);
+  }
+  
+  .alert-info {
+	--bs-alert-color: var(--bs-info-text-emphasis);
+	--bs-alert-bg: var(--bs-info-bg-subtle);
+	--bs-alert-border-color: var(--bs-info-border-subtle);
+	--bs-alert-link-color: var(--bs-info-text-emphasis);
+  }
+  
+  .alert-warning {
+	--bs-alert-color: var(--bs-warning-text-emphasis);
+	--bs-alert-bg: var(--bs-warning-bg-subtle);
+	--bs-alert-border-color: var(--bs-warning-border-subtle);
+	--bs-alert-link-color: var(--bs-warning-text-emphasis);
+  }
+  
+  .alert-danger {
+	--bs-alert-color: var(--bs-danger-text-emphasis);
+	--bs-alert-bg: var(--bs-danger-bg-subtle);
+	--bs-alert-border-color: var(--bs-danger-border-subtle);
+	--bs-alert-link-color: var(--bs-danger-text-emphasis);
+  }
+  
+  .alert-light {
+	--bs-alert-color: var(--bs-light-text-emphasis);
+	--bs-alert-bg: var(--bs-light-bg-subtle);
+	--bs-alert-border-color: var(--bs-light-border-subtle);
+	--bs-alert-link-color: var(--bs-light-text-emphasis);
+  }
+  
+  .alert-dark {
+	--bs-alert-color: var(--bs-dark-text-emphasis);
+	--bs-alert-bg: var(--bs-dark-bg-subtle);
+	--bs-alert-border-color: var(--bs-dark-border-subtle);
+	--bs-alert-link-color: var(--bs-dark-text-emphasis);
+  }
