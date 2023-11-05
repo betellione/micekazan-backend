@@ -1,12 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebApp1.Data;
+using WebApp1.Models;
+using WebApp1.Services.TicketService;
 
 namespace WebApp1.Controllers;
 
-public class TicketController : Controller
+[Authorize]
+[ApiController]
+[Route("[controller]")]
+public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase
 {
-    public string PrintTicket(string code)
+    [HttpPost]
+    public async Task<IActionResult> PrintTicket(string code)
     {
-        var barcodes = new TicketsToPrint();
-        return code;
+        var pdfUri = await ticketService.GetTicketPdfUri(code);
+        if (pdfUri is null) return BadRequest();
+
+        var ticket = new TicketToPrint
+        {
+            Barcode = code,
+            CreatedAt = DateTime.UtcNow,
+            Url = pdfUri,
+        };
+
+        context.TicketsToPrint.Add(ticket);
+        await context.SaveChangesAsync();
+
+        return Ok();
     }
 }
