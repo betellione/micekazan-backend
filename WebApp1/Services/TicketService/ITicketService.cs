@@ -1,6 +1,3 @@
 namespace WebApp1.Services.TicketService;
 
-public class ITicketService
-{
-    
-}
+public interface ITicketService;

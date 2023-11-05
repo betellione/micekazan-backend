@@ -14,6 +14,21 @@
       - api:/root/.aspnet/DataProtection-Keys
     depends_on:
       - db
+  print:
+    user: root
+    container_name: mice_kazan_print
+    build:
+      context: .
+      dockerfile: Micekazan.PrintDispatcher/Dockerfile
+    ports:
+      - 8081:8080
+    environment:
+      - HTTP_PORTS=8080
+    env_file: .env
+    volumes:
+      - print:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      - db
   db:
     container_name: mice_kazan_db
     image: postgres:15-alpine
@@ -28,3 +43,5 @@ volumes:
     name: mice_kazan_db
   api:
     name: mice_kazan_api
+  print:
+    name: mice_kazan_print
