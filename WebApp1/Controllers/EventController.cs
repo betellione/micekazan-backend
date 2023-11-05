@@ -131,7 +131,7 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
         var userId = new Guid(userManager.GetUserId(User)!);
         await eventService.ImportEvents(userId);
         
-        TempData["StatusMessage"] = "Чамарчик превратился в баребулу (все хорошо).";
+        TempData["StatusMessage"] = "События успешно загружены";
         return RedirectToAction("Index");
     }
 }
