@@ -1,8 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text;
 using WebApp1.External.Qtickets.Contracts.Responses;
-using WebApp1.Models;
-using Event = WebApp1.External.Qtickets.Contracts.Responses.Event;
 
 namespace WebApp1.External.Qtickets;
 
