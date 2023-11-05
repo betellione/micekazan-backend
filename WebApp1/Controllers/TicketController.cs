@@ -6,6 +6,7 @@ public class TicketController : Controller
 {
     public string PrintTicket(string code)
     {
+        var barcodes = new TicketsToPrint();
         return code;
     }
 }

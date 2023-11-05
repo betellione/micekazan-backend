@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<EventCollector> EventCollectors { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
+    public DbSet<TicketToPrint> TicketsToPrint { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,6 +106,16 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasOne(x => x.Creator).WithMany(x => x.TokenUpdates)
                 .HasForeignKey(x => x.CreatorId)
                 .HasConstraintName("TokenUpdate_User_CreatorId_fk");
+        });
+
+        modelBuilder.Entity<TicketToPrint>(entity =>
+        {
+            entity.ToTable("TicketToPrint");
+            entity.HasKey(x => x.Barcode).HasName("TicketToPrint_pk");
+
+            entity.Property(x => x.Barcode).HasColumnName("Barcode");
+
+            entity.Property(x => x.Url).HasMaxLength(256).HasColumnName("Url");
         });
     }
 }
