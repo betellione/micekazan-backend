@@ -6,6 +6,7 @@ using WebApp1.Models;
 using WebApp1.Options;
 using WebApp1.Services;
 using WebApp1.Services.EventService;
+using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddQticketsApiProvider();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 

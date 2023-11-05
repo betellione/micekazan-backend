@@ -1,5 +1,4 @@
-using WebApp1.Models;
-using Event = WebApp1.External.Qtickets.Contracts.Responses.Event;
+using WebApp1.External.Qtickets.Contracts.Responses;
 
 namespace WebApp1.External.Qtickets;
 
