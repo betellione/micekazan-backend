@@ -26,12 +26,10 @@ public class PrintQueue(IHttpClientFactory httpClientFactory, IPrintProvider pri
                     var doc = await ch.Reader.ReadAsync(stoppingToken);
                     var httpClient = httpClientFactory.CreateClient("Qtickets");
                     using var response = await httpClient.GetAsync(doc.DocumentUri, stoppingToken);
-
-                    // TODO: Save temp file locally first and then use fileStream.
+                    
                     await using var stream = await response.Content.ReadAsStreamAsync(stoppingToken);
-                    var fileStream = stream as FileStream;
 
-                    await printProvider.PrintDocument(fileStream!, PrintSettings);
+                    await printProvider.PrintDocument(stream, PrintSettings);
                 }
                 catch (Exception)
                 {

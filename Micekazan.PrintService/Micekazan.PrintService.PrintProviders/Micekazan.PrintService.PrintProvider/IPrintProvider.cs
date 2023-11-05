@@ -2,5 +2,5 @@
 
 public interface IPrintProvider
 {
-    public Task PrintDocument(FileStream document, PrintSettings? settings);
+    public Task PrintDocument(Stream document, PrintSettings? settings);
 }

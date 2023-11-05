@@ -42,7 +42,7 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,City,CreatedAt,StartedAt,FinishedAt,CreatorId")] Event @event)
+    public async Task<IActionResult> Create([Bind("Id,Name,City,CreatedAt,StartedAt,FinishedAt,CreatorId")] Event @event, int eventId)
     {
         if (ModelState.IsValid)
         {
