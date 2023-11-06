@@ -59,8 +59,9 @@ public class UserController(ApplicationDbContext context, IUserStore<User> userS
             foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
             return View(vm);
         }
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
+
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
         return RedirectToAction("Index", "Event");
     }
 
