@@ -12,6 +12,6 @@ public class LoginViewModel
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
-    [Display(Name = "Remember me")]
+    [Display(Name = "Запомнить меня")]
     public bool RememberMe { get; set; }
 }

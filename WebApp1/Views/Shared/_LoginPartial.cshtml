@@ -1,10 +1,10 @@
 ﻿<div class="d-flex flex-nowrap align-items-center">
     @if (User.Identity?.IsAuthenticated ?? false)
     {
-        <button class="btn btn-outline-primary me-2" onclick="location.href='@Url.Action("Index", "Manage")'">@User.Identity?.Name</button>
+        <button class="btn btn-outline-primary me-3" onclick="location.href='@Url.Action("Index", "Manage")'">@User.Identity?.Name</button>
         <form asp-controller="Account" asp-action="Logout" method="post" class="">
             <button type="submit" class="exit-btn">
-                <img src="/images/exit.png" alt="MiceKazan" width="20" height="20">
+                <img src="/images/exit.png" alt="MiceKazan" width="25" height="25">
             </button>
         </form>
     }

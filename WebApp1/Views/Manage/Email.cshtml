@@ -2,7 +2,7 @@
 @model EmailViewModel
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Manage Email";
+    ViewData["Title"] = "Управление почтой";
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 
@@ -13,30 +13,30 @@
         @if (Model.IsEmailConfirmed ?? false)
         {
             <div class="form-floating mb-3 input-group">
-                <input asp-for="Email" class="form-control" disabled/>
+                <input asp-for="Email" class="form-control bg-black" disabled/>
                 <div class="input-group-append">
-                    <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                    <span class="h-100 input-group-text text-warning bg-black font-weight-bold">✓</span>
                 </div>
-                <label asp-for="Email" class="form-label"></label>
+                <label asp-for="Email" class="form-label">Почта</label>
             </div>
         }
         else
         {
             <div class="form-floating mb-3">
                 <input asp-for="Email" class="form-control" disabled/>
-                <label asp-for="Email" class="form-label"></label>
+                <label asp-for="Email" class="form-label">Почта</label>
                 <form asp-controller="Manage" asp-action="SendVerificationEmail" method="post">
-                    <button type="submit" class="btn btn-link">Send verification email</button>
+                    <button type="submit" class="btn btn-link">Отправить письмо с подтверждением</button>
                 </form>
             </div>
         }
         <form asp-controller="Manage" asp-action="ChangeEmail" method="post">
             <div class="form-floating mb-3">
                 <input asp-for="NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Please enter new email."/>
-                <label asp-for="NewEmail" class="form-label"></label>
+                <label asp-for="NewEmail" class="form-label">Новая почта</label>
                 <span asp-validation-for="NewEmail" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Change email</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Изменить почту</button>
         </form>
     </div>
 </div>

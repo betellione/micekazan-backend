@@ -4,114 +4,127 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
+<h3>Вы уверены, что хотите удалить это?</h3>
 <div>
-    <h4>User</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.CreatedAt) *@
+            Создано:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CreatedAt)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExpiresAt)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.ExpiresAt) *@
+            Действует до:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ExpiresAt)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserName)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.UserName) *@
+            Имя пользователя:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.UserName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NormalizedUserName)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.NormalizedUserName) *@
+            Нормализованное имя пользователя:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NormalizedUserName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.Email) *@
+            Почта:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NormalizedEmail)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.NormalizedEmail) *@
+            Нормализованная почта:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NormalizedEmail)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EmailConfirmed)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.EmailConfirmed) *@
+            Email подтвержден:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EmailConfirmed)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PasswordHash)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.PasswordHash) *@
+            Хэш пароль:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PasswordHash)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SecurityStamp)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.SecurityStamp) *@
+            Метка безопасности:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SecurityStamp)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ConcurrencyStamp)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.ConcurrencyStamp) *@
+            Метка конкуренции:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ConcurrencyStamp)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.PhoneNumber) *@
+            Номер телефона:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.PhoneNumberConfirmed) *@
+            Номер телефона подтвержден:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PhoneNumberConfirmed)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TwoFactorEnabled)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.TwoFactorEnabled) *@
+            Двухфакторная аутентификация:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TwoFactorEnabled)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LockoutEnd)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.LockoutEnd) *@
+            Окончание блокировки:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LockoutEnd)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LockoutEnabled)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.LockoutEnabled) *@
+            Блокировка включена:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LockoutEnabled)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccessFailedCount)
+        <dt class="col-sm-2">
+            @* @Html.DisplayNameFor(model => model.AccessFailedCount) *@
+            Неудачных попыток входа:
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.AccessFailedCount)
         </dd>
     </dl>
-    
-    <form asp-action="Delete">
+
+    <form asp-action="Delete" class="d-flex gap-2 align-items-center">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Удалить" class="btn btn-danger" />
+        <a asp-action="Index">Вернуться к списку</a>
     </form>
 </div>

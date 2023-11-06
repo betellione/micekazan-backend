@@ -4,38 +4,52 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 class="d-block">Пользователи</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ExpiresAt)
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td> 
-            <td>
-                @Html.DisplayFor(modelItem => item.ExpiresAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+    <a asp-action="Create" class="btn btn-primary h-75">Создать</a>
+</div>
+
+<div class="table-responsive custom-table mb-5">
+    <table class="table table-dark table-hover align-middle">
+        <thead>
+            <tr>
+                <th>
+                    <div class="table-col-header">
+                        @* @Html.DisplayNameFor(model => model.Email) *@
+                        Почта
+                    </div>
+
+                </th>
+                <th>
+                    <div class="table-col-header">
+                        @* @Html.DisplayNameFor(model => model.ExpiresAt) *@
+                        Срок действия истекает
+                    </div>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick="location.href='@Url.Action("Edit", new { id = item.Id })';">
+                    <td>
+                        <div class="table-col">
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </div>
+
+                    </td>
+                    <td>
+                        <div class="table-col">
+                            @Html.DisplayFor(modelItem => item.ExpiresAt)
+                        </div>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-primary w-100" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -2,7 +2,7 @@
 @model TokenViewModel
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Change token";
+    ViewData["Title"] = "Изменить токен";
     ViewData["ActivePage"] = ManageNavPages.ChangeToken;
 }
 
@@ -14,12 +14,12 @@
     var secured = new string('*', 12);
     if (tokenString.Length < 4) secured += new string('*', 4 - tokenString.Length) + token;
     else secured += tokenString[^4..];
-    <h3>Your current token</h3>
+    <h3>Ваш текущий токен</h3>
     <h5>@secured</h5>
 }
 else
 {
-    <h3>You do not currently have a token</h3>
+    <h3>В настоящее время у вас нет токена</h3>
 }
 
 <h3>@ViewData["Title"]</h3>
@@ -28,11 +28,11 @@ else
         <form asp-controller="Manage" asp-action="Token" method="post">
             <div class="form-floating mb-3">
                 <input asp-for="Token" class="form-control" autocomplete="token" aria-required="true"/>
-                <label asp-for="Token" class="form-label"></label>
+                <label asp-for="Token" class="form-label">Новый токен</label>
                 <span asp-validation-for="Token" class="text-danger"></span>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Update Token</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Обновить токен</button>
         </form>
     </div>
 </div>
