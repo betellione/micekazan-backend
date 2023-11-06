@@ -27,7 +27,10 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Users.Select(x => x.UserMapping()).ToListAsync());
+        
+        var users = await _userManager.GetUsersForClaimAsync(new Claim(ClaimTypes.Role, "Organizer"));
+        
+        return View(users.Select(x => x.UserMapping()));
     }
 
     // GET: User/Details/5

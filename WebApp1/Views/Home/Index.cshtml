@@ -3,10 +3,6 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center mb-4">
-    <h1 class="display-6">Отображение фронтальной камеры</h1>
-</div>
-
 <div id="videoContainer">
     <video id="videoElement" autoplay playsinline></video>
 </div>
@@ -39,10 +35,16 @@
                     }
                     if (code.data.toString().length === 12 && code.data !== prevCode) {
                         prevCode = code.data
-                        $.post('@Url.Action("PrintTicket", "Ticket")', { code: code.data })
-                        console.log(code.data)
+                        fetch('@Url.Action("PrintTicket", "Ticket")?code=' + code.data, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                        })
+                          .then(response => response.json())
+                          .then(data => console.log(data))
+                          .catch(error => console.error(error));
                     }
-                    resultElement.innerHTML = 'Штрих-код: ' + code.data;
                 }, 1000 / 30);
             })
                 .catch(function (error) {

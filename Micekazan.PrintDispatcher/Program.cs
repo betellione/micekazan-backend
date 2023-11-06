@@ -37,7 +37,7 @@ app.MapGet("/api/update", async (ApplicationDbContext context) =>
 
 app.MapPost("/api/ack", async (Acknowledgement ack, ApplicationDbContext context) =>
 {
-    if (dick.TryGetValue(ack.UpdateId, out var barcode)) return Results.NotFound();
+    if (!dick.TryGetValue(ack.UpdateId, out var barcode)) return Results.NotFound();
 
     var toPrint = await context.TicketsToPrint.FindAsync(barcode);
     if (toPrint is null) return Results.NotFound();

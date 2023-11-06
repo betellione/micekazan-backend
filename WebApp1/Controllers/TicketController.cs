@@ -8,7 +8,7 @@ namespace WebApp1.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase
 {
     [HttpPost]

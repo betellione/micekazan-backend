@@ -16,6 +16,10 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+        if (!context.CreatorTokens.Any(x => x.CreatorId == new Guid(userManager.GetUserId(User)!)))
+        {
+            return RedirectToAction("Token", "Manage");
+        }
         var applicationDbContext = context.Events.Include(x => x.Creator);
         return View(await applicationDbContext.ToListAsync());
     }
@@ -129,9 +133,19 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
     public async Task<IActionResult> EventLoad()
     {
         var userId = new Guid(userManager.GetUserId(User)!);
-        await eventService.ImportEvents(userId);
-        
-        TempData["StatusMessage"] = "События успешно загружены";
+        var result = await eventService.ImportEvents(userId);
+
+        if (!context.CreatorTokens.Any(x => x.CreatorId == new Guid(userManager.GetUserId(User)!)))
+        {
+            TempData["StatusMessage"] = "Введите свой токен в профиле";
+        } else if (!result)
+        {
+            TempData["StatusMessage"] = "Произошла ошибка при загрузке событий";
+        }
+        else
+        {
+            TempData["StatusMessage"] = "События успешно загружены";
+        }
         return RedirectToAction("Index");
     }
 }
