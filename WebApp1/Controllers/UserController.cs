@@ -56,7 +56,7 @@ public class UserController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(UserViewModel vm)
+    public async Task<IActionResult> Create(UserViewModel vm, int eventId)
     {
         if (!ModelState.IsValid) return View(vm);
         var user = new User
@@ -77,9 +77,16 @@ public class UserController : Controller
 
             return View(vm);
         }
+        var eventCollector = new EventCollector
+        {
+            CollectorId = user.Id,
+            EventId = eventId
+        };
+        _context.EventCollectors.Add(eventCollector);
+        await _context.SaveChangesAsync();
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Event");
     }
 
     // GET: User/Edit/5
