@@ -1,73 +1,51 @@
 @model IEnumerable<WebApp1.Models.Event>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Список событий";
 }
 
 <div class="d-flex justify-content-between mt-5 mb-3">
-    <h1 class="d-block">Список событий</h1>
+    <h1 class="d-block">@ViewData["Title"]</h1>
     <form asp-action="EventLoad" method="post">
-        <div class="text-danger" role="alert"></div>
         <div>
-            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-warning">Загрузить события</button>
+            <button type="submit" class="w-100 btn btn-lg btn-warning">Загрузить события</button>
         </div>
     </form>
 </div>
-<partial name="_StatusMessage" for="@TempData["StatusMessage"]" />
+<partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
 <div class="table-responsive custom-table mb-5">
     <table class="table table-dark table-hover align-middle">
         <thead>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.Name) *@
-                        Наименование
-                    </div>
-                </th>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.City)*@
-                        Город
-                    </div>
-                </th>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.StartedAt) *@
-                        Начало
-                    </div>
-                </th>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.FinishedAt) *@
-                        Завершение
-                    </div>
-                </th>
+        <th>
+            <div class="table-col-header">Наименование</div>
+        </th>
+        <th>
+            <div class="table-col-header">Город</div>
+        </th>
+        <th>
+            <div class="table-col-header">Начало</div>
+        </th>
+        <th>
+            <div class="table-col-header">Завершение</div>
+        </th>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr onclick="location.href='@Url.Action("Details", new { id = item.Id })';">
-                    <td class="table-row">
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </div>
-                    </td>
-                    <td>
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.City)
-                        </div>
-                    </td>
-                    <td>
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.StartedAt)
-                        </div>
-                    </td>
-                    <td>
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.FinishedAt)
-                        </div>
-                    </td>
-                </tr>
-            }
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Details", new { id = item.Id, })';">
+                <td class="table-row">
+                    <div class="table-col">@item.Name</div>
+                </td>
+                <td>
+                    <div class="table-col">@item.City</div>
+                </td>
+                <td>
+                    <div class="table-col">@item.StartedAt</div>
+                </td>
+                <td>
+                    <div class="table-col">@item.FinishedAt</div>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>

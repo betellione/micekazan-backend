@@ -1,77 +1,69 @@
-@model WebApp1.Models.Event
-
+@using Microsoft.IdentityModel.Tokens
+@model EventDetails
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Информация";
 }
 
-<h1>Информация</h1>
-
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.Name) *@
-            Наименование
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.City) *@
-            Город
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.CreatedAt) *@
-            Создано
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.StartedAt) *@
-            Начало
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.FinishedAt) *@
-            Завершение
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FinishedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @* @Html.DisplayNameFor(model => model.Creator) *@
-            Создатель
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Creator.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <form asp-action="Create" method="post">
-        <hr/>
-        <div class="text-danger" role="alert"></div>
-        <div>
-            <button id="login-submit" class="w-100 btn btn-lg btn-warning">Создать билетера</button>
-        </div>
-    </form>
-</div>
-<div>
-    <form asp-action="Create" method="post">
-        <hr/>
-        <div class="text-danger" role="alert"></div>
-        <div>
-            <button id="login-submit" class="w-100 btn btn-lg btn-warning">Посмотреть список билетеров</button>
-        </div>
-    </form>
-</div>
+<h1>@Model.Name</h1>
 <div>
     <hr/>
-    <a asp-action="Index">Вернуться к списку</a>
+    <dl class="row">
+        <dt class="col-sm-2">Наименование</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+        <dt class="col-sm-2">Город</dt>
+        <dd class="col-sm-10">@Model.City</dd>
+        <dt class="col-sm-2">Создано</dt>
+        <dd class="col-sm-10">@Model.CreatedAt</dd>
+        <dt class="col-sm-2">Начало</dt>
+        <dd class="col-sm-10">@Model.StartedAt</dd>
+        <dt class="col-sm-2">Завершение</dt>
+        <dd class="col-sm-10">@Model.FinishedAt</dd>
+        <dt class="col-sm-2">Создатель</dt>
+        <dd class="col-sm-10">@Model.CreatorUsername</dd>
+    </dl>
+</div>
+<hr/>
+
+<div class="d-flex justify-content-between mt-3 mb-3">
+    <h1 class="d-block">Билетеры</h1>
+    <div class="d-block">
+        <a asp-controller="Event"
+           asp-action="AddScanner"
+           asp-route-eventId="@Model.Id"
+           asp-route-eventName="@Model.Name"
+           class="w-100 btn btn-lg btn-warning">
+            Добавить билетера
+        </a>
+    </div>
+</div>
+@if (Model.Scanners.IsNullOrEmpty())
+{
+    <p>К этому мероприятию пока не добавлены билетеры</p>
+}
+else
+{
+    <div class="table-responsive custom-table mb-3">
+        <table class="table table-dark table-hover align-middle">
+            <thead>
+            <th>
+                <div class="table-col-header">Логин</div>
+            </th>
+            </thead>
+            <tbody>
+            @foreach (var scanner in Model.Scanners)
+            {
+                <tr onclick="location.href='';">
+                    <td class="table-row">
+                        <div hidden>@scanner.Id</div>
+                        <div class="table-col">@scanner.Username</div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div>
+    <a asp-action="Index" asp-controller="Event">Вернуться к списку</a>
 </div>

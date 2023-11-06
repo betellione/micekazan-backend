@@ -15,4 +15,6 @@ public class UserViewModel
     public string Password { get; set; } = null!;
 
     public DateTime? ExpiresAt { get; set; }
+    public string? EventName { get; set; }
+    public long? EventId { get; set; }
 }

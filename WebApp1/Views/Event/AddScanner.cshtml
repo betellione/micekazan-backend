@@ -1,12 +1,14 @@
 @model WebApp1.ViewModels.UserViewModel
 @{
-    ViewData["Title"] = "Создание билетера";
+    ViewData["Title"] = "Создание билетера для мероприятия";
 }
 
 <div class="col-md-4 mx-auto">
     <h1 class="text-center">@ViewData["Title"]</h1>
-    <form asp-controller="User" asp-action="Create" method="post" class="d-flex flex-column gap-3">
+    <h2 class="text-center">@Model.EventName</h2>
+    <form asp-controller="Event" asp-action="AddScanner" method="post" class="d-flex flex-column gap-3 mb-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="EventId" hidden/>
         <div class="form-group">
             <label asp-for="Email" class="control-label">Почта</label>
             <input asp-for="Email" class="form-control"/>
@@ -23,12 +25,12 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <input type="submit" value="Создать" class="btn btn-primary w-100"/>
+            <button type="submit" class="w-100 btn btn-lg btn-warning">Сохранить</button>
         </div>
     </form>
-</div>
-<div>
-    <a asp-controller="User" asp-action="Index">Вернуться к списку</a>
+    <div>
+        <a asp-controller="Event" asp-action="Details" asp-route-id="@Model.EventId">Назад</a>
+    </div>
 </div>
 
 @section Scripts {
