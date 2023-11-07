@@ -181,6 +181,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     public IActionResult Register(string? returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
+        
         return View();
     }
 
@@ -191,7 +192,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var user = new User();
+        var user = new User{Name = vm.Name, Surname = vm.Surname, Patronymic = vm.Patronymic, City = vm.City};
         await userManager.SetUserNameAsync(user, vm.Email);
         await userManager.SetEmailAsync(user, vm.Email);
 
@@ -240,7 +241,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await userManager.ConfirmEmailAsync(user, code);
-        TempData["StatusMessage"] = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+        TempData["StatusMessage"] = result.Succeeded ? "Почта успешно подтверждена." : "Ошибка при подтверждении почты.";
 
         return View();
     }

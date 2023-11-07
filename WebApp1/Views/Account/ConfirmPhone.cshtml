@@ -1,0 +1,27 @@
+﻿@model ConfirmPhoneViewModel
+@{
+    ViewData["Title"] = "Забыли пароль?";
+}
+<div class="col-md-4 mx-auto">
+    <h2 class="text-center">Введите адрес почты</h2>
+    <hr />
+    <div class="row">
+        <div>
+            <form asp-controller="Account" asp-action="ForgotPassword" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Code" class="form-control" autocomplete="username" aria-required="true"
+                        placeholder="name@example.com" />
+                    <label asp-for="Code" class="form-label"></label>
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Сброс пароля</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

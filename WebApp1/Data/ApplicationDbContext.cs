@@ -23,6 +23,16 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+                
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
+            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
+            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
+            entity.Property(x => x.City).HasMaxLength(32).HasColumnName("City");
+            entity.Property(x => x.Activity).HasColumnName("Activity");
+        });
 
         modelBuilder.Entity<CreatorToken>(entity =>
         {

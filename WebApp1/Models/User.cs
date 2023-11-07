@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using WebApp1.Enums;
 
 namespace WebApp1.Models;
 
 public class User : IdentityUser<Guid>
 {
+    public string? Name { get; set; } = null!;
+    public string? Surname { get; set; } = null!;
+    public string? Patronymic { get; set; } = null!;
+    public string? City { get; set; } = null!;
+    public ActivityTypes? Activity { get; set; } = ActivityTypes.Individual; 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime ExpiresAt { get; set; }
 

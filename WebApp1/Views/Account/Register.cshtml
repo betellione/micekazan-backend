@@ -10,17 +10,50 @@
             <hr/>
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
+                <input asp-for="Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Имя"/>
+                <label asp-for="Name">Имя</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Surname" class="form-control" autocomplete="surname" aria-required="true" placeholder="Фамилия"/>
+                <label asp-for="Surname">Фамилия</label>
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Patronymic" class="form-control" autocomplete="patronymic" aria-required="true" placeholder="Отчество"/>
+                <label asp-for="Patronymic">Отчество</label>
+                <span asp-validation-for="Patronymic" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" placeholder="Почта"/>
                 <label asp-for="Email">Почта</label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
+                <input asp-for="City" class="form-control" autocomplete="city" aria-required="true" placeholder="Город"/>
+                <label asp-for="City">Город</label>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="PhoneNumber" class="form-control" autocomplete="phone" aria-required="true" placeholder="Номер Телефона"/>
+                <label asp-for="PhoneNumber">Номер Телефона</label>
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <select asp-for="Activity" aria-required="true" class="form-control">
+                    <option value="Individual">Физическое лицо</option>
+                    <option value="Entrepreneur">Индивидуальный предприниматель</option>
+                    <option value="Business">Юридическое лицо</option>
+                </select>
+                <label asp-for="Activity">Занятость</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Пароль"/>
                 <label asp-for="Password">Пароль</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Пароль"/>
                 <label asp-for="ConfirmPassword">Подтвердите пароль</label>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
