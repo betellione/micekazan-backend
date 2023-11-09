@@ -216,7 +216,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 
-        return RedirectToAction("ConfirmPhone");
+        return RedirectToAction("RegisterConfirmation");
     }
 
     [HttpGet]
