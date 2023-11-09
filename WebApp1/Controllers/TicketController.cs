@@ -16,6 +16,9 @@ public class TicketController(ITicketService ticketService, ApplicationDbContext
     {
         var pdfUri = await ticketService.GetTicketPdfUri(code);
         if (pdfUri is null) return BadRequest();
+        
+        var result = await ticketService.CreateTicket(code);
+        if (result is null) return Problem();
 
         var ticket = new TicketToPrint
         {

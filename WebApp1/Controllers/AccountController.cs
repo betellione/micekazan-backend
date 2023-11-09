@@ -216,7 +216,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 
-        return RedirectToAction("RegisterConfirmation");
+        return RedirectToAction("ConfirmPhone");
     }
 
     [HttpGet]
@@ -360,5 +360,23 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         return View();
     }
 
+    #endregion
+    
+    #region Phone
+    
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ConfirmPhone()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public IActionResult ConfirmPhone(ConfirmPhoneViewModel vm)
+    {
+        return RedirectToAction("RegisterConfirmation");
+    }
     #endregion
 }

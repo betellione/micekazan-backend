@@ -12,19 +12,16 @@ public class RegisterViewModel
     
     [Required]
     [StringLength(64, ErrorMessage = "{0} должно быть минимум {2} и максимум {1} символов в длину.", MinimumLength = 2)]
-    [RegularExpression(@"^\p{L}+$", ErrorMessage = "{0} должно состоять только из букв")]
     [Display(Name = "Имя")]
     public string Name { get; set; } = null!;
     
     [Required]
     [StringLength(64, ErrorMessage = "{0} должна быть минимум {2} и максимум {1} символов в длину.", MinimumLength = 2)]
-    [RegularExpression(@"^\p{L}+$", ErrorMessage = "{0} должна состоять только из букв")]
     [Display(Name = "Фамилия")]
     public string Surname { get; set; } = null!;
     
     [Required]
     [StringLength(64, ErrorMessage = "{0} должно быть минимум {2} и максимум {1} символов в длину.", MinimumLength = 2)]
-    [RegularExpression(@"^\p{L}+$", ErrorMessage = "{0} должно состоять только из букв")]
     [Display(Name = "Отчество")]
     public string Patronymic { get; set; } = null!;
     
