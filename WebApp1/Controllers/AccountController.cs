@@ -379,4 +379,11 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         return RedirectToAction("RegisterConfirmation");
     }
     #endregion
+    
+        
+    [HttpGet]
+    public IActionResult Settings()
+    {
+        return View();
+    }
 }

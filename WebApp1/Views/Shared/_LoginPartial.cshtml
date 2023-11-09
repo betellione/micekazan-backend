@@ -1,7 +1,14 @@
 ﻿<div class="d-flex flex-nowrap align-items-center">
     @if (User.Identity?.IsAuthenticated ?? false)
     {
-        <button class="btn btn-outline-primary me-3" onclick="location.href='@Url.Action("Index", "Manage")'">@User.Identity?.Name</button>
+        @if (User.IsInRole("Organizer"))
+        {
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Event")'">Мероприятия</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Покупатели</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Терминал</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Settings", "Account")'">Настройки</button>
+        }
+        <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">@User.Identity?.Name</button>
         <form asp-controller="Account" asp-action="Logout" method="post" class="">
             <button type="submit" class="exit-btn">
                 <img src="/images/exit.png" alt="MiceKazan" width="25" height="25">
