@@ -95,6 +95,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.Property(x => x.Id).HasColumnName("Id");
             entity.Property(x => x.Barcode).HasMaxLength(16).HasColumnName("Barcode");
+            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
+            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
+            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
+            entity.Property(x => x.PassedAt).HasColumnName("PassedAt");
             entity.Property(x => x.EventId).HasColumnName("EventId");
 
             entity.HasOne(x => x.Event).WithMany(x => x.Tickets)
