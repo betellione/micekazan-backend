@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
 

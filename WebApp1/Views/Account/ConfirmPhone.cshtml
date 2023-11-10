@@ -1,16 +1,18 @@
 ﻿@model ConfirmPhoneViewModel
 @{
-    ViewData["Title"] = "Забыли пароль?";
+    ViewData["Title"] = "Введите код подтверждения";
 }
+
 <div class="col-md-4 mx-auto">
-    <h2 class="text-center">Введите код подтверждения</h2>
-    <hr />
+    <h2 class="text-center">@ViewData["Title"]</h2>
+    <hr/>
     <div class="row">
         <div>
             <form asp-controller="Account" asp-action="ConfirmPhone" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <input asp-for="PhoneNumber" hidden/>
                 <div class="form-floating mb-3">
-                    <input asp-for="Code" class="form-control" aria-required="true" placeholder="123456" />
+                    <input asp-for="Code" class="form-control"/>
                     <label asp-for="Code" class="form-label"></label>
                     <span asp-validation-for="Code" class="text-danger"></span>
                 </div>
@@ -20,7 +22,6 @@
     </div>
 </div>
 
-
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
 }

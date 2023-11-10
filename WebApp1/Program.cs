@@ -1,22 +1,22 @@
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Extensions;
 using WebApp1.Models;
 using WebApp1.Options;
-using WebApp1.Services;
 using WebApp1.Services.EventService;
 using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));
+
 builder.Services.AddQticketsApiProvider();
+builder.Services.AddMessageSenders();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
-
-builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
@@ -40,11 +40,13 @@ builder.Services.AddDefaultIdentity<User>(options =>
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-
 builder.Services.AddEndpointsApiExplorer().AddSwaggerGen();
 
+builder.SetUpLogging();
+
 var app = builder.Build();
+
+app.UseLogging();
 
 if (app.Environment.IsDevelopment())
 {

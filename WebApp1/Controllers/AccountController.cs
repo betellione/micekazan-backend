@@ -3,17 +3,18 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Models;
+using WebApp1.Services.EmailSender;
+using WebApp1.Services.SmsSender;
 using WebApp1.ViewModels.Account;
 
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
-    : Controller
+public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
+    ISmsSender smsSender) : Controller
 {
     /// <summary>
     ///     Try to get 2FA Authentication User.
@@ -182,7 +183,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     public IActionResult Register(string? returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
-        
+
         return View();
     }
 
@@ -193,9 +194,10 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var user = new User{Name = vm.Name, Surname = vm.Surname, Patronymic = vm.Patronymic, City = vm.City};
+        var user = new User { Name = vm.Name, Surname = vm.Surname, Patronymic = vm.Patronymic, City = vm.City, };
         await userManager.SetUserNameAsync(user, vm.Email);
         await userManager.SetEmailAsync(user, vm.Email);
+        await userManager.SetPhoneNumberAsync(user, vm.PhoneNumber);
 
         var result = await userManager.CreateAsync(user, vm.Password);
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
@@ -207,17 +209,12 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             return View(vm);
         }
 
-        var userId = await userManager.GetUserIdAsync(user);
-        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId, code, }, Request.Scheme);
+        var smsCode = await userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
+        await smsSender.SendSmsAsync(vm.PhoneNumber, $"{smsCode} - код подтверждения номера телефона в Micekazan");
 
-        await emailSender.SendEmailAsync(
-            vm.Email,
-            "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+        await signInManager.SignInAsync(user, isPersistent: false);
 
-        return RedirectToAction("ConfirmPhone");
+        return RedirectToAction("ConfirmPhone", new { phoneNumber = vm.PhoneNumber, });
     }
 
     [HttpGet]
@@ -362,26 +359,50 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     }
 
     #endregion
-    
+
     #region Phone
-    
+
     [HttpGet]
-    [AllowAnonymous]
-    public IActionResult ConfirmPhone()
+    public IActionResult ConfirmPhone(string phoneNumber)
     {
-        return View();
+        return View(new ConfirmPhoneViewModel { PhoneNumber = phoneNumber, });
     }
 
     [HttpPost]
-    [AllowAnonymous]
     [ValidateAntiForgeryToken]
-    public IActionResult ConfirmPhone(ConfirmPhoneViewModel vm)
+    public async Task<IActionResult> ConfirmPhone(ConfirmPhoneViewModel vm)
     {
-        return RedirectToAction("RegisterConfirmation");
+        var user = await userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            ModelState.AddModelError(string.Empty, "Failed to verify phone number");
+            return View(vm);
+        }
+
+        var result = await userManager.ChangePhoneNumberAsync(user, vm.PhoneNumber, vm.Code);
+
+        if (result.Succeeded)
+        {
+            await signInManager.SignInAsync(user, isPersistent: false);
+
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code, }, Request.Scheme);
+
+            await emailSender.SendEmailAsync(
+                user.Email!,
+                "Confirm your email",
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+
+            return RedirectToAction("RegisterConfirmation");
+        }
+
+        ModelState.AddModelError(string.Empty, "Failed to verify phone number");
+        return View(vm);
     }
+
     #endregion
-    
-        
+
     [HttpGet]
     public IActionResult Settings()
     {
