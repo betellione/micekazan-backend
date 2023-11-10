@@ -11,6 +11,24 @@
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
         }
 
+        @if (User.IsInRole("Admin"))
+        {
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "User")'">Пользователи</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Покупатели</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Терминал</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Settings", "Account")'">Настройки</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
+        }
+
+        @if (User.IsInRole("Scanner"))
+        {
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Event")'">Мероприятия</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Settings", "Account")'">Настройки</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
+        }
+
 <!--         <form asp-controller="Account" asp-action="Logout" method="post" class=""> -->
 <!--             <button type="submit" class="exit-btn"> -->
 <!--                 <img src="/images/exit.png" alt="MiceKazan" width="25" height="25"> -->
