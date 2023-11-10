@@ -195,9 +195,6 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         var user = new User{Name = vm.Name, Surname = vm.Surname, Patronymic = vm.Patronymic, City = vm.City};
         await userManager.SetUserNameAsync(user, vm.Email);
         await userManager.SetEmailAsync(user, vm.Email);
-        //
-        user.EmailConfirmed = true;
-        //
 
         var result = await userManager.CreateAsync(user, vm.Password);
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
@@ -209,7 +206,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             return View(vm);
         }
 
-        /*var userId = await userManager.GetUserIdAsync(user);
+        var userId = await userManager.GetUserIdAsync(user);
         var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId, code, }, Request.Scheme);
@@ -219,8 +216,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
 
-        return RedirectToAction("RegisterConfirmation");*/
-        return RedirectToAction("Login");
+        return RedirectToAction("ConfirmPhone");
     }
 
     [HttpGet]
