@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Models;
+using WebApp1.Services.SmsSender;
 using WebApp1.ViewModels.Account;
 
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
-    : Controller
+public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
+    ISmsSender smsSender) : Controller
 {
     /// <summary>
     ///     Try to get 2FA Authentication User.
