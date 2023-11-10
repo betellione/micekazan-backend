@@ -5,5 +5,8 @@ namespace WebApp1.ViewModels.Account;
 public class ConfirmPhoneViewModel
 {
     [Required]
-    public int Code { get; set; } = 0;
+    public string PhoneNumber { get; set; } = null!;
+    
+    [Required]
+    public string Code { get; set; } = null!;
 }

@@ -12,7 +12,7 @@ public class SmsRuApiProvider(IHttpClientFactory httpClientFactory, IOptions<Sms
 
     public async Task<bool> SendSms(string phoneNumber, string message)
     {
-        var client = httpClientFactory.CreateClient();
+        var client = httpClientFactory.CreateClient("SmsRu");
         var token = _options.Token;
 
         try
@@ -24,7 +24,7 @@ public class SmsRuApiProvider(IHttpClientFactory httpClientFactory, IOptions<Sms
 
             _logger.Information("SMS sent with response {SendResponse}", json);
 
-            return json?.Sms[phoneNumber].Status == "OK";
+            return json?.Sms.Values.FirstOrDefault()?.Status == "OK";
         }
         catch (Exception e)
         {
