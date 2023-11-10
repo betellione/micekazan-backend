@@ -42,9 +42,10 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Lockout()
+    public async Task<IActionResult> Lockout()
     {
-        return View();
+        await signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
     }
 
     #endregion
