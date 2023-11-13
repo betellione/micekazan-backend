@@ -6,7 +6,7 @@
       context: .
       dockerfile: WebApp1/Dockerfile
     ports:
-      - "192.168.0.105:4444:8080"
+      - 8080:8080
     environment:
       - HTTP_PORTS=8080
     env_file: .env
