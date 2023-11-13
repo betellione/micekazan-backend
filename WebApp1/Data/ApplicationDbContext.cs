@@ -95,15 +95,29 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.Property(x => x.Id).HasColumnName("Id");
             entity.Property(x => x.Barcode).HasMaxLength(16).HasColumnName("Barcode");
-            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
-            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
-            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.PassedAt).HasColumnName("PassedAt");
             entity.Property(x => x.EventId).HasColumnName("EventId");
 
+            entity.HasOne(x => x.Client).WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.ClientId)
+                .HasConstraintName("Ticket_Client_ClientId_fk");
             entity.HasOne(x => x.Event).WithMany(x => x.Tickets)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("Ticket_Event_EventId_fk");
+        });
+        
+        modelBuilder.Entity<Client>(entity =>
+        {
+            entity.ToTable("Client");
+
+            entity.Property(x => x.Id).HasColumnName("Id");
+            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
+            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
+            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
+            entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
+            entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
+            entity.Property(x => x.OrganizationName).HasMaxLength(64).HasColumnName("OrganizationName");
+            entity.Property(x => x.WorkPosition).HasMaxLength(64).HasColumnName("WorkPosition");
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>
