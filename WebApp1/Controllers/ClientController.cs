@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
@@ -7,11 +8,17 @@ using WebApp1.Models;
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer", Policy = "RegisterConfirmation")]
-public class ClientController(ApplicationDbContext context) : Controller
+public class ClientController(ApplicationDbContext context, UserManager<User> userManager) : Controller
 {
     // GET: Client
     public async Task<IActionResult> Index()
     {
+        var userId = new Guid(userManager.GetUserId(User)!);
+
+        if (!await context.CreatorTokens.AnyAsync(x => x.CreatorId == userId))
+        {
+            return RedirectToAction("Token", "Manage");
+        }
         return View(await context.Client.ToListAsync());
     }
 

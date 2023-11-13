@@ -14,7 +14,7 @@ using WebApp1.ViewModels.Account.Manage;
 
 namespace WebApp1.Controllers;
 
-[Authorize]
+[Authorize(Policy = "RegisterConfirmation")]
 public class ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
     IServiceProvider sp) : Controller
 {

@@ -1,7 +1,10 @@
-﻿<div class="d-flex flex-nowrap align-items-center">
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService As
+<div class="d-flex flex-nowrap align-items-center">
     @if (User.Identity?.IsAuthenticated ?? false)
     {
-        @if (User.IsInRole("Organizer"))
+        var result = await As.AuthorizeAsync(User, "RegisterConfirmation");
+        @if (User.IsInRole("Organizer") && result.Succeeded)
         {
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Event")'">Мероприятия</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Client")'">Покупатели</button>

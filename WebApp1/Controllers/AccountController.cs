@@ -31,6 +31,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "RegisterConfirmation")]
     public async Task<IActionResult> Logout()
     {
         await signInManager.SignOutAsync();
@@ -216,7 +217,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         var smsCode = await userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
         await smsSender.SendSmsAsync(vm.PhoneNumber, $"{smsCode} - код подтверждения номера телефона в Micekazan");
 
-        await signInManager.SignInAsync(user, false);
+        await signInManager.SignInAsync(user, false, "Default");
 
         return RedirectToAction("ConfirmPhone", new { phoneNumber = vm.PhoneNumber, });
     }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ObjectPool;
 using WebApp1.Data;
 using WebApp1.Extensions;
 using WebApp1.Models;
@@ -12,13 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("RegisterConfirmation", policy =>
+builder.Services.AddAuthorization(x =>
+{
+    x.AddPolicy("RegisterConfirmation", y =>
     {
-        policy.RequireClaim("EmailConfirmed");
-        policy.RequireClaim("PhoneConfirmed");
+        y.RequireClaim("EmailConfirmed");
+        y.RequireClaim("PhoneConfirmed");
     });
-
+    x.AddPolicy("Default", y => y.RequireAuthenticatedUser());
+    x.DefaultPolicy = x.GetPolicy("Default")!;
+});
 builder.Services.AddQticketsApiProvider();
 builder.Services.AddMessageSenders();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -41,7 +45,8 @@ builder.Services.AddDefaultIdentity<User>(options =>
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
 
-        options.SignIn.RequireConfirmedAccount = true;
+        options.SignIn.RequireConfirmedPhoneNumber = true;
+        options.SignIn.RequireConfirmedEmail = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
