@@ -6,8 +6,7 @@ public class Ticket
     public string Barcode { get; set; } = null!;
     public long EventId { get; set; }
     public long ClientId { get; set; }
-    public DateTime PassedAt { get; set; } = DateTime.UtcNow;
-
+    public DateTime? PassedAt { get; set; }
     public Event Event { get; set; } = null!;
     public Client Client { get; set; } = null!;
 }
