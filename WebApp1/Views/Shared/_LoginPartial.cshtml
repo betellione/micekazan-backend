@@ -4,7 +4,7 @@
         @if (User.IsInRole("Organizer"))
         {
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Event")'">Мероприятия</button>
-            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Покупатели</button>
+            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Client")'">Покупатели</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action()'">Терминал</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Settings", "Account")'">Настройки</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>

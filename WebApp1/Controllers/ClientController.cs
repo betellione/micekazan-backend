@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
@@ -5,6 +6,7 @@ using WebApp1.Models;
 
 namespace WebApp1.Controllers;
 
+[Authorize(Roles = "Organizer", Policy = "RegisterConfirmation")]
 public class ClientController(ApplicationDbContext context) : Controller
 {
     // GET: Client

@@ -6,7 +6,7 @@ using WebApp1.Services.TicketService;
 
 namespace WebApp1.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Scanner", Policy = "RegisterConfirmation")]
 [ApiController]
 [Route("[controller]/[action]")]
 public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase

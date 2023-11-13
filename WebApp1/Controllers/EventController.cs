@@ -12,7 +12,7 @@ using WebApp1.ViewModels.Event;
 
 namespace WebApp1.Controllers;
 
-[Authorize(Roles = "Organizer")]
+[Authorize(Roles = "Organizer", Policy = "RegisterConfirmation")]
 public class EventController(ApplicationDbContext context, IEventService eventService, IUserStore<User> userStore,
     UserManager<User> userManager) : Controller
 {

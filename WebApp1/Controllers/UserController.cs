@@ -10,7 +10,7 @@ using WebApp1.ViewModels;
 
 namespace WebApp1.Controllers;
 
-[Authorize]
+[Authorize(Policy = "RegisterConfirmation")]
 public class UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager) : Controller
 {
     [HttpGet]
