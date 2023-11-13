@@ -18,22 +18,23 @@ public class EventService : IEventService
 
     public async Task<bool> ImportEvents(Guid userId)
     {
-        var creatorToken = await _context.CreatorTokens.FirstOrDefaultAsync(x => x.CreatorId == userId);
-        if (creatorToken is null) return false;
-        
-        var events = (await _apiProvider.GetActiveEvents(creatorToken.Token)).ToList();
+        var token = await context.CreatorTokens.Where(x => x.CreatorId == userId).Select(x => x.Token).FirstOrDefaultAsync();
+        if (token is null) return false;
 
-        var eventModels = events.Select(x => new Event
-        {
-            Id = x.Id,
-            CreatorId = userId,
-            Name = x.Name,
-            City = x.City.Name,
-            CreatedAt = DateTime.UtcNow,
-            StartedAt = x.Shows.Min(y => y.StartDate),
-            FinishedAt = x.Shows.Max(y => y.FinishDate),
-        });
-        _context.Events.AddRange(eventModels);
+        var eventModels = await apiProvider.GetEvents(token)
+            .Select(x => new Event
+            {
+                Id = x.Id,
+                CreatorId = userId,
+                Name = x.Name,
+                City = x.City.Name,
+                CreatedAt = DateTime.UtcNow,
+                StartedAt = x.Shows.Min(y => y.StartDate),
+                FinishedAt = x.Shows.Max(y => y.FinishDate),
+            })
+            .ToListAsync();
+
+        context.Events.AddRange(eventModels);
 
         try
         {
@@ -44,6 +45,12 @@ public class EventService : IEventService
         {
             return false;
         }
+    }
+
+    public async Task<bool> ImportEventTickets(long eventId)
+    {
+        var i = await Task.FromResult(0);
+        return false;
     }
 
     public Task GetById()

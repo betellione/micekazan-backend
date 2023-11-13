@@ -1,68 +1,71 @@
 using System.Net.Http.Headers;
 using System.Text;
+using Serilog;
 using WebApp1.External.Qtickets.Contracts.Responses;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace WebApp1.External.Qtickets;
 
-public class QticketsApiProvider : IQticketsApiProvider
+public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticketsApiProvider
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly Serilog.ILogger _logger = Log.ForContext<IQticketsApiProvider>();
 
-    public QticketsApiProvider(IHttpClientFactory httpClientFactory)
+    public async IAsyncEnumerable<Event> GetEvents(string token)
     {
-        _httpClientFactory = httpClientFactory;
-    }
+        const int itemsPerPage = 100;
+        const int pages = 10;
 
-    public async Task<IEnumerable<Event>> GetActiveEvents(string token)
-    {
-        var httpClient = _httpClientFactory.CreateClient("Qtickets");
-        var result = new List<Event>();
+        var httpClient = httpClientFactory.CreateClient("Qtickets");
 
-        for (var page = 1; page <= 10; ++page)
+        for (var page = 1; page <= pages; ++page)
         {
             // language=json
             var query = $$"""
                           {
                             "select": ["id", "name", "city.name", "shows.start_date", "shows.finish_date"],
-                            "where": [
-                              {
-                                "column": "is_active",
-                                "value": 1
-                              }
-                            ],
-                            "perPage": 100,
+                            "perPage": {{itemsPerPage}},
                             "page": {{page}}
                           }
                           """;
 
-            using var content = new StringContent(query, Encoding.UTF8, "application/json");
-            using var request = new HttpRequestMessage();
-            request.Method = HttpMethod.Get;
-            request.RequestUri = new Uri(httpClient.BaseAddress!, "events");
-            request.Content = content;
-            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {token}");
+            BaseResponse<Event>? eventsBase;
 
-            using var response = await httpClient.SendAsync(request);
-
-            var eventsBase = await response.Content.ReadFromJsonAsync<BaseResponse<Event>>();
-            var total = eventsBase?.Paging?.Total ?? 0;
-            var events = eventsBase?.Data.ToList();
-
-            if (events is null || events.Count == 0) break;
-
-            foreach (var @event in events)
-            foreach (var show in @event.Shows)
+            try
             {
-                show.StartDate = show.StartDate.ToUniversalTime();
-                show.FinishDate = show.FinishDate.ToUniversalTime();
+                using var content = new StringContent(query, Encoding.UTF8, "application/json");
+                using var request = new HttpRequestMessage();
+                request.Method = HttpMethod.Get;
+                request.RequestUri = new Uri(httpClient.BaseAddress!, "events");
+                request.Content = content;
+                request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {token}");
+
+                using var response = await httpClient.SendAsync(request);
+                eventsBase = await response.Content.ReadFromJsonAsync<BaseResponse<Event>>();
+                if (eventsBase is null) yield break;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error while getting events from Qtickets API");
+                yield break;
             }
 
-            result.AddRange(events);
+            var total = eventsBase.Paging?.Total ?? 0;
+            var count = 0;
 
-            if (events.Count < 100 || 100 * (page - 1) + events.Count >= total) break;
+            foreach (var @event in eventsBase.Data)
+            {
+                foreach (var show in @event.Shows)
+                {
+                    show.StartDate = show.StartDate.ToUniversalTime();
+                    show.FinishDate = show.FinishDate.ToUniversalTime();
+                }
+
+                count += 1;
+                yield return @event;
+            }
+
+            if (count < itemsPerPage || itemsPerPage * (page - 1) + count >= total) yield break;
         }
-
-        return result;
     }
 
     public async Task<Ticket?> GetTicket(string barcode, string token)

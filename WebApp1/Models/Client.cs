@@ -1,5 +1,4 @@
-﻿
-namespace WebApp1.Models;
+﻿namespace WebApp1.Models;
 
 public class Client
 {

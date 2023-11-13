@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using WebApp1.Controllers.Types;
+using WebApp1.Data;
 using WebApp1.Models;
+using WebApp1.Services.EventService;
 using WebApp1.Services.TokenService;
 using WebApp1.ViewModels.Account.Manage;
 
@@ -179,9 +182,19 @@ public class ManageController : Controller
         var userId = new Guid(_userManager.GetUserId(User)!);
         var result = await tokenService.SetToken(userId, vm.Token);
 
-        TempData["StatusMessage"] = result
-            ? "Your token has been changed."
-            : "Error: Your token has not been changed. Try a different token or come back later.";
+        if (result)
+        {
+            var eventService = sp.GetRequiredService<IEventService>();
+            var importResult = await eventService.ImportEvents(userId);
+
+            TempData["StatusMessage"] = importResult
+                ? "Your token has been changed.\nМероприятия успешно загружены."
+                : "Your token has been changed.\nОшибка: мероприятия не были загружены.";
+        }
+        else
+        {
+            TempData["StatusMessage"] = "Error: Your token has not been changed. Try a different token or come back later.";
+        }
 
         return RedirectToAction("Token");
     }
