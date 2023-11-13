@@ -9,7 +9,7 @@ namespace WebApp1.External.Qtickets.Contracts.Responses;
 public class Client
 {
     [JsonPropertyName("details")]
-    private readonly Details _details = null!;
+    private Details _details = null!;
 
     [JsonPropertyName("id")]
     public long Id { get; set; }
