@@ -116,8 +116,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
             entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
-            entity.Property(x => x.OrganizationName).HasMaxLength(64).HasColumnName("OrganizationName");
-            entity.Property(x => x.WorkPosition).HasMaxLength(64).HasColumnName("WorkPosition");
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>
