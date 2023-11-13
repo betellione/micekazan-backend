@@ -5,14 +5,21 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.External.SmsRu;
 
-public class SmsRuApiProvider(IHttpClientFactory httpClientFactory, IOptions<SmsOptions> optionsAccessor) : ISmsRuApiProvider
+public class SmsRuApiProvider : ISmsRuApiProvider
 {
-    private readonly SmsOptions _options = optionsAccessor.Value;
+    private readonly SmsOptions _options;
     private readonly ILogger _logger = Serilog.Log.ForContext<ISmsRuApiProvider>();
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public SmsRuApiProvider(IHttpClientFactory httpClientFactory, IOptions<SmsOptions> optionsAccessor)
+    {
+        _httpClientFactory = httpClientFactory;
+        _options = optionsAccessor.Value;
+    }
 
     public async Task<bool> SendSms(string phoneNumber, string message)
     {
-        var client = httpClientFactory.CreateClient("SmsRu");
+        var client = _httpClientFactory.CreateClient("SmsRu");
         var token = _options.Token;
 
         try

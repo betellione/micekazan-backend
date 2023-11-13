@@ -13,9 +13,22 @@ using WebApp1.ViewModels.Account;
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
-    ISmsSender smsSender) : Controller
+public class AccountController : Controller
 {
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IEmailSender _emailSender;
+    private readonly ISmsSender _smsSender;
+
+    public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
+        ISmsSender smsSender)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _emailSender = emailSender;
+        _smsSender = smsSender;
+    }
+
     /// <summary>
     ///     Try to get 2FA Authentication User.
     /// </summary>
@@ -23,7 +36,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     /// <exception cref="InvalidOperationException">Unable to load two-factor authentication user.</exception>
     private async Task<User> TryExtract2FaUser()
     {
-        var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
+        var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
         return user ?? throw new InvalidOperationException("Unable to load two-factor authentication user.");
     }
 
@@ -33,7 +46,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await signInManager.SignOutAsync();
+        await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 
@@ -45,7 +58,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [AllowAnonymous]
     public async Task<IActionResult> Lockout()
     {
-        await signInManager.SignOutAsync();
+        await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 
@@ -79,7 +92,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var result = await signInManager.PasswordSignInAsync(vm.Email, vm.Password, vm.RememberMe, false);
+        var result = await _signInManager.PasswordSignInAsync(vm.Email, vm.Password, vm.RememberMe, false);
         returnUrl ??= Url.Content("~/");
 
         if (result.Succeeded) return LocalRedirect(returnUrl);
@@ -125,7 +138,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         _ = await TryExtract2FaUser();
 
         var authenticatorCode = vm.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
-        var result = await signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, vm.RememberMe,
+        var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, vm.RememberMe,
             vm.RememberMachine);
         returnUrl ??= Url.Content("~/");
 
@@ -164,7 +177,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         _ = await TryExtract2FaUser();
         var recoveryCode = vm.RecoveryCode.Replace(" ", string.Empty);
-        var result = await signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
+        var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
 
         if (result.Succeeded) return LocalRedirect(returnUrl ?? Url.Content("~/"));
         if (result.IsLockedOut) return RedirectToAction("Lockout");
@@ -195,13 +208,13 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         if (!ModelState.IsValid) return View(vm);
 
         var user = new User { Name = vm.Name, Surname = vm.Surname, Patronymic = vm.Patronymic, City = vm.City, };
-        await userManager.SetUserNameAsync(user, vm.Email);
-        await userManager.SetEmailAsync(user, vm.Email);
-        await userManager.SetPhoneNumberAsync(user, vm.PhoneNumber);
+        await _userManager.SetUserNameAsync(user, vm.Email);
+        await _userManager.SetEmailAsync(user, vm.Email);
+        await _userManager.SetPhoneNumberAsync(user, vm.PhoneNumber);
 
-        var result = await userManager.CreateAsync(user, vm.Password);
-        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
-        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email!));
+        var result = await _userManager.CreateAsync(user, vm.Password);
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Organizer"));
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email!));
 
         if (!result.Succeeded)
         {
@@ -209,10 +222,10 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             return View(vm);
         }
 
-        var smsCode = await userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
-        await smsSender.SendSmsAsync(vm.PhoneNumber, $"{smsCode} - код подтверждения номера телефона в Micekazan");
+        var smsCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
+        await _smsSender.SendSmsAsync(vm.PhoneNumber, $"{smsCode} - код подтверждения номера телефона в Micekazan");
 
-        await signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, isPersistent: false);
 
         return RedirectToAction("ConfirmPhone", new { phoneNumber = vm.PhoneNumber, });
     }
@@ -234,13 +247,13 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (userId is null || code is null) return RedirectToAction("Index", "Home");
 
-        var user = await userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null) return NotFound($"Unable to load user with ID '{userId}'.");
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-        var result = await userManager.ConfirmEmailAsync(user, code);
-        await userManager.AddClaimAsync(user, new Claim("EmailConfirmed", string.Empty));
-        await signInManager.RefreshSignInAsync(user);
+        var result = await _userManager.ConfirmEmailAsync(user, code);
+        await _userManager.AddClaimAsync(user, new Claim("EmailConfirmed", string.Empty));
+        await _signInManager.RefreshSignInAsync(user);
         TempData["StatusMessage"] = result.Succeeded ? "Почта успешно подтверждена." : "Ошибка при подтверждении почты.";
 
         return View();
@@ -252,11 +265,11 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (userId is null || email is null || code is null) return RedirectToAction("Index", "Home");
 
-        var user = await userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null) return NotFound($"Unable to load user with ID '{userId}'.");
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-        var result = await userManager.ChangeEmailAsync(user, email, code);
+        var result = await _userManager.ChangeEmailAsync(user, email, code);
 
         if (!result.Succeeded)
         {
@@ -264,14 +277,14 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             return View();
         }
 
-        var setUserNameResult = await userManager.SetUserNameAsync(user, email);
+        var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
         if (!setUserNameResult.Succeeded)
         {
             TempData["StatusMessage"] = "Error changing user name.";
             return View();
         }
 
-        await signInManager.RefreshSignInAsync(user);
+        await _signInManager.RefreshSignInAsync(user);
 
         TempData["StatusMessage"] = "Thank you for confirming your email change.";
         return View();
@@ -295,11 +308,11 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var user = await userManager.FindByEmailAsync(vm.Email);
-        if (user is null || !await userManager.IsEmailConfirmedAsync(user))
+        var user = await _userManager.FindByEmailAsync(vm.Email);
+        if (user is null || !await _userManager.IsEmailConfirmedAsync(user))
             return RedirectToAction("ForgotPasswordConfirmation");
 
-        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
         var callbackUrl = Url.Page(
@@ -308,7 +321,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
             new { area = "Identity", code, },
             Request.Scheme) ?? string.Empty;
 
-        await emailSender.SendEmailAsync(
+        await _emailSender.SendEmailAsync(
             vm.Email,
             "Reset Password",
             $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
@@ -342,10 +355,10 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         if (!ModelState.IsValid) return View(vm);
 
-        var user = await userManager.FindByEmailAsync(vm.Email);
+        var user = await _userManager.FindByEmailAsync(vm.Email);
         if (user is null) return RedirectToAction("ResetPasswordConfirmation");
 
-        var result = await userManager.ResetPasswordAsync(user, vm.Code, vm.Password);
+        var result = await _userManager.ResetPasswordAsync(user, vm.Code, vm.Password);
         if (result.Succeeded) return RedirectToAction("ResetPasswordConfirmation");
 
         foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
@@ -374,25 +387,25 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ConfirmPhone(ConfirmPhoneViewModel vm)
     {
-        var user = await userManager.GetUserAsync(User);
+        var user = await _userManager.GetUserAsync(User);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, "Failed to verify phone number");
             return View(vm);
         }
 
-        var result = await userManager.ChangePhoneNumberAsync(user, vm.PhoneNumber, vm.Code);
+        var result = await _userManager.ChangePhoneNumberAsync(user, vm.PhoneNumber, vm.Code);
 
         if (result.Succeeded)
         {
-            await userManager.AddClaimAsync(user, new Claim("PhoneConfirmed", string.Empty));
-            await signInManager.SignInAsync(user, isPersistent: false);
+            await _userManager.AddClaimAsync(user, new Claim("PhoneConfirmed", string.Empty));
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
-            var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code, }, Request.Scheme);
 
-            await emailSender.SendEmailAsync(
+            await _emailSender.SendEmailAsync(
                 user.Email!,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");

@@ -4,11 +4,18 @@ using WebApp1.External.Qtickets.Contracts.Responses;
 
 namespace WebApp1.External.Qtickets;
 
-public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticketsApiProvider
+public class QticketsApiProvider : IQticketsApiProvider
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public QticketsApiProvider(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
+
     public async Task<IEnumerable<Event>> GetActiveEvents(string token)
     {
-        var httpClient = httpClientFactory.CreateClient("Qtickets");
+        var httpClient = _httpClientFactory.CreateClient("Qtickets");
         var result = new List<Event>();
 
         for (var page = 1; page <= 10; ++page)
@@ -60,7 +67,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 
     public async Task<Ticket?> GetTicket(string barcode, string token)
     {
-        var httpClient = httpClientFactory.CreateClient("Qtickets");
+        var httpClient = _httpClientFactory.CreateClient("Qtickets");
 
         // language=json
         var query = $$"""
