@@ -2,14 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
+using WebApp1.Services.TokenService;
 
 namespace WebApp1.Services.EventService;
 
-public class EventService(IQticketsApiProvider apiProvider, ApplicationDbContext context) : IEventService
+public class EventService(ApplicationDbContext context, ITokenService tokenService, IQticketsApiProvider apiProvider) : IEventService
 {
     public async Task<bool> ImportEvents(Guid userId)
     {
-        var token = await context.CreatorTokens.Where(x => x.CreatorId == userId).Select(x => x.Token).FirstOrDefaultAsync();
+        var token = await tokenService.GetToken(userId);
         if (token is null) return false;
 
         var eventModels = await apiProvider.GetEvents(token)

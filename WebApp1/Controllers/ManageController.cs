@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Controllers.Types;
 using WebApp1.Models;
+using WebApp1.Services.ClientService;
 using WebApp1.Services.EventService;
+using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
 using WebApp1.ViewModels.Account.Manage;
 
@@ -152,6 +154,19 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
         return View();
     }
 
+    private static async Task<bool> ImportData(Guid userId, IServiceProvider sp)
+    {
+        var eventService = sp.GetRequiredService<IEventService>();
+        var ticketService = sp.GetRequiredService<ITicketService>();
+        var clientService = sp.GetRequiredService<IClientService>();
+
+        var importResult = await eventService.ImportEvents(userId);
+        importResult &= await clientService.ImportClients(userId);
+        importResult &= await ticketService.ImportTickets(userId);
+
+        return importResult;
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Organizer")]
@@ -169,8 +184,7 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
 
         if (result)
         {
-            var eventService = sp.GetRequiredService<IEventService>();
-            var importResult = await eventService.ImportEvents(userId);
+            var importResult = await ImportData(userId, sp);
 
             TempData["StatusMessage"] = importResult
                 ? "Your token has been changed.\nМероприятия успешно загружены."

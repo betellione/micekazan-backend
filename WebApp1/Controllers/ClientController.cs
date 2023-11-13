@@ -19,7 +19,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
         {
             return RedirectToAction("Token", "Manage");
         }
-        return View(await context.Client.ToListAsync());
+        return View(await context.Clients.ToListAsync());
     }
 
     // GET: Client/Details/5
@@ -30,7 +30,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Client
+        var client = await context.Clients
             .FirstOrDefaultAsync(m => m.Id == id);
         if (client == null)
         {
@@ -71,7 +71,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Client.FindAsync(id);
+        var client = await context.Clients.FindAsync(id);
         if (client == null)
         {
             return NotFound();
@@ -123,7 +123,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Client
+        var client = await context.Clients
             .FirstOrDefaultAsync(m => m.Id == id);
         if (client == null)
         {
@@ -139,10 +139,10 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
-        var client = await context.Client.FindAsync(id);
+        var client = await context.Clients.FindAsync(id);
         if (client != null)
         {
-            context.Client.Remove(client);
+            context.Clients.Remove(client);
         }
 
         await context.SaveChangesAsync();
@@ -151,6 +151,6 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
 
     private bool ClientExists(long id)
     {
-        return context.Client.Any(e => e.Id == id);
+        return context.Clients.Any(e => e.Id == id);
     }
 }

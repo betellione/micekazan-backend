@@ -9,9 +9,9 @@ public class Ticket
 
     [JsonPropertyName("barcode")]
     public string Barcode { get; set; } = null!;
-    
+
     [JsonPropertyName("client_email")]
-    public long ClientEmail { get; set; }
+    public string ClientEmail { get; set; } = null!;
     
     [JsonPropertyName("show_id")]
     public long ShowId { get; set; }

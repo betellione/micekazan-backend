@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,14 +19,13 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
     public DbSet<TicketToPrint> TicketsToPrint { get; set; }
-    public DbSet<Client> Client { get; set; } = default!;
+    public DbSet<Client> Clients { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-                
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
@@ -108,7 +107,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("Ticket_Event_EventId_fk");
         });
-        
+
         modelBuilder.Entity<Client>(entity =>
         {
             entity.ToTable("Client");
@@ -120,6 +119,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
             entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
+
+            entity.HasIndex(x => x.Email).IsUnique();
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>

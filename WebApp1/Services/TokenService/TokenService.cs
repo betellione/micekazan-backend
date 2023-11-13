@@ -8,8 +8,8 @@ public class TokenService(ApplicationDbContext context) : ITokenService
 {
     public async Task<string?> GetToken(Guid userId)
     {
-        var creatorToken = await context.CreatorTokens.FirstOrDefaultAsync(x => x.CreatorId == userId);
-        return creatorToken?.Token;
+        var token = await context.CreatorTokens.Where(x => x.CreatorId == userId).Select(x => x.Token).FirstOrDefaultAsync();
+        return token;
     }
 
     public async Task<bool> SetToken(Guid userId, string token)
