@@ -239,6 +239,8 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await userManager.ConfirmEmailAsync(user, code);
+        await userManager.AddClaimAsync(user, new Claim("EmailConfirmed", string.Empty));
+        await signInManager.RefreshSignInAsync(user);
         TempData["StatusMessage"] = result.Succeeded ? "Почта успешно подтверждена." : "Ошибка при подтверждении почты.";
 
         return View();
@@ -383,6 +385,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         if (result.Succeeded)
         {
+            await userManager.AddClaimAsync(user, new Claim("PhoneConfirmed", string.Empty));
             await signInManager.SignInAsync(user, isPersistent: false);
 
             var code = await userManager.GenerateEmailConfirmationTokenAsync(user);

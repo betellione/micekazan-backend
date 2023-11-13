@@ -12,6 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RegisterConfirmation", policy =>
+    {
+        policy.RequireClaim("EmailConfirmed");
+        policy.RequireClaim("PhoneConfirmed");
+    });
+});
+
 builder.Services.AddQticketsApiProvider();
 builder.Services.AddMessageSenders();
 builder.Services.AddScoped<ITokenService, TokenService>();
