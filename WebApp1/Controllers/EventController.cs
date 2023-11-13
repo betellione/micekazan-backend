@@ -13,33 +13,20 @@ using WebApp1.ViewModels.Event;
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer")]
-public class EventController : Controller
+public class EventController(ApplicationDbContext context, IEventService eventService, IUserStore<User> userStore,
+    UserManager<User> userManager) : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IEventService _eventService;
-    private readonly IUserStore<User> _userStore;
-    private readonly UserManager<User> _userManager;
-
-    public EventController(ApplicationDbContext context, IEventService eventService, IUserStore<User> userStore,
-        UserManager<User> userManager)
-    {
-        _context = context;
-        _eventService = eventService;
-        _userStore = userStore;
-        _userManager = userManager;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var userId = new Guid(_userManager.GetUserId(User)!);
+        var userId = new Guid(userManager.GetUserId(User)!);
 
-        if (!await _context.CreatorTokens.AnyAsync(x => x.CreatorId == userId))
+        if (!await context.CreatorTokens.AnyAsync(x => x.CreatorId == userId))
         {
             return RedirectToAction("Token", "Manage");
         }
 
-        var applicationDbContext = _context.Events.Include(x => x.Creator);
+        var applicationDbContext = context.Events.Include(x => x.Creator);
 
         return View(await applicationDbContext.ToListAsync());
     }
@@ -49,7 +36,7 @@ public class EventController : Controller
     {
         if (id is null) return BadRequest();
 
-        var vm = await _context.Events
+        var vm = await context.Events
             .Select(x => new EventDetails
             {
                 Id = x.Id,
@@ -73,7 +60,7 @@ public class EventController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id");
         return View();
     }
 
@@ -83,12 +70,12 @@ public class EventController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+            ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
             return View(@event);
         }
 
-        _context.Add(@event);
-        await _context.SaveChangesAsync();
+        context.Add(@event);
+        await context.SaveChangesAsync();
 
         return RedirectToAction("Index");
     }
@@ -98,10 +85,10 @@ public class EventController : Controller
     {
         if (id is null) return NotFound();
 
-        var @event = await _context.Events.FindAsync(id);
+        var @event = await context.Events.FindAsync(id);
         if (@event is null) return NotFound();
 
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
 
         return View(@event);
     }
@@ -116,8 +103,8 @@ public class EventController : Controller
         {
             try
             {
-                _context.Events.Update(@event);
-                await _context.SaveChangesAsync();
+                context.Events.Update(@event);
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,7 +115,7 @@ public class EventController : Controller
             return RedirectToAction("Index");
         }
 
-        ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", @event.CreatorId);
+        ViewData["CreatorId"] = new SelectList(context.Users, "Id", "Id", @event.CreatorId);
 
         return View(@event);
     }
@@ -138,7 +125,7 @@ public class EventController : Controller
     {
         if (id is null) return NotFound();
 
-        var @event = await _context.Events
+        var @event = await context.Events
             .Include(x => x.Creator)
             .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -152,24 +139,24 @@ public class EventController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
-        var @event = await _context.Events.FindAsync(id);
-        if (@event is not null) _context.Events.Remove(@event);
+        var @event = await context.Events.FindAsync(id);
+        if (@event is not null) context.Events.Remove(@event);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return RedirectToAction("Index");
     }
 
     private Task<bool> EventExists(long id)
     {
-        return _context.Events.AnyAsync(e => e.Id == id);
+        return context.Events.AnyAsync(e => e.Id == id);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EventLoad()
     {
-        var userId = new Guid(_userManager.GetUserId(User)!);
-        var hasToken = await _context.CreatorTokens.AnyAsync(x => x.CreatorId == userId);
+        var userId = new Guid(userManager.GetUserId(User)!);
+        var hasToken = await context.CreatorTokens.AnyAsync(x => x.CreatorId == userId);
 
         if (!hasToken)
         {
@@ -177,7 +164,7 @@ public class EventController : Controller
             return RedirectToAction("Index");
         }
 
-        var result = await _eventService.ImportEvents(userId);
+        var result = await eventService.ImportEvents(userId);
         TempData["StatusMessage"] = result ? "События успешно загружены" : "Произошла ошибка при загрузке событий";
 
         return RedirectToAction("Index");
@@ -198,12 +185,12 @@ public class EventController : Controller
         var user = new User
         {
             Email = vm.Email,
-            NormalizedEmail = _userManager.NormalizeEmail(vm.Email),
+            NormalizedEmail = userManager.NormalizeEmail(vm.Email),
             EmailConfirmed = true,
         };
 
-        await _userStore.SetUserNameAsync(user, vm.Email, CancellationToken.None);
-        var result = await _userManager.CreateAsync(user, vm.Password);
+        await userStore.SetUserNameAsync(user, vm.Email, CancellationToken.None);
+        var result = await userManager.CreateAsync(user, vm.Password);
 
         if (!result.Succeeded)
         {
@@ -217,10 +204,10 @@ public class EventController : Controller
             EventId = vm.EventId!.Value,
         };
 
-        _context.EventCollectors.Add(eventCollector);
-        await _context.SaveChangesAsync();
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
+        context.EventCollectors.Add(eventCollector);
+        await context.SaveChangesAsync();
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
 
         return RedirectToAction("Details", new { id = vm.EventId, });
     }

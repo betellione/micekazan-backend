@@ -11,23 +11,12 @@ using WebApp1.ViewModels;
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class UserController : Controller
+public class UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager) : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IUserStore<User> _userStore;
-    private readonly UserManager<User> _userManager;
-
-    public UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager)
-    {
-        _context = context;
-        _userStore = userStore;
-        _userManager = userManager;
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var users = await _userManager.GetUsersForClaimAsync(new Claim(ClaimTypes.Role, "Organizer"));
+        var users = await userManager.GetUsersForClaimAsync(new Claim(ClaimTypes.Role, "Organizer"));
         return View(users.Select(x => x.UserMapping()));
     }
 
@@ -36,7 +25,7 @@ public class UserController : Controller
     {
         if (id is null) return BadRequest();
 
-        var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+        var user = await context.Users.FirstOrDefaultAsync(m => m.Id == id);
         if (user is null) return NotFound();
 
         return View(user);
@@ -57,12 +46,12 @@ public class UserController : Controller
         var user = new User
         {
             Email = vm.Email,
-            NormalizedEmail = _userManager.NormalizeEmail(vm.Email),
+            NormalizedEmail = userManager.NormalizeEmail(vm.Email),
             EmailConfirmed = true,
         };
 
-        await _userStore.SetUserNameAsync(user, vm.Email, CancellationToken.None);
-        var result = await _userManager.CreateAsync(user, vm.Password);
+        await userStore.SetUserNameAsync(user, vm.Email, CancellationToken.None);
+        var result = await userManager.CreateAsync(user, vm.Password);
 
         if (!result.Succeeded)
         {
@@ -70,8 +59,8 @@ public class UserController : Controller
             return View(vm);
         }
 
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
         return RedirectToAction("Index", "Event");
     }
 
@@ -80,7 +69,7 @@ public class UserController : Controller
     {
         if (id is null) return BadRequest();
 
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user is null) return NotFound();
 
         return View(user.UserMapping());
@@ -99,8 +88,8 @@ public class UserController : Controller
 
         try
         {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -116,7 +105,7 @@ public class UserController : Controller
     {
         if (id is null) return BadRequest();
 
-        var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+        var user = await context.Users.FirstOrDefaultAsync(m => m.Id == id);
         if (user is null) return NotFound();
 
         return View(user);
@@ -127,17 +116,17 @@ public class UserController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user is null) return NotFound();
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
 
         return RedirectToAction("Index");
     }
 
     private Task<bool> UserExists(Guid id)
     {
-        return _context.Users.AnyAsync(e => e.Id == id);
+        return context.Users.AnyAsync(e => e.Id == id);
     }
 }

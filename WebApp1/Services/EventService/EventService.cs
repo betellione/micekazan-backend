@@ -5,17 +5,8 @@ using WebApp1.Models;
 
 namespace WebApp1.Services.EventService;
 
-public class EventService : IEventService
+public class EventService(IQticketsApiProvider apiProvider, ApplicationDbContext context) : IEventService
 {
-    private readonly IQticketsApiProvider _apiProvider;
-    private readonly ApplicationDbContext _context;
-
-    public EventService(IQticketsApiProvider apiProvider, ApplicationDbContext context)
-    {
-        _apiProvider = apiProvider;
-        _context = context;
-    }
-
     public async Task<bool> ImportEvents(Guid userId)
     {
         var token = await context.CreatorTokens.Where(x => x.CreatorId == userId).Select(x => x.Token).FirstOrDefaultAsync();
@@ -38,7 +29,7 @@ public class EventService : IEventService
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
         catch (DbUpdateException)
@@ -60,7 +51,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<Event>> GetAll(Guid userId)
     {
-        var events = await _context.Events
+        var events = await context.Events
             .Where(x => x.CreatorId == userId)
             .OrderByDescending(x => x.StartedAt)
             .ToListAsync();

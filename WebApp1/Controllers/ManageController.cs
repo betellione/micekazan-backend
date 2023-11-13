@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 using WebApp1.Controllers.Types;
-using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
 using WebApp1.Services.TokenService;
@@ -17,22 +15,9 @@ using WebApp1.ViewModels.Account.Manage;
 namespace WebApp1.Controllers;
 
 [Authorize]
-public class ManageController : Controller
+public class ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
+    IServiceProvider sp) : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly IEmailSender _emailSender;
-    private readonly IServiceProvider _sp;
-
-    public ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
-        IServiceProvider sp)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _emailSender = emailSender;
-        _sp = sp;
-    }
-
     /// <summary>
     ///     Get User from DB by current Claims Identity.
     /// </summary>
@@ -40,7 +25,7 @@ public class ManageController : Controller
     /// <exception cref="InvalidOperationException">User not found.</exception>
     private async Task<User> GetCurrentUserAsyncOrThrowIfNull()
     {
-        return await _userManager.GetUserAsync(HttpContext.User) ?? throw new InvalidOperationException("User not found.");
+        return await userManager.GetUserAsync(HttpContext.User) ?? throw new InvalidOperationException("User not found.");
     }
 
     #region Index
@@ -53,7 +38,7 @@ public class ManageController : Controller
         var user = await GetCurrentUserAsyncOrThrowIfNull();
         var vm = new IndexViewModel
         {
-            Username = await _userManager.GetUserNameAsync(user) ?? string.Empty,
+            Username = await userManager.GetUserNameAsync(user) ?? string.Empty,
         };
 
         return View(vm);
@@ -84,11 +69,11 @@ public class ManageController : Controller
             return RedirectToAction("Email");
         }
 
-        var code = await _userManager.GenerateChangeEmailTokenAsync(user, vm.NewEmail);
+        var code = await userManager.GenerateChangeEmailTokenAsync(user, vm.NewEmail);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = Url.Action("ConfirmEmailChange", "Account",
             new { userId = user.Id, email = vm.NewEmail, code, }, Request.Scheme)!;
-        await _emailSender.SendEmailAsync(vm.NewEmail,
+        await emailSender.SendEmailAsync(vm.NewEmail,
             "Confirm your email",
             $"Please confirm your email by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
@@ -113,10 +98,10 @@ public class ManageController : Controller
         if (user.Email is null) throw new Exception("User has no email");
         if (user.EmailConfirmed) throw new Exception("Email already confirmed");
 
-        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code, }, Request.Scheme)!;
-        await _emailSender.SendEmailAsync(user.Email,
+        await emailSender.SendEmailAsync(user.Email,
             "Confirm your email",
             $"Please confirm your email by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
@@ -141,7 +126,7 @@ public class ManageController : Controller
         if (!ModelState.IsValid) return View(vm);
 
         var user = await GetCurrentUserAsyncOrThrowIfNull();
-        var result = await _userManager.ChangePasswordAsync(user, vm.OldPassword, vm.NewPassword);
+        var result = await userManager.ChangePasswordAsync(user, vm.OldPassword, vm.NewPassword);
 
         if (!result.Succeeded)
         {
@@ -149,7 +134,7 @@ public class ManageController : Controller
             return View(vm);
         }
 
-        await _signInManager.RefreshSignInAsync(user);
+        await signInManager.RefreshSignInAsync(user);
 
         TempData["StatusMessage"] = "Your password has been changed.";
         return RedirectToAction("ChangePassword");
@@ -178,8 +163,8 @@ public class ManageController : Controller
             return View(vm);
         }
 
-        var tokenService = _sp.GetRequiredService<ITokenService>();
-        var userId = new Guid(_userManager.GetUserId(User)!);
+        var tokenService = sp.GetRequiredService<ITokenService>();
+        var userId = new Guid(userManager.GetUserId(User)!);
         var result = await tokenService.SetToken(userId, vm.Token);
 
         if (result)
@@ -201,8 +186,8 @@ public class ManageController : Controller
 
     private async Task LoadToken()
     {
-        var tokenService = _sp.GetRequiredService<ITokenService>();
-        var userId = new Guid(_userManager.GetUserId(User)!);
+        var tokenService = sp.GetRequiredService<ITokenService>();
+        var userId = new Guid(userManager.GetUserId(User)!);
         ViewData["CurrentToken"] = await tokenService.GetToken(userId);
     }
 
@@ -218,10 +203,10 @@ public class ManageController : Controller
         var user = await GetCurrentUserAsyncOrThrowIfNull();
         var vm = new TwoFactorAuthenticationViewModel
         {
-            HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) is not null,
-            Is2FaEnabled = await _userManager.GetTwoFactorEnabledAsync(user),
-            IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
-            RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user),
+            HasAuthenticator = await userManager.GetAuthenticatorKeyAsync(user) is not null,
+            Is2FaEnabled = await userManager.GetTwoFactorEnabledAsync(user),
+            IsMachineRemembered = await signInManager.IsTwoFactorClientRememberedAsync(user),
+            RecoveryCodesLeft = await userManager.CountRecoveryCodesAsync(user),
         };
 
         return View(vm);
@@ -239,7 +224,7 @@ public class ManageController : Controller
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
 
-        var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+        var isTwoFactorEnabled = await userManager.GetTwoFactorEnabledAsync(user);
         if (!isTwoFactorEnabled)
             throw new InvalidOperationException(
                 "Cannot generate recovery codes for user because they do not have 2FA enabled.");
@@ -253,10 +238,10 @@ public class ManageController : Controller
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
 
-        if (!await _userManager.GetTwoFactorEnabledAsync(user))
+        if (!await userManager.GetTwoFactorEnabledAsync(user))
             throw new InvalidOperationException("Cannot generate recovery codes for user as they do not have 2FA enabled.");
 
-        var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
 
         TempData["RecoveryCodes"] = recoveryCodes?.ToList();
         TempData["StatusMessage"] = "You have generated new recovery codes.";
@@ -284,8 +269,8 @@ public class ManageController : Controller
         }
 
         var verificationCode = vm.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
-        var is2FaTokenValid = await _userManager.VerifyTwoFactorTokenAsync(user,
-            _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+        var is2FaTokenValid = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
         if (!is2FaTokenValid)
         {
             ModelState.AddModelError(string.Empty, "Verification code is invalid.");
@@ -293,24 +278,24 @@ public class ManageController : Controller
             return View();
         }
 
-        await _userManager.SetTwoFactorEnabledAsync(user, true);
+        await userManager.SetTwoFactorEnabledAsync(user, true);
         TempData["StatusMessage"] = "Your authenticator app has been verified.";
 
-        if (await _userManager.CountRecoveryCodesAsync(user) != 0) return RedirectToAction("TwoFactorAuthentication");
+        if (await userManager.CountRecoveryCodesAsync(user) != 0) return RedirectToAction("TwoFactorAuthentication");
 
-        var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, TwoFactorRecoveryCodes);
         TempData["RecoveryCodes"] = recoveryCodes?.ToList();
         return RedirectToAction("RecoveryCodes");
     }
 
     private async Task LoadSharedKeyAndQrCodeUriAsync(User user)
     {
-        var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+        var unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
 
         if (string.IsNullOrEmpty(unformattedKey))
         {
-            await _userManager.ResetAuthenticatorKeyAsync(user);
-            unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+            await userManager.ResetAuthenticatorKeyAsync(user);
+            unformattedKey = await userManager.GetAuthenticatorKeyAsync(user);
         }
 
         ViewData["SharedKey"] = FormatKey(unformattedKey!);
@@ -356,9 +341,9 @@ public class ManageController : Controller
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
 
-        await _userManager.SetTwoFactorEnabledAsync(user, false);
-        await _userManager.ResetAuthenticatorKeyAsync(user);
-        await _signInManager.RefreshSignInAsync(user);
+        await userManager.SetTwoFactorEnabledAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        await signInManager.RefreshSignInAsync(user);
 
         TempData["StatusMessage"] = "Your authenticator app key has been reset, you will need to configure your " +
                                     "authenticator app using the new key.";
@@ -370,7 +355,7 @@ public class ManageController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ForgetMachine()
     {
-        await _signInManager.ForgetTwoFactorClientAsync();
+        await signInManager.ForgetTwoFactorClientAsync();
         TempData["StatusMessage"] = "The current browser has been forgotten. " +
                                     "When you login again from this browser you will be prompted for your 2FA code.";
         return RedirectToAction("TwoFactorAuthentication");
@@ -380,7 +365,7 @@ public class ManageController : Controller
     public async Task<IActionResult> DisableTwoFactorAuthentication()
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
-        if (!await _userManager.GetTwoFactorEnabledAsync(user))
+        if (!await userManager.GetTwoFactorEnabledAsync(user))
             throw new InvalidOperationException("Cannot disable 2FA for user as it's not currently enabled.");
         return View();
     }
@@ -390,7 +375,7 @@ public class ManageController : Controller
     public async Task<IActionResult> DisableTwoFactorAuthenticationPost()
     {
         var user = await GetCurrentUserAsyncOrThrowIfNull();
-        var result = await _userManager.SetTwoFactorEnabledAsync(user, false);
+        var result = await userManager.SetTwoFactorEnabledAsync(user, false);
 
         if (!result.Succeeded)
             throw new InvalidOperationException("Unexpected error occurred disabling 2FA.");

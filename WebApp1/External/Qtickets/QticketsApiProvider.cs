@@ -2,13 +2,13 @@ using System.Net.Http.Headers;
 using System.Text;
 using Serilog;
 using WebApp1.External.Qtickets.Contracts.Responses;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
+using ILogger = Serilog.ILogger;
 
 namespace WebApp1.External.Qtickets;
 
 public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticketsApiProvider
 {
-    private readonly Serilog.ILogger _logger = Log.ForContext<IQticketsApiProvider>();
+    private readonly ILogger _logger = Log.ForContext<IQticketsApiProvider>();
 
     public async IAsyncEnumerable<Event> GetEvents(string token)
     {
@@ -70,7 +70,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 
     public async Task<Ticket?> GetTicket(string barcode, string token)
     {
-        var httpClient = _httpClientFactory.CreateClient("Qtickets");
+        var httpClient = httpClientFactory.CreateClient("Qtickets");
 
         // language=json
         var query = $$"""

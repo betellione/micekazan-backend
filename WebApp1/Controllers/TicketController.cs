@@ -9,21 +9,12 @@ namespace WebApp1.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]/[action]")]
-public class TicketController : ControllerBase
+public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase
 {
-    private readonly ITicketService _ticketService;
-    private readonly ApplicationDbContext _context;
-
-    public TicketController(ITicketService ticketService, ApplicationDbContext context)
-    {
-        _ticketService = ticketService;
-        _context = context;
-    }
-
     [HttpPost]
     public async Task<IActionResult> PrintTicket(string code)
     {
-        var pdfUri = await _ticketService.GetTicketPdfUri(code);
+        var pdfUri = await ticketService.GetTicketPdfUri(code);
         if (pdfUri is null) return BadRequest();
 
         var ticket = new TicketToPrint
@@ -33,8 +24,8 @@ public class TicketController : ControllerBase
             Url = pdfUri,
         };
 
-        _context.TicketsToPrint.Add(ticket);
-        await _context.SaveChangesAsync();
+        context.TicketsToPrint.Add(ticket);
+        await context.SaveChangesAsync();
 
         return Ok();
     }
