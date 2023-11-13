@@ -10,62 +10,79 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 {
     private readonly ILogger _logger = Log.ForContext<IQticketsApiProvider>();
 
-    public async IAsyncEnumerable<Event> GetEvents(string token)
+    private async IAsyncEnumerable<T> GetDataList<T>(string apiMethod, string token, QueryBuilder builder, int maxPages = 10,
+        Action<T>? action = null)
     {
         const int itemsPerPage = 100;
-        const int pages = 10;
 
         var httpClient = httpClientFactory.CreateClient("Qtickets");
 
-        for (var page = 1; page <= pages; ++page)
+        for (var page = 1; page <= maxPages; ++page)
         {
-            // language=json
-            var query = $$"""
-                          {
-                            "select": ["id", "name", "city.name", "shows.start_date", "shows.finish_date"],
-                            "perPage": {{itemsPerPage}},
-                            "page": {{page}}
-                          }
-                          """;
-
-            BaseResponse<Event>? eventsBase;
+            BaseResponse<T>? baseDataList;
 
             try
             {
+                var query = builder.PerPage(itemsPerPage).Page(page).Build();
                 using var content = new StringContent(query, Encoding.UTF8, "application/json");
                 using var request = new HttpRequestMessage();
                 request.Method = HttpMethod.Get;
-                request.RequestUri = new Uri(httpClient.BaseAddress!, "events");
+                request.RequestUri = new Uri(httpClient.BaseAddress!, apiMethod);
                 request.Content = content;
                 request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {token}");
 
                 using var response = await httpClient.SendAsync(request);
-                eventsBase = await response.Content.ReadFromJsonAsync<BaseResponse<Event>>();
-                if (eventsBase is null) yield break;
+                baseDataList = await response.Content.ReadFromJsonAsync<BaseResponse<T>>();
+                if (baseDataList is null) yield break;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Error while getting events from Qtickets API");
+                _logger.Error(e, "Error while getting data list from Qtickets API with method {ApiMethod}", apiMethod);
                 yield break;
             }
 
-            var total = eventsBase.Paging?.Total ?? 0;
+            var total = baseDataList.Paging?.Total ?? 0;
             var count = 0;
 
-            foreach (var @event in eventsBase.Data)
+            foreach (var item in baseDataList.Data)
             {
-                foreach (var show in @event.Shows)
-                {
-                    show.StartDate = show.StartDate.ToUniversalTime();
-                    show.FinishDate = show.FinishDate.ToUniversalTime();
-                }
-
+                action?.Invoke(item);
                 count += 1;
-                yield return @event;
+                yield return item;
             }
 
             if (count < itemsPerPage || itemsPerPage * (page - 1) + count >= total) yield break;
         }
+    }
+
+    public IAsyncEnumerable<Event> GetEvents(string token)
+    {
+        var builder = new QueryBuilder().Select("id", "name", "city.name", "shows.start_date", "shows.finish_date");
+        return GetDataList<Event>("events", token, builder, action: Func);
+
+        static void Func(Event @event)
+        {
+            @event.ShowIds = new List<long>();
+            
+            foreach (var show in @event.Shows)
+            {
+                ((List<long>)@event.ShowIds).Add(show.Id);
+                show.StartDate = show.StartDate.ToUniversalTime();
+                show.FinishDate = show.FinishDate.ToUniversalTime();
+            }
+        }
+    }
+
+    public IAsyncEnumerable<Client> GetClients(string token)
+    {
+        var builder = new QueryBuilder().Select("id", "email", "details.name", "details.middlename", "details.surname", "details.phone");
+        return GetDataList<Client>("clients", token, builder, 50);
+    }
+
+    public IAsyncEnumerable<Ticket> GetTickets(string token)
+    {
+        var builder = new QueryBuilder().Select("id", "barcode", "client_email", "show_id");
+        return GetDataList<Ticket>("baskets", token, builder, 50);
     }
 
     public async Task<Ticket?> GetTicket(string barcode, string token)

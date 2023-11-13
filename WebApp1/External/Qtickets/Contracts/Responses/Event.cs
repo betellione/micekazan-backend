@@ -15,4 +15,7 @@ public class Event
     
     [JsonPropertyName("shows")]
     public IEnumerable<Show> Shows { get; set; } = Enumerable.Empty<Show>();
+
+    [JsonIgnore]
+    public IEnumerable<long> ShowIds { get; set; } = Enumerable.Empty<long>();
 }
