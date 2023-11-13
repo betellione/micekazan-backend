@@ -113,6 +113,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.ToTable("Client");
 
             entity.Property(x => x.Id).HasColumnName("Id");
+            entity.Property(x => x.ForeignId).HasColumnName("ForeignId");
             entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
             entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
             entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
