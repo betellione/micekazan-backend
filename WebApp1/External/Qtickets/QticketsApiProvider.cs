@@ -57,7 +57,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 
     public IAsyncEnumerable<Event> GetEvents(string token)
     {
-        var builder = new QueryBuilder().Select("id", "name", "city.name", "shows.start_date", "shows.finish_date");
+        var builder = new QueryBuilder().Select("id", "name", "city.name", "shows.id", "shows.start_date", "shows.finish_date");
         return GetDataList<Event>("events", token, builder, action: Func);
 
         static void Func(Event @event)
