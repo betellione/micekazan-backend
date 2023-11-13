@@ -22,7 +22,7 @@ public class Tests
         };
         httpClientFactoryMock.Setup(x => x.CreateClient("Qtickets")).Returns(httpClient);
         var qticketsApiProvider = new QticketsApiProvider(httpClientFactoryMock.Object);
-        var events = await qticketsApiProvider.GetClients(token).ToListAsync();
+        await qticketsApiProvider.GetClients(token).ToListAsync();
         
     }
 }
