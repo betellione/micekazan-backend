@@ -41,7 +41,7 @@ public class EventService(IQticketsApiProvider apiProvider, ApplicationDbContext
     public async Task<bool> ImportEventTickets(long eventId)
     {
         var i = await Task.FromResult(0);
-        return false;
+        return i == 0;
     }
 
     public Task GetById()
