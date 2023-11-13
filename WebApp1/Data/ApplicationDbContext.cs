@@ -65,6 +65,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.StartedAt).HasColumnName("StartedAt");
             entity.Property(x => x.FinishedAt).HasColumnName("FinishedAt");
             entity.Property(x => x.CreatorId).HasColumnName("CreatorId");
+            entity.Property(x => x.ForeignShowIds).HasDefaultValueSql("'{}'").HasColumnName("ForeignShowIds");
 
             entity.HasOne(x => x.Creator).WithMany(x => x.EventsCreated)
                 .HasForeignKey(x => x.CreatorId)

@@ -8,6 +8,7 @@ public class Event
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime StartedAt { get; set; }
     public DateTime FinishedAt { get; set; }
+    public ICollection<long> ForeignShowIds { get; set; } = new List<long>();
     public Guid CreatorId { get; set; }
 
     public User Creator { get; set; } = null!;
