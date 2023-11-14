@@ -11,9 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Aspose.PDF" Version="23.10.0" />
-      <PackageReference Include="IronPdf" Version="2023.10.3" />
-      <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+      <PackageReference Include="IronPdf" Version="2023.11.8" />
     </ItemGroup>
 
 </Project>
