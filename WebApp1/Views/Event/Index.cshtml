@@ -29,7 +29,7 @@
         </th>
         </thead>
         <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.OrderByDescending(x => x.StartedAt))
         {
             <tr onclick="location.href='@Url.Action("Details", new { id = item.Id, })';">
                 <td class="table-row">
