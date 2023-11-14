@@ -3,6 +3,7 @@ using WebApp1.Data;
 using WebApp1.Extensions;
 using WebApp1.Models;
 using WebApp1.Options;
+using WebApp1.Services.ClientService;
 using WebApp1.Services.EventService;
 using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
@@ -27,8 +28,9 @@ builder.Services.AddMessageSenders();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 
-builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

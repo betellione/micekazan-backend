@@ -14,7 +14,7 @@ public class QueryBuilder
 
     private readonly Query _query = new();
 
-    public QueryBuilder Where(string column, object value, string? @operator = null)
+    public QueryBuilder Where(string column, object? value, string? @operator = null)
     {
         var clause = new WhereClause(column, value, @operator);
         _query.Where ??= new List<WhereClause>();
@@ -68,13 +68,13 @@ public class QueryBuilder
         public int? PerPage { get; set; }
     }
 
-    private class WhereClause(string column, object value, string? @operator)
+    private class WhereClause(string column, object? value, string? @operator)
     {
         [JsonPropertyName("column")]
         public string Column { get; set; } = column;
 
         [JsonPropertyName("value")]
-        public object Value { get; set; } = value;
+        public object? Value { get; set; } = value;
 
         [JsonPropertyName("operator")]
         public string? Operator { get; set; } = @operator;

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
 using WebApp1.External.Qtickets;
@@ -7,12 +8,15 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.ClientService;
 
-public class ClientService(ApplicationDbContext context, ITokenService tokenService, IQticketsApiProvider apiProvider) : IClientService
+public class ClientService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
+    IQticketsApiProvider apiProvider) : IClientService
 {
     private readonly ILogger _logger = Log.ForContext<IClientService>();
 
     public async Task<bool> ImportClients(Guid userId)
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        
         var token = await tokenService.GetToken(userId);
         if (token is null) return false;
 
@@ -26,17 +30,35 @@ public class ClientService(ApplicationDbContext context, ITokenService tokenServ
             PhoneNumber = x.PhoneNumber,
         });
 
+        var batchCounter = 0;
+        var existed = (await context.Clients.Select(x => x.Email).ToListAsync()).ToHashSet();
+
         await foreach (var client in clients)
         {
+            if (existed.Contains(client.Email)) context.Update(client);
+            else context.Clients.Add(client);
+
             try
             {
-                context.Clients.Add(client);
-                await context.SaveChangesAsync();
+                if (++batchCounter >= 100)
+                {
+                    batchCounter = 0;
+                    await context.SaveChangesAsync();
+                }
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Error while saving client {Client} in the DB", client);
+                _logger.Error(e, "Error while saving clients in the DB");
             }
+        }
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while saving clients in the DB");
         }
 
         return true;

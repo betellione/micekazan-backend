@@ -121,6 +121,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
 
             entity.HasIndex(x => x.Email).IsUnique();
+            entity.HasAlternateKey(x => x.Email);
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>

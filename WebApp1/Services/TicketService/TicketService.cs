@@ -8,7 +8,8 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.TicketService;
 
-public class TicketService(ApplicationDbContext context, ITokenService tokenService, IQticketsApiProvider apiProvider) : ITicketService
+public class TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
+    IQticketsApiProvider apiProvider) : ITicketService
 {
     private readonly ILogger _logger = Log.ForContext<ITicketService>();
 
@@ -19,38 +20,56 @@ public class TicketService(ApplicationDbContext context, ITokenService tokenServ
         return Task.FromResult((string?)string.Empty);
     }
 
-    private async Task FillUpTicket(Ticket ticket, string clientEmail, long showId)
-    {
-        var clientId = await context.Clients.Where(x => x.Email == clientEmail).Select(x => x.Id).FirstOrDefaultAsync();
-        if (clientId == default) throw new Exception($"Client with email {clientEmail} not found");
-
-        var eventId = await context.Events.Where(x => x.ForeignShowIds.Contains(showId)).Select(x => x.Id).FirstOrDefaultAsync();
-        if (eventId == default) throw new Exception($"Event with show with ID {showId} not found");
-
-        ticket.ClientId = clientId;
-        ticket.EventId = eventId;
-    }
-
     public async Task<bool> ImportTickets(Guid userId)
     {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        
         var token = await tokenService.GetToken(userId);
         if (token is null) return false;
 
         var tickets = apiProvider.GetTickets(token);
 
+        var batchCounter = 0;
+        var existed = (await context.Tickets.Select(x => x.Barcode).ToListAsync()).ToHashSet();
+        var clientEmailIdPairs = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id);
+        var eventShowIdPairs = await context.Events.Select(x => new { x.Id, x.ForeignShowIds, }).ToListAsync();
+
         await foreach (var ticketForeign in tickets)
         {
             try
             {
-                var ticket = new Ticket { Barcode = ticketForeign.Barcode, };
-                await FillUpTicket(ticket, ticketForeign.ClientEmail, ticketForeign.ShowId);
-                context.Tickets.Add(ticket);
-                await context.SaveChangesAsync();
+                if (!clientEmailIdPairs.TryGetValue(ticketForeign.ClientEmail, out var clientId))
+                {
+                    throw new Exception($"Client with email {ticketForeign.ClientEmail} not found");
+                }
+
+                var eventId = eventShowIdPairs.FirstOrDefault(x => x.ForeignShowIds.Contains(ticketForeign.ShowId));
+                if (eventId is null) throw new Exception($"Event with show with ID {ticketForeign.ShowId} not found");
+
+                var ticket = new Ticket { Barcode = ticketForeign.Barcode, ClientId = clientId, EventId = eventId.Id, };
+
+                if (existed.Contains(ticketForeign.Barcode)) context.Tickets.Update(ticket);
+                else context.Tickets.Add(ticket);
+
+                if (++batchCounter >= 100)
+                {
+                    batchCounter = 0;
+                    await context.SaveChangesAsync();
+                }
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Error while saving ticket {Ticket} in the DB", ticketForeign);
+                _logger.Error(e, "Error while saving tickets in the DB");
             }
+        }
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while saving tickets in the DB");
         }
 
         return true;

@@ -81,7 +81,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 
     public IAsyncEnumerable<Ticket> GetTickets(string token)
     {
-        var builder = new QueryBuilder().Select("id", "barcode", "client_email", "show_id");
+        var builder = new QueryBuilder().Select("id", "barcode", "client_email", "show_id").Where("barcode", null, "not null");
         return GetDataList<Ticket>("baskets", token, builder, 50);
     }
 

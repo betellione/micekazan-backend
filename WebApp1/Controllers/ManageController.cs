@@ -184,11 +184,8 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
 
         if (result)
         {
-            var importResult = await ImportData(userId, sp);
-
-            TempData["StatusMessage"] = importResult
-                ? "Your token has been changed.\nМероприятия успешно загружены."
-                : "Your token has been changed.\nОшибка: мероприятия не были загружены.";
+            _ = await ImportData(userId, sp);
+            TempData["StatusMessage"] = "Your token has been changed.\nМероприятия загружены.";
         }
         else
         {
