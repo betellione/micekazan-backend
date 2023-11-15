@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
     public DbSet<TicketToPrint> TicketsToPrint { get; set; }
+    public DbSet<TicketPdfTemplate> TicketPdfTemplate { get; set; }
     public DbSet<Client> Clients { get; set; }
 
 
@@ -148,6 +149,27 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Barcode).HasColumnName("Barcode");
 
             entity.Property(x => x.Url).HasMaxLength(256).HasColumnName("Url");
+        });
+        
+        modelBuilder.Entity<TicketPdfTemplate>(entity =>
+        {
+            entity.ToTable("TicketPdfTemplate");
+            entity.HasKey(x => x.Id).HasName("TicketPdfTemplate_pk");
+
+            entity.Property(x => x.TemplateName).HasMaxLength(16).HasColumnName("TemplateName");
+            entity.Property(x => x.TextColor).HasMaxLength(7).IsFixedLength().HasColumnName("TextColor").HasDefaultValue("#000000");
+
+            entity.Property(x => x.IsHorizontal).HasColumnName("IsHorizontal").HasDefaultValue(true);
+            entity.Property(x => x.HasName).HasColumnName("HasName").HasDefaultValue(true);
+            entity.Property(x => x.HasSurname).HasColumnName("HasSurname").HasDefaultValue(true);
+            entity.Property(x => x.HasQrCode).HasColumnName("HasQrCode").HasDefaultValue(true);
+            
+            entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
+            entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
+            
+            entity.HasOne(x => x.Organizer).WithMany(x => x.TicketPdfTemplates)
+                .HasForeignKey(x => x.OrganizerId)
+                .HasConstraintName("TicketPdfTemplate_User_OrganizerId_fk");
         });
     }
 }

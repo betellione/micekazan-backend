@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApp1.Data;
@@ -11,9 +12,11 @@ using WebApp1.Data;
 namespace WebApp1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231115202626_TicketPdfTemplate")]
+    partial class TicketPdfTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -343,28 +346,19 @@ namespace WebApp1.Data.Migrations
                         .HasColumnName("BackgroundUri");
 
                     b.Property<bool>("HasName")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(true)
                         .HasColumnName("HasName");
 
                     b.Property<bool>("HasQrCode")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(true)
                         .HasColumnName("HasQrCode");
 
                     b.Property<bool>("HasSurname")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(true)
                         .HasColumnName("HasSurname");
 
                     b.Property<bool>("IsHorizontal")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("IsHorizontal");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LogoUri")
                         .HasMaxLength(2048)
@@ -382,10 +376,8 @@ namespace WebApp1.Data.Migrations
 
                     b.Property<string>("TextColor")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(7)
                         .HasColumnType("character(7)")
-                        .HasDefaultValue("#000000")
                         .HasColumnName("TextColor")
                         .IsFixedLength();
 

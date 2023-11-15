@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using Serilog;
 using WebApp1.Data;
 using WebApp1.External.Qtickets;
@@ -18,6 +19,26 @@ public class TicketService(IDbContextFactory<ApplicationDbContext> contextFactor
         // TODO: Get token.
         // var ticket = await apiProvider.GetTicket(barcode, "oKwXDV5zjGB4PpfPf0JCC0zc0wLPhH6c");
         return Task.FromResult((string?)string.Empty);
+    }
+
+
+    /*public async Task<Stream> GetTicketPdf(string barcode)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
+        
+        if (ticket is null) return Task.FromException();
+        if (ticket.Barcode is null)
+        {
+            
+        }
+    }*/
+    
+    public async Task<Ticket?> SetPassTimeOrFalse(string barcode)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync();
+        var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
+        return ticket;
     }
 
     public async Task<bool> ImportTickets(Guid userId)

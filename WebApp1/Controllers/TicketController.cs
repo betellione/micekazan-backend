@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Services.TicketService;
@@ -14,17 +15,22 @@ public class TicketController(ITicketService ticketService, ApplicationDbContext
     [HttpPost]
     public async Task<IActionResult> PrintTicket(string code)
     {
+        /*var ticket = await ticketService.GetTicket(code);*/
+        
+        // TODO: Generate PDF if doesn't exist,
         var pdfUri = await ticketService.GetTicketPdfUri(code);
         if (pdfUri is null) return BadRequest();
 
-        var ticket = new TicketToPrint
+        var ticketToPrint = new TicketToPrint
         {
             Barcode = code,
             CreatedAt = DateTime.UtcNow,
             Url = pdfUri,
         };
+        
+        
 
-        context.TicketsToPrint.Add(ticket);
+        context.TicketsToPrint.Add(ticketToPrint);
         await context.SaveChangesAsync();
 
         return Ok();
