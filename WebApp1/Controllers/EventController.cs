@@ -208,6 +208,7 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
         await context.SaveChangesAsync();
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
+        await userManager.AddClaimAsync(user, new Claim("PrinterToken", vm.Token));
 
         return RedirectToAction("Details", new { id = vm.EventId, });
     }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApp1.ViewModels;
 
@@ -13,6 +14,12 @@ public class UserViewModel
     [Display(Name = "Password")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
+
+    [DisplayName("Токен")]
+    [MinLength(32)]
+    [MaxLength(256)]
+    [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Токен имеет неверный формат. Разрешены только цифры и латинские буквы")]
+    public string Token { get; set; } = null!;
 
     public DateTime? ExpiresAt { get; set; }
     public string? EventName { get; set; }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Services.TicketService;

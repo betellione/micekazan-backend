@@ -1,5 +1,3 @@
-using WebApp1.Models;
-
 namespace WebApp1.Services.TicketService;
 
 public interface ITicketService
