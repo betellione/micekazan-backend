@@ -3,11 +3,11 @@
 }
 
 <div class="d-flex justify-content-between mt-5 mb-3">
-    <form asp-action="EventLoad" method="post">
+    @*<form asp-action="EventLoad" method="post">
         <div>
             <button type="submit" class="w-100 btn btn-lg btn-warning">Загрузить события</button>
         </div>
-    </form>
+    </form>*@
 </div>
 <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
 <div class="table-responsive custom-table mb-5">
