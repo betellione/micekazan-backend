@@ -1,59 +1,61 @@
 @model IEnumerable<WebApp1.Models.Client>
 
 @{
-    ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Surname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Patronymic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Surname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Patronymic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="d-flex justify-content-between mt-5 mb-3">
+</div>
+<div class="table-responsive custom-table mb-5">
+    <table class="table table-dark table-hover align-middle">
+        <thead>
+            <tr>
+                <th class="table-col-header">
+                    @*@Html.DisplayNameFor(model => model.Name)*@
+                    <div class="table-col-header">Имя</div>
+                </th>
+                <th class="table-col-header">
+                    @*@Html.DisplayNameFor(model => model.Surname)*@
+                    <div class="table-col-header">Фамилия</div>
+                </th>
+                <th class="table-col-header">
+                    @*@Html.DisplayNameFor(model => model.Patronymic)*@
+                    <div class="table-col-header">Отчество</div>
+                </th>
+                <th class="table-col-header">
+                    @*@Html.DisplayNameFor(model => model.Email)*@
+                    <div class="table-col-header">Почта</div>
+                </th>
+                <th class="table-col-header">
+                    @*@Html.DisplayNameFor(model => model.PhoneNumber)*@
+                    <div class="table-col-header">Номер телефона</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td class="table-row">
+                    <div class="table-col">@Html.DisplayFor(modelItem => item.Name)</div>
+                </td>
+                <td class="table-row">
+                    <div class="table-col">@Html.DisplayFor(modelItem => item.Surname)</div>
+                </td>
+                <td class="table-row">
+                    <div class="table-col">@Html.DisplayFor(modelItem => item.Patronymic)</div>
+                </td>
+                <td class="table-row">
+                    <div class="table-col">@Html.DisplayFor(modelItem => item.Email)</div>
+                </td>
+                <td class="table-row">
+                    <div class="table-col">@Html.DisplayFor(modelItem => item.PhoneNumber)</div>
+                </td>
+                @*<td class="table-row">
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Подробнее</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>*@
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
