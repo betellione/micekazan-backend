@@ -1,32 +1,30 @@
 @model IEnumerable<WebApp1.Models.Event>
 @{
-    ViewData["Title"] = "Список событий";
 }
 
 <div class="d-flex justify-content-between mt-5 mb-3">
-    <!-- <h1 class="d-block">@ViewData["Title"]</h1> -->
     <form asp-action="EventLoad" method="post">
         <div>
             <button type="submit" class="w-100 btn btn-lg btn-warning">Загрузить события</button>
         </div>
-    </form>*@
+    </form>
 </div>
 <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
 <div class="table-responsive custom-table mb-5">
     <table class="table table-dark table-hover align-middle">
         <thead>
-        <th>
-            <div class="table-col-header">Наименование</div>
-        </th>
-        <th>
-            <div class="table-col-header">Город</div>
-        </th>
-        <th>
-            <div class="table-col-header">Начало</div>
-        </th>
-        <th>
-            <div class="table-col-header">Завершение</div>
-        </th>
+            <th>
+                <div class="table-col-header">Наименование</div>
+            </th>
+            <th>
+                <div class="table-col-header">Город</div>
+            </th>
+            <th>
+                <div class="table-col-header">Начало</div>
+            </th>
+            <th>
+                <div class="table-col-header">Завершение</div>
+            </th>
         </thead>
         <tbody>
         @foreach (var item in Model.OrderByDescending(x => x.StartedAt))
