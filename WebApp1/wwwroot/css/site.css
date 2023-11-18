@@ -263,6 +263,8 @@ body {
 
 .bg-black {
     background-color: unset !important;
+
+    height: 100%;
 }
 
 html body header nav .container a {
@@ -284,9 +286,10 @@ html body header .container {
 
 html body header nav .container div {
     width: 100%;
-    width: 100%;
+    height: 100%;
 
     justify-content: space-around;
+    position: relative;
 }
 
 html body header nav .container div button {
@@ -621,4 +624,28 @@ td.cell-left {
 
     margin: auto;
     padding-top: 30px;
+}
+
+/* login button */
+.login_button {
+    padding: 5px 20px !important;
+
+    height: max-content !important;
+    width: max-content !important;
+
+    position: absolute;
+
+    right: 0;
+}
+
+.login_img {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+header img {
+    height: 50px;
 }
