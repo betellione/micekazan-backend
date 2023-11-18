@@ -16,5 +16,6 @@ public class User : IdentityUser<Guid>
     public ICollection<CreatorToken> Tokens { get; set; } = new List<CreatorToken>();
     public ICollection<TokenUpdate> TokenUpdates { get; set; } = new List<TokenUpdate>();
     public ICollection<Event> EventsCreated { get; set; } = new List<Event>();
+    public ICollection<TicketPdfTemplate> TicketPdfTemplates { get; set; } = new List<TicketPdfTemplate>();
     public ICollection<EventCollector> EventsToCollect { get; set; } = new List<EventCollector>();
 }

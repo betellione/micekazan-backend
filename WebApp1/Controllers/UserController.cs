@@ -10,9 +10,8 @@ using WebApp1.ViewModels;
 
 namespace WebApp1.Controllers;
 
-[Authorize]
-public class UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager)
-    : Controller
+[Authorize(Policy = "RegisterConfirmation")]
+public class UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index()

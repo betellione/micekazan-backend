@@ -1,4 +1,3 @@
-@using Microsoft.IdentityModel.Tokens
 @model EventDetails
 @{
     ViewData["Title"] = "Информация";
@@ -36,7 +35,7 @@
         </a>
     </div>
 </div>
-@if (Model.Scanners.IsNullOrEmpty())
+@if (!Model.Scanners.Any())
 {
     <p>К этому мероприятию пока не добавлены билетеры</p>
 }

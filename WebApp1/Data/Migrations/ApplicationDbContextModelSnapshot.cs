@@ -17,7 +17,7 @@ namespace WebApp1.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -156,6 +156,55 @@ namespace WebApp1.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WebApp1.Models.Client", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Email");
+
+                    b.Property<long>("ForeignId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("ForeignId");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Name");
+
+                    b.Property<string>("Patronymic")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Patronymic");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("PhoneNumber");
+
+                    b.Property<string>("Surname")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("Surname");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Email");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Client", (string)null);
+                });
+
             modelBuilder.Entity("WebApp1.Models.CreatorToken", b =>
                 {
                     b.Property<Guid>("CreatorId")
@@ -200,6 +249,13 @@ namespace WebApp1.Data.Migrations
                     b.Property<DateTime>("FinishedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("FinishedAt");
+
+                    b.Property<long[]>("ForeignShowIds")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint[]")
+                        .HasColumnName("ForeignShowIds")
+                        .HasDefaultValueSql("'{}'");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -252,38 +308,93 @@ namespace WebApp1.Data.Migrations
                         .HasColumnType("character varying(16)")
                         .HasColumnName("Barcode");
 
+                    b.Property<long>("ClientId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("EventId")
                         .HasColumnType("bigint")
                         .HasColumnName("EventId");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("Name");
-
-                    b.Property<DateTime>("PassedAt")
+                    b.Property<DateTime?>("PassedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("PassedAt");
-
-                    b.Property<string>("Patronymic")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("Patronymic");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("Surname");
 
                     b.HasKey("Id")
                         .HasName("Ticket_pk");
 
+                    b.HasIndex("ClientId");
+
                     b.HasIndex("EventId");
 
                     b.ToTable("Ticket", (string)null);
+                });
+
+            modelBuilder.Entity("WebApp1.Models.TicketPdfTemplate", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BackgroundUri")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("BackgroundUri");
+
+                    b.Property<bool>("HasName")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("HasName");
+
+                    b.Property<bool>("HasQrCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("HasQrCode");
+
+                    b.Property<bool>("HasSurname")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("HasSurname");
+
+                    b.Property<bool>("IsHorizontal")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("IsHorizontal");
+
+                    b.Property<string>("LogoUri")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("LogoUri");
+
+                    b.Property<Guid>("OrganizerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("TemplateName");
+
+                    b.Property<string>("TextColor")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(7)
+                        .HasColumnType("character(7)")
+                        .HasDefaultValue("#000000")
+                        .HasColumnName("TextColor")
+                        .IsFixedLength();
+
+                    b.HasKey("Id")
+                        .HasName("TicketPdfTemplate_pk");
+
+                    b.HasIndex("OrganizerId");
+
+                    b.ToTable("TicketPdfTemplate", (string)null);
                 });
 
             modelBuilder.Entity("WebApp1.Models.TicketToPrint", b =>
@@ -531,6 +642,13 @@ namespace WebApp1.Data.Migrations
 
             modelBuilder.Entity("WebApp1.Models.Ticket", b =>
                 {
+                    b.HasOne("WebApp1.Models.Client", "Client")
+                        .WithMany("Tickets")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Ticket_Client_ClientId_fk");
+
                     b.HasOne("WebApp1.Models.Event", "Event")
                         .WithMany("Tickets")
                         .HasForeignKey("EventId")
@@ -538,7 +656,21 @@ namespace WebApp1.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("Ticket_Event_EventId_fk");
 
+                    b.Navigation("Client");
+
                     b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("WebApp1.Models.TicketPdfTemplate", b =>
+                {
+                    b.HasOne("WebApp1.Models.User", "Organizer")
+                        .WithMany("TicketPdfTemplates")
+                        .HasForeignKey("OrganizerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("TicketPdfTemplate_User_OrganizerId_fk");
+
+                    b.Navigation("Organizer");
                 });
 
             modelBuilder.Entity("WebApp1.Models.TokenUpdate", b =>
@@ -553,6 +685,11 @@ namespace WebApp1.Data.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("WebApp1.Models.Client", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("WebApp1.Models.Event", b =>
                 {
                     b.Navigation("Collectors");
@@ -565,6 +702,8 @@ namespace WebApp1.Data.Migrations
                     b.Navigation("EventsCreated");
 
                     b.Navigation("EventsToCollect");
+
+                    b.Navigation("TicketPdfTemplates");
 
                     b.Navigation("TokenUpdates");
 

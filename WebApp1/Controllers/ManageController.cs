@@ -8,12 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Controllers.Types;
 using WebApp1.Models;
+using WebApp1.Services.ClientService;
+using WebApp1.Services.EventService;
+using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
 using WebApp1.ViewModels.Account.Manage;
 
 namespace WebApp1.Controllers;
 
-[Authorize]
+[Authorize(Policy = "RegisterConfirmation")]
 public class ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
     IServiceProvider sp) : Controller
 {
@@ -151,6 +154,19 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
         return View();
     }
 
+    private static async Task<bool> ImportData(Guid userId, IServiceProvider sp)
+    {
+        var eventService = sp.GetRequiredService<IEventService>();
+        var ticketService = sp.GetRequiredService<ITicketService>();
+        var clientService = sp.GetRequiredService<IClientService>();
+
+        var importResult = await eventService.ImportEvents(userId);
+        importResult &= await clientService.ImportClients(userId);
+        importResult &= await ticketService.ImportTickets(userId);
+
+        return importResult;
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Organizer")]
@@ -166,9 +182,15 @@ public class ManageController(UserManager<User> userManager, SignInManager<User>
         var userId = new Guid(userManager.GetUserId(User)!);
         var result = await tokenService.SetToken(userId, vm.Token);
 
-        TempData["StatusMessage"] = result
-            ? "Your token has been changed."
-            : "Error: Your token has not been changed. Try a different token or come back later.";
+        if (result)
+        {
+            _ = await ImportData(userId, sp);
+            TempData["StatusMessage"] = "Your token has been changed.\nМероприятия загружены.";
+        }
+        else
+        {
+            TempData["StatusMessage"] = "Error: Your token has not been changed. Try a different token or come back later.";
+        }
 
         return RedirectToAction("Token");
     }

@@ -4,12 +4,15 @@ namespace WebApp1.External.Qtickets.Contracts.Responses;
 
 public class Ticket
 {
-    [JsonPropertyName("pdf_url")]
-    public string PdfUri { get; set; } = null!;
-    [JsonPropertyName("pdf_url")]
-    public string Name { get; set; } = null!;
-    [JsonPropertyName("pdf_url")]
-    public string Surname { get; set; } = null!;
-    [JsonPropertyName("pdf_url")]
-    public string Patronymic { get; set; } = null!;
+    [JsonPropertyName("id")]
+    public long Id { get; set; }
+
+    [JsonPropertyName("barcode")]
+    public string Barcode { get; set; } = null!;
+
+    [JsonPropertyName("client_email")]
+    public string ClientEmail { get; set; } = null!;
+    
+    [JsonPropertyName("show_id")]
+    public long ShowId { get; set; }
 }

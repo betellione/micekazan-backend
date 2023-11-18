@@ -19,12 +19,14 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
     public DbSet<TicketToPrint> TicketsToPrint { get; set; }
+    public DbSet<TicketPdfTemplate> TicketPdfTemplate { get; set; }
+    public DbSet<Client> Clients { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-                
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
@@ -63,6 +65,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.StartedAt).HasColumnName("StartedAt");
             entity.Property(x => x.FinishedAt).HasColumnName("FinishedAt");
             entity.Property(x => x.CreatorId).HasColumnName("CreatorId");
+            entity.Property(x => x.ForeignShowIds).HasDefaultValueSql("'{}'").HasColumnName("ForeignShowIds");
 
             entity.HasOne(x => x.Creator).WithMany(x => x.EventsCreated)
                 .HasForeignKey(x => x.CreatorId)
@@ -95,15 +98,31 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.Property(x => x.Id).HasColumnName("Id");
             entity.Property(x => x.Barcode).HasMaxLength(16).HasColumnName("Barcode");
-            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
-            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
-            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.PassedAt).HasColumnName("PassedAt");
             entity.Property(x => x.EventId).HasColumnName("EventId");
 
+            entity.HasOne(x => x.Client).WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.ClientId)
+                .HasConstraintName("Ticket_Client_ClientId_fk");
             entity.HasOne(x => x.Event).WithMany(x => x.Tickets)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("Ticket_Event_EventId_fk");
+        });
+
+        modelBuilder.Entity<Client>(entity =>
+        {
+            entity.ToTable("Client");
+
+            entity.Property(x => x.Id).HasColumnName("Id");
+            entity.Property(x => x.ForeignId).HasColumnName("ForeignId");
+            entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
+            entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
+            entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
+            entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
+            entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
+
+            entity.HasIndex(x => x.Email).IsUnique();
+            entity.HasAlternateKey(x => x.Email);
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>
@@ -130,6 +149,27 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Barcode).HasColumnName("Barcode");
 
             entity.Property(x => x.Url).HasMaxLength(256).HasColumnName("Url");
+        });
+        
+        modelBuilder.Entity<TicketPdfTemplate>(entity =>
+        {
+            entity.ToTable("TicketPdfTemplate");
+            entity.HasKey(x => x.Id).HasName("TicketPdfTemplate_pk");
+
+            entity.Property(x => x.TemplateName).HasMaxLength(16).HasColumnName("TemplateName");
+            entity.Property(x => x.TextColor).HasMaxLength(7).IsFixedLength().HasColumnName("TextColor").HasDefaultValue("#000000");
+
+            entity.Property(x => x.IsHorizontal).HasColumnName("IsHorizontal").HasDefaultValue(true);
+            entity.Property(x => x.HasName).HasColumnName("HasName").HasDefaultValue(true);
+            entity.Property(x => x.HasSurname).HasColumnName("HasSurname").HasDefaultValue(true);
+            entity.Property(x => x.HasQrCode).HasColumnName("HasQrCode").HasDefaultValue(true);
+            
+            entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
+            entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
+            
+            entity.HasOne(x => x.Organizer).WithMany(x => x.TicketPdfTemplates)
+                .HasForeignKey(x => x.OrganizerId)
+                .HasConstraintName("TicketPdfTemplate_User_OrganizerId_fk");
         });
     }
 }
