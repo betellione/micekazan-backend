@@ -40,13 +40,17 @@
     }
     else
     {
+        <div class="login_img">
+            <img src=/images/GR_logo.png>
+        </div>
+
         @if (ViewContext.RouteData.Values["Action"] as string != "Login")
         {
-            <button class="btn btn-outline-primary" onclick="location.href='@Url.Action("Login", "Account")'">Вход</button>
+            <button class="btn btn-outline-primary login_button" onclick="location.href='@Url.Action("Login", "Account")'">Вход</button>
         }
         else
         {
-            <button class="btn btn-outline-primary me-2" onclick="location.href='@Url.Action("Register", "Account")'">Регистрация</button>
+            <button class="btn btn-outline-primary me-2 login_button" onclick="location.href='@Url.Action("Register", "Account")'">Регистрация</button>
         }
     }
 </div>
