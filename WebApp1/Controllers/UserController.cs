@@ -48,6 +48,7 @@ public class UserController(ApplicationDbContext context, IUserStore<User> userS
             Email = vm.Email,
             NormalizedEmail = userManager.NormalizeEmail(vm.Email),
             EmailConfirmed = true,
+            PhoneNumberConfirmed = true
         };
 
         await userStore.SetUserNameAsync(user, vm.Email, CancellationToken.None);

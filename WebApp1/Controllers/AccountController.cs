@@ -64,6 +64,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     #endregion
 
     [HttpGet]
+    [Authorize(Roles = "Organizer")]
     public IActionResult Settings()
     {
         return View();
