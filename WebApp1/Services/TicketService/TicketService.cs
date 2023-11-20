@@ -71,11 +71,9 @@ public class TicketService(IDbContextFactory<ApplicationDbContext> contextFactor
                 if (existed.Contains(ticketForeign.Barcode)) context.Tickets.Update(ticket);
                 else context.Tickets.Add(ticket);
 
-                if (++batchCounter >= 100)
-                {
-                    batchCounter = 0;
-                    await context.SaveChangesAsync();
-                }
+                if (++batchCounter < 100) continue;
+                batchCounter = 0;
+                await context.SaveChangesAsync();
             }
             catch (Exception e)
             {

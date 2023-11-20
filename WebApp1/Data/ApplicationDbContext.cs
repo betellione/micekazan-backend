@@ -34,6 +34,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
             entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.City).HasMaxLength(32).HasColumnName("City");
+            entity.Property(x => x.PrintingToken).HasMaxLength(256).HasColumnName("PrintingToken");
             entity.Property(x => x.Activity).HasColumnName("Activity");
         });
 

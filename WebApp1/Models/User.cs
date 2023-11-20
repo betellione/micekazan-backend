@@ -12,6 +12,7 @@ public class User : IdentityUser<Guid>
     public ActivityTypes? Activity { get; set; } = ActivityTypes.Individual; 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime ExpiresAt { get; set; }
+    public string? PrintingToken { get; set; } = null!;
 
     public ICollection<CreatorToken> Tokens { get; set; } = new List<CreatorToken>();
     public ICollection<TokenUpdate> TokenUpdates { get; set; } = new List<TokenUpdate>();
