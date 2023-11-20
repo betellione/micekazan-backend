@@ -47,6 +47,8 @@ public class EventController(ApplicationDbContext context, IEventService eventSe
                 FinishedAt = x.FinishedAt,
                 CreatorId = x.CreatorId,
                 CreatorUsername = x.Creator.UserName!,
+                AllTickets = context.Tickets.Where(q => q.PassedAt != null)
+                    .Count(t => t.Event == context.Events.FirstOrDefault(e => e.Id == id)),
                 Scanners = x.Collectors.Select(y => new Scanner
                 {
                     Id = y.CollectorId, Username = y.Collector.UserName!,

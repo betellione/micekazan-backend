@@ -3,7 +3,10 @@
     ViewData["Title"] = "Информация";
 }
 
-<h1>@Model.Name</h1>
+<div class="d-flex justify-content-between mt-3 mb-3">
+    <h1 class="d-block">@Model.Name</h1>
+    <h1 class="d-block">Количество отсканированных билетов: @Model.AllTickets</h1>
+</div>
 <div>
     <hr/>
     <dl class="row">
