@@ -31,13 +31,13 @@
                 <tr>
                     <td>
                         <label asp-for="DisplayName" class="form-label">
-                            <input asp-for="DisplayName" class="form-check-input" id="card_firstname_input"/>
+                            <input asp-for="DisplayName" class="form-check-input" id="card_firstname_input" checked="checked"/>
                             @Html.DisplayNameFor(m => m.DisplayName)
                         </label>
                     </td>
                     <td>
                         <label asp-for="DisplaySurname" class="form-label">
-                            <input asp-for="DisplaySurname" class="form-check-input" id="card_lastname_input"/>
+                            <input asp-for="DisplaySurname" class="form-check-input" id="card_lastname_input" checked="checked"/>
                             @Html.DisplayNameFor(m => m.DisplaySurname)
                         </label>
                     </td>
@@ -46,7 +46,7 @@
                 <tr>
                     <td>
                         <label asp-for="DisplayQrCode" class="form-label">
-                            <input asp-for="DisplayQrCode" class="form-check-input" id="card_qr_input"/>
+                            <input asp-for="DisplayQrCode" class="form-check-input" id="card_qr_input" checked="checked"/>
                             @Html.DisplayNameFor(m => m.DisplayQrCode)
                         </label>
                     </td>
@@ -129,25 +129,25 @@
     // Отображение (Имя)
     document.getElementById('card_firstname_input').addEventListener("change", (event) => {
         if (event.target.checked) {
-            print_card.querySelector("#card_firstname").style.opacity = "0";
-        } else {
             print_card.querySelector("#card_firstname").style.opacity = "1";
+        } else {
+            print_card.querySelector("#card_firstname").style.opacity = "0";
         }
     });
     // Отображение (Фамилия)
     document.getElementById('card_lastname_input').addEventListener("change", (event) => {
         if (event.target.checked) {
-            print_card.querySelector("#card_lastname").style.opacity = "0";
-        } else {
             print_card.querySelector("#card_lastname").style.opacity = "1";
+        } else {
+            print_card.querySelector("#card_lastname").style.opacity = "0";
         }
     });
     // Отображение (QR)
     document.getElementById('card_qr_input').addEventListener("change", (event) => {
         if (event.target.checked) {
-            print_card.querySelector("#card_qr").style.opacity = "0";
-        } else {
             print_card.querySelector("#card_qr").style.opacity = "1";
+        } else {
+            print_card.querySelector("#card_qr").style.opacity = "0";
         }
     });
 
