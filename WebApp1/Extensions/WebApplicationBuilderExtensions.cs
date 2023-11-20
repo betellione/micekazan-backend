@@ -1,4 +1,5 @@
 using Serilog;
+using WebApp1.Data.FileManager;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
 using WebApp1.Services.EmailSender;
@@ -26,7 +27,7 @@ public static class WebApplicationBuilderExtensions
 
         return services;
     }
-    
+
     public static WebApplicationBuilder SetUpLogging(this WebApplicationBuilder builder)
     {
         builder.Host.UseSerilog((ctx, configuration) =>
@@ -41,6 +42,22 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddLogging();
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddFileManagers(this WebApplicationBuilder builder)
+    {
+        var basePath = builder.Environment.WebRootPath;
+
+        var logoFileManager = new FileManager(Path.Combine(basePath, builder.Configuration["Path:LogoImagePath"]!));
+        var backgroundFileManager = new FileManager(Path.Combine(basePath, builder.Configuration["Path:BackgroundImagePath"]!));
+
+        var logoImageManager = new ImageManager(logoFileManager);
+        var backgroundImageManager = new ImageManager(backgroundFileManager);
+
+        builder.Services.AddKeyedSingleton<IImageManager>("Logo", logoImageManager);
+        builder.Services.AddKeyedSingleton<IImageManager>("Background", backgroundImageManager);
 
         return builder;
     }
