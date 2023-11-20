@@ -31,6 +31,7 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.AddFileManagers();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -73,6 +74,7 @@ else
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
