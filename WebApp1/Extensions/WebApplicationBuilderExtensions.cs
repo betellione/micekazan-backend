@@ -50,8 +50,8 @@ public static class WebApplicationBuilderExtensions
     {
         var basePath = builder.Environment.WebRootPath;
 
-        var logoFileManager = new FileManager(Path.Combine(basePath, builder.Configuration["Path:LogoImagePath"]!));
-        var backgroundFileManager = new FileManager(Path.Combine(basePath, builder.Configuration["Path:BackgroundImagePath"]!));
+        var logoFileManager = new FileManager(basePath, builder.Configuration["Path:LogoImagePath"]!);
+        var backgroundFileManager = new FileManager(basePath, builder.Configuration["Path:BackgroundImagePath"]!);
 
         var logoImageManager = new ImageManager(logoFileManager);
         var backgroundImageManager = new ImageManager(backgroundFileManager);

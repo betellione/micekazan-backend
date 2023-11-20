@@ -1,0 +1,115 @@
+﻿@model PrintViewModel
+
+@using WebApp1.Views.Settings
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Настройка печати";
+    ViewData["ActivePage"] = SettingsNavPages.Print;
+}
+
+<div id="tab_print" class="tabcontent">
+    <h1>@ViewData["Title"]</h1>
+
+    <label>Шаблон</label>
+    <select onchange="PassSelectedValue(this)">
+        @if (Model.TemplateIds.Any())
+        {
+            foreach (var templateId in Model.TemplateIds)
+            {
+                if (templateId == Model.SelectedTemplateId)
+                {
+                    <option value="@templateId" selected>Шаблон @templateId</option>
+                }
+                else
+                {
+                    <option value="@templateId">Шаблон @templateId</option>
+                }
+            }
+        }
+        @if (Model.SelectedTemplateId is null)
+        {
+            <option value="" selected>Новый шаблон</option>
+        }
+        else
+        {
+            <option value="">Новый шаблон</option>
+        }
+    </select>
+
+    <h3>Ориентация и данные</h3>
+    <partial name="_TemplateForm" model="Model.TemplateViewModel"/>
+</div>
+
+<script>
+    const print_card = document.getElementById('print_card_component');
+
+    // Вертикальная ориентация
+    document.getElementById('orientation_vertical').addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.classList.remove('horizon');
+            print_card.classList.add('vertical');
+        }
+    });
+
+    // Горизонтальная ориентация
+    document.getElementById('orientation_horizon').addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.classList.remove('vertical');
+            print_card.classList.add('horizon');
+        }
+    });
+
+    // Отображение (Имя)
+    document.getElementById('card_firstname_input').addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.querySelector("#card_firstname").style.opacity = "0";
+        } else {
+            print_card.querySelector("#card_firstname").style.opacity = "1";
+        }
+    });
+    // Отображение (Фамилия)
+    document.getElementById('card_lastname_input').addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.querySelector("#card_lastname").style.opacity = "0";
+        } else {
+            print_card.querySelector("#card_lastname").style.opacity = "1";
+        }
+    });
+    // Отображение (QR)
+    document.getElementById('card_qr_input').addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.querySelector("#card_qr").style.opacity = "0";
+        } else {
+            print_card.querySelector("#card_qr").style.opacity = "1";
+        }
+    });
+
+    // Цвет текста
+    document.getElementById('card_color_input').addEventListener("change", (event) => {
+        print_card.style.color = event.target.value;
+    });
+
+    // Логотип
+    document.getElementById('card_logo_input').addEventListener("change", (event) => {
+        print_card.querySelector("#card_logo").src = URL.createObjectURL(event.target.files[0]);
+
+        console.log(event);
+    });
+
+    // Фон
+    document.getElementById('card_background_input').addEventListener("change", (event) => {
+        let file = URL.createObjectURL(event.target.files[0]);
+        print_card.style.backgroundImage = `url(${file})`;
+
+        console.log(event);
+    });
+</script>
+
+@section Scripts
+{
+    <script>
+        function PassSelectedValue(selectObject) {
+            window.location.href = "Settings?templateId=" + selectObject.value;
+        }
+    </script>
+}

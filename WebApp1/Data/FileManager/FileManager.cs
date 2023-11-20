@@ -6,12 +6,14 @@ namespace WebApp1.Data.FileManager;
 public class FileManager : IFileManager
 {
     private readonly string _basePath;
+    private readonly string _fullBasePath;
     private readonly ILogger _logger = Log.ForContext<IFileManager>();
 
-    public FileManager(string basePath)
+    public FileManager(string basePath, string skewPath)
     {
         _basePath = basePath;
-        if (!Directory.Exists(_basePath)) Directory.CreateDirectory(_basePath);
+        _fullBasePath = Path.Combine(_basePath, skewPath);
+        if (!Directory.Exists(_fullBasePath)) Directory.CreateDirectory(_fullBasePath);
     }
 
     public async Task<string?> SaveFile(Stream file, string fileName)
@@ -22,7 +24,7 @@ public class FileManager : IFileManager
         {
             await using var fileStream = new FileStream(savePath, FileMode.Create);
             await file.CopyToAsync(fileStream);
-            return savePath;
+            return Path.GetRelativePath(_basePath, savePath);
         }
         catch (Exception e)
         {
@@ -49,7 +51,7 @@ public class FileManager : IFileManager
 
     public bool DeleteFile(string fileName)
     {
-        var path = Path.Combine(_basePath, fileName);
+        var path = Path.Combine(_fullBasePath, fileName);
 
         try
         {
@@ -65,7 +67,7 @@ public class FileManager : IFileManager
 
     public async Task<bool> UpdateFile(string fileName, Stream file)
     {
-        var path = Path.Combine(_basePath, fileName);
+        var path = Path.Combine(_fullBasePath, fileName);
 
         try
         {
@@ -83,6 +85,6 @@ public class FileManager : IFileManager
     public string GeneratePathToSave(string fileExtension)
     {
         var fileName = Guid.NewGuid() + fileExtension;
-        return Path.Combine(_basePath, fileName);
+        return Path.Combine(_fullBasePath, fileName);
     }
 }

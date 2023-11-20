@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_BaseLayout";
+}
+
+<div>
+    <div>
+        <partial name="_SettingsNav"/>
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+</div>
+
+@await RenderSectionAsync("Scripts", false)

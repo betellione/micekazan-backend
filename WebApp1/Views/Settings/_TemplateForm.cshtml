@@ -1,0 +1,108 @@
+@using WebApp1.Types
+@model TemplateViewModel
+
+@{
+}
+
+<form asp-controller="Settings" method="post" enctype="multipart/form-data">
+    <input asp-for="Id" hidden/>
+
+    <div class="page_content">
+        <div class="page_block">
+            <table>
+                <tr>
+                    <td>Цвет шрифта</td>
+                    <td colspan="3">
+                        <input asp-for="FontColor" type="color" id="card_color_input">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label>Горизонтальная</label>
+                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal)
+                    </td>
+                    <td>
+                        <label>Вертикальная</label>
+                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="DisplayName" class="form-label">
+                            <input asp-for="DisplayName" class="form-check-input" id="card_firstname_input"/>
+                            @Html.DisplayNameFor(m => m.DisplayName)
+                        </label>
+                    </td>
+                    <td>
+                        <label asp-for="DisplaySurname" class="form-label">
+                            <input asp-for="DisplaySurname" class="form-check-input" id="card_lastname_input"/>
+                            @Html.DisplayNameFor(m => m.DisplaySurname)
+                        </label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="DisplayQrCode" class="form-label">
+                            <input asp-for="DisplayQrCode" class="form-check-input" id="card_qr_input"/>
+                            @Html.DisplayNameFor(m => m.DisplayQrCode)
+                        </label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="Logo"></label>
+                    </td>
+                    <td>
+                        <input asp-for="Logo" id="card_logo_input">
+                        <span asp-validation-for="Logo"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label asp-for="Background"></label>
+                    </td>
+                    <td>
+                        <input asp-for="Background" id="card_background_input">
+                        <span asp-validation-for="Background"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="page_block">
+            <div class="component">
+                <div class="component_main_block vertical" id="print_card_component">
+                    <div>
+                        <div class="component_card_logo">
+                            <img id="card_logo" alt="" src="">
+                        </div>
+                        <div class="component_card_info">
+                            <div class="block_right size_50" id="card_firstname">
+                                Сергеей
+                            </div>
+                            <div class="block_right size_40" id="card_lastname">
+                                Прокофьев
+                            </div>
+                            <div id="card_qr">
+                                <img src="/images/qr_logo.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page_content">
+        @if (Model.Id is not null)
+        {
+            <button type="submit" asp-action="UpdateTemplate">Сохранить</button>
+        }
+        <button type="submit" asp-action="SaveTemplateAsNew">Сохранить как шаблон</button>
+    </div>
+</form>

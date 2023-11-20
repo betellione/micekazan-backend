@@ -5,6 +5,7 @@ using WebApp1.Models;
 using WebApp1.Options;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.EventService;
+using WebApp1.Services.TemplateService;
 using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.AddFileManagers();

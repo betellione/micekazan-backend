@@ -341,49 +341,43 @@ body>div.container {
 /* Tabs */
 .tab {
     overflow: hidden;
-
     position: relative;
-
     margin-bottom: -2px;
-
     z-index: 90;
 }
 
-.tab button {
+.tab a {
     background-color: inherit;
     float: left;
-    border: none;
     outline: none;
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
     font-size: 17px;
-
+    text-decoration: none;
     color: #717171;
     border: 1px solid white;
 }
 
-.tab button:hover {
+.tab a:hover {
     background-color: rgb(17, 17, 17);
-    color: #ffffff;
+    color: white;
 }
 
-.tab button.active {
+.tab a.active {
     background-color: rgb(17, 17, 17);
     border-bottom-color: rgb(17, 17, 17);
-    color: #ffffff;
+    color: white;
 }
 
 .tab_line {
     position: absolute;
     left: 0;
     right: 0;
-
     border: 1px solid white;
 }
 
 .tabcontent {
-    display: none;
     padding: 20px 0;
     border-top: none;
 }

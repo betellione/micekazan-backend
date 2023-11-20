@@ -2,7 +2,7 @@
 
 const string basePath = "./";
 
-var logoFileManager = new FileManager(Path.Combine(basePath, "logo"));
+var logoFileManager = new FileManager(basePath, "logo");
 var logoImageManager = new ImageManager(logoFileManager);
 
 // Save.
