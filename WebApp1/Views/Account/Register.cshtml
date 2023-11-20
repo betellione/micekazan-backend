@@ -9,6 +9,12 @@
         <form asp-controller="Account" asp-action="Register" id="registerForm" method="post">
             <hr/>
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <label asp-for="Activity">Занятость</label>
+            <div class="form-floating mb-4" asp-validation-for="Activity" aria-required="true">
+                @Html.RadioButtonFor(x => x.Activity, "Individual","cheked") Физическое лицо
+                @Html.RadioButtonFor(x => x.Activity, "Entrepreneur") ИП
+                @Html.RadioButtonFor(x => x.Activity, "Business") Юридическое лицо
+            </div>
             <div class="form-floating mb-3">
                 <input asp-for="Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Имя"/>
                 <label asp-for="Name">Имя</label>
@@ -39,14 +45,17 @@
                 <label asp-for="PhoneNumber">Номер Телефона</label>
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <select asp-for="Activity" aria-required="true" class="form-control">
+            @*<div class="form-floating mb-3">
+                $1$<input type="radio" asp-for="Activity" value="Individual" title="Физическое лицо">
+                <input type="radio" asp-for="Activity" value="Entrepreneur" title="Индивидуальный предприниматель">
+                <input type="radio" asp-for="Activity" value="Business" title="Юридическое лицо">#1#
+                $1$<select asp-for="Activity" aria-required="true" class="form-control">
                     <option value="Individual">Физическое лицо</option>
                     <option value="Entrepreneur">Индивидуальный предприниматель</option>
                     <option value="Business">Юридическое лицо</option>
-                </select>
+                </select>#1#
                 <label asp-for="Activity">Занятость</label>
-            </div>
+            </div>*@
             <div class="form-floating mb-3">
                 <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Пароль"/>
                 <label asp-for="Password">Пароль</label>

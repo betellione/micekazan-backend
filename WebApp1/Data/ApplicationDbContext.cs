@@ -20,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
     public DbSet<TicketToPrint> TicketsToPrint { get; set; }
     public DbSet<TicketPdfTemplate> TicketPdfTemplate { get; set; }
+    public DbSet<Screen> Screen { get; set; }
     public DbSet<Client> Clients { get; set; }
 
 
@@ -170,6 +171,24 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasOne(x => x.Organizer).WithMany(x => x.TicketPdfTemplates)
                 .HasForeignKey(x => x.OrganizerId)
                 .HasConstraintName("TicketPdfTemplate_User_OrganizerId_fk");
+        });
+        
+        modelBuilder.Entity<Screen>(entity =>
+        {
+            entity.ToTable("Screen");
+            entity.HasKey(x => x.Id).HasName("Screen_pk");
+
+            entity.Property(x => x.Type).HasColumnName("Type");
+            entity.Property(x => x.WelcomeText).HasMaxLength(32).HasColumnName("WelcomeText");
+            entity.Property(x => x.Description).HasMaxLength(256).HasColumnName("Description");
+            entity.Property(x => x.TextColor).HasMaxLength(7).IsFixedLength().HasColumnName("TextColor").HasDefaultValue("#000000");
+            
+            entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
+            entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
+            
+            entity.HasOne(x => x.Event).WithMany(x => x.Screens)
+                .HasForeignKey(x => x.EventId)
+                .HasConstraintName("Screen_Event_EventId_fk");
         });
     }
 }

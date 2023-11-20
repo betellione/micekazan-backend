@@ -14,4 +14,5 @@ public class Event
     public User Creator { get; set; } = null!;
     public ICollection<EventCollector> Collectors { get; set; } = new List<EventCollector>();
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+    public ICollection<Screen> Screens { get; set; } = new List<Screen>();
 }

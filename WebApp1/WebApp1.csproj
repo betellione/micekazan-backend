@@ -39,4 +39,12 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Settings\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Settings\Screen.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Settings\_Layout.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Settings\_SettingsNav.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Settings\_ViewImports.cshtml" />
+    </ItemGroup>
+
 </Project>
