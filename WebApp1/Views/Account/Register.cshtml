@@ -1,4 +1,5 @@
-﻿@model RegisterViewModel
+﻿@using WebApp1.Enums
+@model RegisterViewModel
 @{
     ViewData["Title"] = "Регистрация";
 }
@@ -11,9 +12,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <label asp-for="Activity">Занятость</label>
             <div class="form-floating mb-4" asp-validation-for="Activity" aria-required="true">
-                @Html.RadioButtonFor(x => x.Activity, "Individual","cheked") Физическое лицо
-                @Html.RadioButtonFor(x => x.Activity, "Entrepreneur") ИП
-                @Html.RadioButtonFor(x => x.Activity, "Business") Юридическое лицо
+                @Html.RadioButtonFor(x => x.Activity, ActivityTypes.Individual, new Dictionary<string, ActivityTypes>() {["checked"] =  ActivityTypes.Individual}) Физическое лицо
+                @Html.RadioButtonFor(x => x.Activity, ActivityTypes.Entrepreneur) ИП
+                @Html.RadioButtonFor(x => x.Activity, ActivityTypes.Business) Юридическое лицо
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Имя"/>

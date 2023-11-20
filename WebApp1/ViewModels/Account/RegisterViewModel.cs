@@ -35,7 +35,7 @@ public class RegisterViewModel
     [Display(Name = "Номер телефона")]
     public string PhoneNumber { get; set; } = null!;
     
-    [Required]
+    [Required(ErrorMessage = "Укажите вашу занятость")]
     [Display(Name = "Занятость")]
     public ActivityTypes Activity { get; set; } = ActivityTypes.Individual;
 
