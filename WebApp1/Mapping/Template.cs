@@ -16,6 +16,8 @@ public static class Template
             DisplaySurname = model.HasSurname,
             DisplayQrCode = model.HasQrCode,
             PageOrientation = model.IsHorizontal ? PageOrientation.Horizontal : PageOrientation.Vertical,
+            LogoPath = model.LogoUri,
+            BackgroundPath = model.BackgroundUri,
         };
     }
 }

@@ -23,4 +23,7 @@ public class TemplateViewModel
     
     [DisplayName("Загрузить фон")]
     public IFormFile? Background { get; set; }
+
+    public string? LogoPath { get; set; }
+    public string? BackgroundPath { get; set; }
 }
