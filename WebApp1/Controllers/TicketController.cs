@@ -6,7 +6,6 @@ using WebApp1.Services.TicketService;
 
 namespace WebApp1.Controllers;
 
-[Authorize(Roles = "Scanner", Policy = "RegisterConfirmation")]
 [ApiController]
 [Route("[controller]/[action]")]
 public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase
@@ -14,7 +13,6 @@ public class TicketController(ITicketService ticketService, ApplicationDbContext
     [HttpPost]
     public async Task<IActionResult> PrintTicket(string code)
     {
-        /*var ticket = await ticketService.GetTicket(code);*/
         
         // TODO: Generate PDF if doesn't exist,
         var pdfUri = await ticketService.GetTicketPdfUri(code);

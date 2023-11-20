@@ -13,11 +13,15 @@ public class TicketService(IDbContextFactory<ApplicationDbContext> contextFactor
 {
     private readonly ILogger _logger = Log.ForContext<ITicketService>();
 
-    public Task<string?> GetTicketPdfUri(string barcode)
+    public async Task<string?> GetTicketPdfUri(string barcode)
     {
         // TODO: Get token.
-        // var ticket = await apiProvider.GetTicket(barcode, "oKwXDV5zjGB4PpfPf0JCC0zc0wLPhH6c");
-        return Task.FromResult((string?)string.Empty);
+        var ticket = await apiProvider.GetTicket(barcode, "oKwXDV5zjGB4PpfPf0JCC0zc0wLPhH6c");
+        await using var context = await contextFactory.CreateDbContextAsync();
+        var ticket2 = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
+        if (ticket2 != null) ticket2.PassedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return (string?)string.Empty;
     }
 
 
