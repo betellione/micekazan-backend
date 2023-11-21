@@ -10,6 +10,7 @@ public class PdfGenerator : IPdfGenerator
         var stream = new MemoryStream();
 
         document.GeneratePdf(stream);
+        stream.Position = 0;
 
         return stream;
     }
