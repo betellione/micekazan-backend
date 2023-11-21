@@ -3,11 +3,12 @@
 public class InfoToShow
 {
     public long Id { get; set; }
-    public string? Email { get; set; } = null!;
-    public string? Phone { get; set; } = null!;
-    public string? ClientName { get; set; } = null!;
-    public string? ClientSurname { get; set; } = null!;
-    public string? ClientMiddleName { get; set; } = null!;
-    public string? OrganizationName { get; set; } = null!;
-    public string? WorkPosition { get; set; } = null!;
+    public string? Barcode { get; set; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
+    public string? ClientName { get; set; }
+    public string? ClientSurname { get; set; }
+    public string? ClientMiddleName { get; set; }
+    public string? OrganizationName { get; set; }
+    public string? WorkPosition { get; set; }
 }
