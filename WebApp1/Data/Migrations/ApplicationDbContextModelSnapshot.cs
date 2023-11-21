@@ -275,9 +275,9 @@ namespace WebApp1.Data.Migrations
                     b.ToTable("Event", (string)null);
                 });
 
-            modelBuilder.Entity("WebApp1.Models.EventCollector", b =>
+            modelBuilder.Entity("WebApp1.Models.EventScanner", b =>
                 {
-                    b.Property<Guid>("CollectorId")
+                    b.Property<Guid>("ScannerId")
                         .HasColumnType("uuid")
                         .HasColumnName("CollectorId");
 
@@ -285,10 +285,21 @@ namespace WebApp1.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("EventId");
 
-                    b.HasKey("CollectorId", "EventId")
+                    b.Property<string>("PrintingToken")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("PrintingToken");
+
+                    b.Property<long?>("TicketPdfTemplateId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("TicketPdfTemplateId");
+
+                    b.HasKey("ScannerId", "EventId")
                         .HasName("EventCollector_pk");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("TicketPdfTemplateId");
 
                     b.ToTable("EventCollector", (string)null);
                 });
@@ -571,11 +582,6 @@ namespace WebApp1.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("PrintingToken")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("PrintingToken");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -678,15 +684,8 @@ namespace WebApp1.Data.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("WebApp1.Models.EventCollector", b =>
+            modelBuilder.Entity("WebApp1.Models.EventScanner", b =>
                 {
-                    b.HasOne("WebApp1.Models.User", "Collector")
-                        .WithMany("EventsToCollect")
-                        .HasForeignKey("CollectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("EventCollector_User_CollectorId_fk");
-
                     b.HasOne("WebApp1.Models.Event", "Event")
                         .WithMany("Collectors")
                         .HasForeignKey("EventId")
@@ -694,9 +693,23 @@ namespace WebApp1.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("EventCollector_Event_EventId_fk");
 
-                    b.Navigation("Collector");
+                    b.HasOne("WebApp1.Models.User", "Scanner")
+                        .WithMany("EventsToCollect")
+                        .HasForeignKey("ScannerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("EventCollector_User_CollectorId_fk");
+
+                    b.HasOne("WebApp1.Models.TicketPdfTemplate", "TicketPdfTemplate")
+                        .WithMany("ScannersWithTemplate")
+                        .HasForeignKey("TicketPdfTemplateId")
+                        .HasConstraintName("EventCollector_TicketPdfTemplate_TicketPdfTemplateId_fk");
 
                     b.Navigation("Event");
+
+                    b.Navigation("Scanner");
+
+                    b.Navigation("TicketPdfTemplate");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Screen", b =>
@@ -768,6 +781,11 @@ namespace WebApp1.Data.Migrations
                     b.Navigation("Screens");
 
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("WebApp1.Models.TicketPdfTemplate", b =>
+                {
+                    b.Navigation("ScannersWithTemplate");
                 });
 
             modelBuilder.Entity("WebApp1.Models.User", b =>
