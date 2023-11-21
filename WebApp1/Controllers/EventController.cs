@@ -218,6 +218,7 @@ public class EventController : Controller
         {
             ScannerId = user.Id,
             EventId = vm.EventId!.Value,
+            PrintingToken = vm.Token,
         };
 
         _context.EventScanners.Add(eventCollector);
