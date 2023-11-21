@@ -7,6 +7,6 @@ public class TicketDocumentModel
     public string FontColor { get; set; } = "#000000";
     public string? BackgroundPath { get; set; }
     public string? LogoPath { get; set; }
-    public string? QrPath { get; set; }
+    public Stream? QrStream { get; set; }
     public bool IsHorizontal { get; set; }
 }

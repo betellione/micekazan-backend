@@ -4,5 +4,5 @@ public enum ScreenTypes
 {
     Waiting,
     Success,
-    Fail
+    Fail,
 }

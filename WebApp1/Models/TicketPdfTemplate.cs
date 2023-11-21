@@ -12,5 +12,9 @@ public class TicketPdfTemplate
     public string? LogoUri { get; set; }
     public string? BackgroundUri { get; set; }
     public Guid OrganizerId { get; set; }
+
     public User Organizer { get; set; } = null!;
+    public IEnumerable<EventScanner> ScannersWithTemplate => _scannersWithTemplate ??= new List<EventScanner>();
+
+    private List<EventScanner>? _scannersWithTemplate;
 }

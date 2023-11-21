@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Data.FileManager;
+using WebApp1.Enums;
 using WebApp1.Models;
-using WebApp1.Types;
 using WebApp1.ViewModels.Settings;
 
 namespace WebApp1.Services.TemplateService;

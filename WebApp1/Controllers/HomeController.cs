@@ -32,9 +32,9 @@ public class HomeController : Controller
             "Scanner" => View(new IndexViewModel
             {
                 AllTickets = _context.Tickets
-                    .Count(t => t.Event.Collectors.Select(x => x.CollectorId).Contains(new Guid(_userManager.GetUserId(User)!))),
+                    .Count(t => t.Event.Collectors.Select(x => x.ScannerId).Contains(new Guid(_userManager.GetUserId(User)!))),
                 ScannedTickets = _context.Tickets.Where(x => x.PassedAt != null)
-                    .Count(t => t.Event.Collectors.Select(x => x.CollectorId).Contains(new Guid(_userManager.GetUserId(User)!))),
+                    .Count(t => t.Event.Collectors.Select(x => x.ScannerId).Contains(new Guid(_userManager.GetUserId(User)!))),
             }),
             _ => _signInManager.IsSignedIn(User) ? View() : RedirectToAction("Login", "Account"),
         };

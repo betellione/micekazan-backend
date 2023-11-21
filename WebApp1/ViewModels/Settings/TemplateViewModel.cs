@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using WebApp1.Types;
+using WebApp1.Enums;
 
 namespace WebApp1.ViewModels.Settings;
 

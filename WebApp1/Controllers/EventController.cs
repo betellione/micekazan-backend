@@ -64,7 +64,7 @@ public class EventController : Controller
                     .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
                 Scanners = x.Collectors.Select(y => new Scanner
                 {
-                    Id = y.CollectorId, Username = y.Collector.UserName!,
+                    Id = y.ScannerId, Username = y.Scanner.UserName!,
                 }),
             })
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -214,13 +214,13 @@ public class EventController : Controller
             return View(vm);
         }
 
-        var eventCollector = new EventCollector
+        var eventCollector = new EventScanner
         {
-            CollectorId = user.Id,
+            ScannerId = user.Id,
             EventId = vm.EventId!.Value,
         };
 
-        _context.EventCollectors.Add(eventCollector);
+        _context.EventScanners.Add(eventCollector);
         await _context.SaveChangesAsync();
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));

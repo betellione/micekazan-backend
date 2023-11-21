@@ -34,6 +34,11 @@ public class TicketService : ITicketService
         return (string?)string.Empty;
     }
 
+    public Task<Stream?> GetTicketPdf(string barcode)
+    {
+        throw new NotImplementedException();
+    }
+
     /*public async Task<Stream> GetTicketPdf(string barcode)
     {
         await using var context = await contextFactory.CreateDbContextAsync();

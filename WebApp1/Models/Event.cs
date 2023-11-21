@@ -12,7 +12,11 @@ public class Event
     public Guid CreatorId { get; set; }
 
     public User Creator { get; set; } = null!;
-    public ICollection<EventCollector> Collectors { get; set; } = new List<EventCollector>();
-    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
-    public ICollection<Screen> Screens { get; set; } = new List<Screen>();
+    public IEnumerable<EventScanner> Collectors => _collectors ??= new List<EventScanner>();
+    public IEnumerable<Ticket> Tickets => _tickets ??= new List<Ticket>();
+    public IEnumerable<Screen> Screens => _screens ??= new List<Screen>();
+
+    private List<EventScanner>? _collectors;
+    private List<Ticket>? _tickets;
+    private List<Screen>? _screens;
 }

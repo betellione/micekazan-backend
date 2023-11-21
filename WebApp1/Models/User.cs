@@ -5,18 +5,23 @@ namespace WebApp1.Models;
 
 public class User : IdentityUser<Guid>
 {
-    public string? Name { get; set; } = null!;
-    public string? Surname { get; set; } = null!;
-    public string? Patronymic { get; set; } = null!;
-    public string? City { get; set; } = null!;
-    public ActivityTypes? Activity { get; set; } = ActivityTypes.Individual; 
+    public string? Name { get; set; }
+    public string? Surname { get; set; }
+    public string? Patronymic { get; set; }
+    public string? City { get; set; }
+    public ActivityTypes? Activity { get; set; } = ActivityTypes.Individual;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime ExpiresAt { get; set; }
-    public string? PrintingToken { get; set; } = null!;
 
-    public ICollection<CreatorToken> Tokens { get; set; } = new List<CreatorToken>();
-    public ICollection<TokenUpdate> TokenUpdates { get; set; } = new List<TokenUpdate>();
-    public ICollection<Event> EventsCreated { get; set; } = new List<Event>();
-    public ICollection<TicketPdfTemplate> TicketPdfTemplates { get; set; } = new List<TicketPdfTemplate>();
-    public ICollection<EventCollector> EventsToCollect { get; set; } = new List<EventCollector>();
+    public IEnumerable<CreatorToken> Tokens => _tokens ??= new List<CreatorToken>();
+    public IEnumerable<TokenUpdate> TokenUpdates => _tokenUpdates ??= new List<TokenUpdate>();
+    public IEnumerable<Event> EventsCreated => _eventsCreated ??= new List<Event>();
+    public IEnumerable<TicketPdfTemplate> TicketPdfTemplates => _ticketPdfTemplates ??= new List<TicketPdfTemplate>();
+    public IEnumerable<EventScanner> EventsToCollect => _eventsToCollect ??= new List<EventScanner>();
+
+    private List<CreatorToken>? _tokens;
+    private List<TokenUpdate>? _tokenUpdates;
+    private List<Event>? _eventsCreated;
+    private List<TicketPdfTemplate>? _ticketPdfTemplates;
+    private List<EventScanner>? _eventsToCollect;
 }

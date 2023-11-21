@@ -1,5 +1,5 @@
+using WebApp1.Enums;
 using WebApp1.Models;
-using WebApp1.Types;
 using WebApp1.ViewModels.Settings;
 
 namespace WebApp1.Mapping;

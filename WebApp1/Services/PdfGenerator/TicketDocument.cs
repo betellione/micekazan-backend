@@ -53,7 +53,7 @@ public class TicketDocument : IDocument
                         .FitArea();
                 }
 
-                if (_model.QrPath is not null)
+                if (_model.QrStream is not null)
                 {
                     layers.Layer()
                         .AlignRight()
@@ -62,7 +62,7 @@ public class TicketDocument : IDocument
                         .Padding(2, Unit.Millimetre)
                         .Width(30, Unit.Millimetre)
                         .Height(30, Unit.Millimetre)
-                        .Image(_model.QrPath)
+                        .Image(_model.QrStream)
                         .FitArea();
                 }
 
@@ -112,7 +112,7 @@ public class TicketDocument : IDocument
                         .FitArea();
                 }
 
-                if (_model.QrPath is not null)
+                if (_model.QrStream is not null)
                 {
                     layers.Layer()
                         .AlignMiddle()
@@ -121,7 +121,7 @@ public class TicketDocument : IDocument
                         .Padding(2, Unit.Millimetre)
                         .Width(30, Unit.Millimetre)
                         .Height(30, Unit.Millimetre)
-                        .Image(_model.QrPath)
+                        .Image(_model.QrStream)
                         .FitArea();
                 }
 

@@ -4,5 +4,5 @@ public enum ActivityTypes
 {
     Individual,
     Entrepreneur,
-    Business
+    Business,
 }

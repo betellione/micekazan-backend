@@ -15,7 +15,7 @@ public class PdfGenerator : IPdfGenerator
             FontColor = template.TextColor,
             BackgroundPath = template.BackgroundUri,
             LogoPath = template.LogoUri,
-            QrPath = null,
+            QrStream = null,
         };
 
         var document = new TicketDocument(model);

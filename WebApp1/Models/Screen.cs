@@ -12,5 +12,6 @@ public class Screen
     public string? LogoUri { get; set; }
     public string? BackgroundUri { get; set; }
     public long EventId { get; set; }
+
     public Event Event { get; set; } = null!;
 }

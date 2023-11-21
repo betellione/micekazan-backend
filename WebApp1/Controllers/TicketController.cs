@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Services.TicketService;
 
 namespace WebApp1.Controllers;
 
+[Authorize(Roles = "Scanner")]
 [ApiController]
 [Route("[controller]/[action]")]
 public class TicketController : ControllerBase
@@ -21,7 +23,6 @@ public class TicketController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PrintTicket(string code)
     {
-        // TODO: Generate PDF if doesn't exist,
         var pdfUri = await _ticketService.GetTicketPdfUri(code);
         if (pdfUri is null) return BadRequest();
 

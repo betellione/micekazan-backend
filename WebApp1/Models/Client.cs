@@ -9,5 +9,8 @@ public class Client
     public string? Patronymic { get; set; }
     public string Email { get; set; } = null!;
     public string? PhoneNumber { get; set; }
-    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+
+    public IEnumerable<Ticket> Tickets => _tickets ??= new List<Ticket>();
+
+    private List<Ticket>? _tickets;
 }

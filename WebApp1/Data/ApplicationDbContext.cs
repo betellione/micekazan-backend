@@ -15,7 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
     public DbSet<CreatorToken> CreatorTokens { get; set; }
     public DbSet<Event> Events { get; set; }
-    public DbSet<EventCollector> EventCollectors { get; set; }
+    public DbSet<EventScanner> EventScanners { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
     public DbSet<TicketToPrint> TicketsToPrint { get; set; }
@@ -34,7 +34,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.Surname).HasMaxLength(64).HasColumnName("Surname");
             entity.Property(x => x.Patronymic).HasMaxLength(64).HasColumnName("Patronymic");
             entity.Property(x => x.City).HasMaxLength(32).HasColumnName("City");
-            entity.Property(x => x.PrintingToken).HasMaxLength(256).HasColumnName("PrintingToken");
             entity.Property(x => x.Activity).HasColumnName("Activity");
         });
 
@@ -74,22 +73,28 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                 .HasConstraintName("Event_User_CreatorId_fk");
         });
 
-        modelBuilder.Entity<EventCollector>(entity =>
+        modelBuilder.Entity<EventScanner>(entity =>
         {
             entity.ToTable("EventCollector");
 
-            entity.HasKey(x => new { x.CollectorId, x.EventId }).HasName("EventCollector_pk");
+            entity.HasKey(x => new { CollectorId = x.ScannerId, x.EventId, }).HasName("EventCollector_pk");
 
-            entity.Property(x => x.CollectorId).HasColumnName("CollectorId");
+            entity.Property(x => x.ScannerId).HasColumnName("CollectorId");
             entity.Property(x => x.EventId).HasColumnName("EventId");
+            entity.Property(x => x.TicketPdfTemplateId).HasColumnName("TicketPdfTemplateId");
+            entity.Property(x => x.PrintingToken).HasMaxLength(256).HasColumnName("PrintingToken");
 
-            entity.HasOne(x => x.Collector).WithMany(x => x.EventsToCollect)
-                .HasForeignKey(x => x.CollectorId)
+            entity.HasOne(x => x.Scanner).WithMany(x => x.EventsToCollect)
+                .HasForeignKey(x => x.ScannerId)
                 .HasConstraintName("EventCollector_User_CollectorId_fk");
 
             entity.HasOne(x => x.Event).WithMany(x => x.Collectors)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("EventCollector_Event_EventId_fk");
+            
+            entity.HasOne(x => x.TicketPdfTemplate).WithMany(x => x.ScannersWithTemplate)
+                .HasForeignKey(x => x.TicketPdfTemplateId)
+                .HasConstraintName("EventCollector_TicketPdfTemplate_TicketPdfTemplateId_fk");
         });
 
         modelBuilder.Entity<Ticket>(entity =>

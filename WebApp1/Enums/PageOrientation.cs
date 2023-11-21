@@ -1,4 +1,4 @@
-namespace WebApp1.Types;
+namespace WebApp1.Enums;
 
 public enum PageOrientation
 {
