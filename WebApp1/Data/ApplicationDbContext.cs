@@ -43,7 +43,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.ToTable("InfoToShow");
             entity.HasKey(x => x.Id).HasName("InfoToShow_pk");
             entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
-            entity.Property(x => x.Phone).HasMaxLength(12).HasColumnName("Phone");
+            entity.Property(x => x.Phone).HasMaxLength(20).HasColumnName("Phone");
             entity.Property(x => x.ClientName).HasMaxLength(64).HasColumnName("ClientName");
             entity.Property(x => x.ClientSurname).HasMaxLength(64).HasColumnName("ClientSurname");
             entity.Property(x => x.ClientMiddleName).HasMaxLength(64).HasColumnName("ClientMiddleName");
