@@ -1,0 +1,28 @@
+@model WebApp1.Models.InfoToShow
+
+@{
+    ViewData["Title"] = "Информация";
+}
+
+<h1>Информация</h1>
+
+<div>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">Имя</dt>
+        <dd class="col-sm-10">@Model.ClientName</dd>
+        <dt class="col-sm-2">Фамилия</dt>
+        <dd class="col-sm-10">@Model.ClientSurname</dd>
+        <dt class="col-sm-2">Отчество</dt>
+        <dd class="col-sm-10">@Model.ClientMiddleName</dd>
+        <dt class="col-sm-2">Почта</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+        <dt class="col-sm-2">Телефон</dt>
+        <dd class="col-sm-10">@Model.Phone</dd>
+        <dt class="col-sm-2">Должность</dt>
+        <dd class="col-sm-10">@Model.WorkPosition</dd>
+        <dt class="col-sm-2">Место работы</dt>
+        <dd class="col-sm-10">@Model.OrganizationName</dd>
+    </dl>
+</div>
+<hr/>
