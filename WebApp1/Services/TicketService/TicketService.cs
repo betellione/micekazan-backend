@@ -18,25 +18,30 @@ public class TicketService : ITicketService
     private readonly ITokenService _tokenService;
     private readonly IQticketsApiProvider _apiProvider;
     private readonly IClientService _clientService;
+    private readonly IPdfGenerator _pdfGenerator;
+    private readonly IQrCodeGenerator _qrCodeGenerator;
     private readonly IServiceProvider _sp;
 
     public TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
-        IQticketsApiProvider apiProvider, IClientService clientService, IServiceProvider sp)
+        IQticketsApiProvider apiProvider, IClientService clientService, IServiceProvider sp, IPdfGenerator pdfGenerator,
+        IQrCodeGenerator qrCodeGenerator)
     {
         _contextFactory = contextFactory;
         _tokenService = tokenService;
         _apiProvider = apiProvider;
         _clientService = clientService;
+        _pdfGenerator = pdfGenerator;
+        _qrCodeGenerator = qrCodeGenerator;
         _sp = sp;
     }
 
     private Stream GetQrCode(string token)
     {
-        var qrCodeGenerator = _sp.GetRequiredService<IQrCodeGenerator>();
         var linkGenerator = _sp.GetRequiredService<LinkGenerator>();
+        var accessor = _sp.GetRequiredService<HttpContextAccessor>();
 
-        var qrContent = linkGenerator.GetPathByAction("InfoToShow", "Client", new { token, }) ?? string.Empty;
-        var qr = qrCodeGenerator.GenerateQrCode(qrContent);
+        var qrContent = linkGenerator.GetUriByAction(accessor.HttpContext!, "InfoToShow", "Client", new { token, }) ?? string.Empty;
+        var qr = _qrCodeGenerator.GenerateQrCode(qrContent);
 
         return qr;
     }
@@ -83,9 +88,7 @@ public class TicketService : ITicketService
 
         await using var model = template is null ? CreateDefaultDocumentModel(info) : CreateDocumentModelFromTemplate(info, template);
 
-        var pdfGenerator = _sp.GetRequiredService<IPdfGenerator>();
-
-        var pdf = pdfGenerator.GenerateTicketPdf(model);
+        var pdf = _pdfGenerator.GenerateTicketPdf(model);
 
         return pdf;
     }

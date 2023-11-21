@@ -155,6 +155,7 @@ public class ClientController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [AllowAnonymous]
     [HttpGet("[controller]/{token}")]
     public async Task<IActionResult> InfoToShow(string token)
     {
