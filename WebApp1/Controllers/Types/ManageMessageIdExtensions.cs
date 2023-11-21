@@ -14,7 +14,7 @@ public static class ManageMessageIdExtensions
             ManageMessageId.RemovePhoneSuccess => "Your phone number was removed.",
             ManageMessageId.AddLoginSuccess => "The external login was added.",
             ManageMessageId.RemoveLoginSuccess => "The external login was removed.",
-            _ => string.Empty
+            _ => string.Empty,
         };
     }
 }

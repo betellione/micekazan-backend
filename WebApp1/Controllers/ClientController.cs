@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Models;
+using WebApp1.Services.ClientService;
 
 namespace WebApp1.Controllers;
 
@@ -12,14 +13,16 @@ public class ClientController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly IClientService _clientService;
 
-    public ClientController(ApplicationDbContext context, UserManager<User> userManager)
+    public ClientController(ApplicationDbContext context, UserManager<User> userManager, IClientService clientService)
     {
         _context = context;
         _userManager = userManager;
+        _clientService = clientService;
     }
 
-    // GET: Client
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
@@ -32,7 +35,7 @@ public class ClientController : Controller
         return View(await _context.Clients.ToListAsync());
     }
 
-    // GET: Client/Details/5
+    [HttpGet]
     public async Task<IActionResult> Details(long? id)
     {
         if (id == null)
@@ -50,15 +53,12 @@ public class ClientController : Controller
         return View(client);
     }
 
-    // GET: Client/Create
+    [HttpGet]
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Client/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Name,Surname,Patronymic,Email,PhoneNumber")] Client client)
@@ -73,7 +73,7 @@ public class ClientController : Controller
         return View(client);
     }
 
-    // GET: Client/Edit/5
+    [HttpGet]
     public async Task<IActionResult> Edit(long? id)
     {
         if (id == null)
@@ -90,9 +90,6 @@ public class ClientController : Controller
         return View(client);
     }
 
-    // POST: Client/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Surname,Patronymic,Email,PhoneNumber")] Client client)
@@ -125,7 +122,7 @@ public class ClientController : Controller
         return View(client);
     }
 
-    // GET: Client/Delete/5
+    [HttpGet]
     public async Task<IActionResult> Delete(long? id)
     {
         if (id == null)
@@ -143,7 +140,6 @@ public class ClientController : Controller
         return View(client);
     }
 
-    // POST: Client/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
@@ -157,6 +153,13 @@ public class ClientController : Controller
 
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet("[controller]/{token}")]
+    public async Task<IActionResult> InfoToShow(string token)
+    {
+        var data = await _clientService.GetClientData(token);
+        return View(data);
     }
 
     private bool ClientExists(long id)

@@ -5,6 +5,7 @@ using WebApp1.Models;
 using WebApp1.Options;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.EventService;
+using WebApp1.Services.PrintService;
 using WebApp1.Services.TemplateService;
 using WebApp1.Services.TicketService;
 using WebApp1.Services.TokenService;
@@ -34,8 +35,18 @@ builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.AddMediaGenerationServices();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddScoped<IPrintService, PrintServiceFileWriterMock>();
+}
+else
+{
+    builder.Services.AddScoped<IPrintService, PrintService>();
+}
+
 builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.AddFileManagers();
+builder.AddStores();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

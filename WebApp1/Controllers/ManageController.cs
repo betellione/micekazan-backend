@@ -212,7 +212,7 @@ public class ManageController : Controller
     {
         var tokenService = _sp.GetRequiredService<ITokenService>();
         var userId = new Guid(_userManager.GetUserId(User)!);
-        ViewData["CurrentToken"] = await tokenService.GetToken(userId);
+        ViewData["CurrentToken"] = await tokenService.GetCurrentOrganizerToken(userId);
     }
 
     #endregion

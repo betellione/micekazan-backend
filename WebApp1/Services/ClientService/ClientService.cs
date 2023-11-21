@@ -27,7 +27,7 @@ public class ClientService : IClientService
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var token = await _tokenService.GetToken(userId);
+        var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var clients = _apiProvider.GetClients(token).Select(x => new Client
@@ -78,5 +78,50 @@ public class ClientService : IClientService
         }
 
         return true;
+    }
+
+    public async Task<InfoToShow?> AddClientData(string ticketBarcode)
+    {
+        var token = await _tokenService.GetTicketToken(ticketBarcode);
+        if (token is null) return null;
+
+        var data = await _apiProvider.GetTicketClientData(ticketBarcode, token);
+        if (data is null) return null;
+
+        var tokenSpan = new byte[16];
+        Random.Shared.NextBytes(tokenSpan);
+        var infoToken = Convert.ToBase64String(tokenSpan).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        
+        var info = new InfoToShow
+        {
+            Email = data.ClientEmail,
+            Phone = data.ClientPhone,
+            ClientName = data.ClientName,
+            ClientSurname = data.ClientSurname,
+            OrganizationName = data.OrganizationName,
+            WorkPosition = data.WorkPosition,
+            ClientMiddleName = data.ClientMiddlename,
+            Barcode = ticketBarcode,
+            Token = infoToken,
+        };
+
+        try
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            context.InfoToShow.Add(info);
+            await context.SaveChangesAsync();
+            return info;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Cannot add Info to Show for ticket barcode {Barcode} in DB with data {ClientData}", ticketBarcode, data);
+            return null;
+        }
+    }
+
+    public Task<InfoToShow?> GetClientData(string token)
+    {
+        using var context = _contextFactory.CreateDbContext();
+        return context.InfoToShow.FirstOrDefaultAsync(x => x.Token == token);
     }
 }

@@ -3,6 +3,9 @@ using Serilog;
 using WebApp1.Data;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
+using WebApp1.Services.ClientService;
+using WebApp1.Services.PdfGenerator;
+using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.TokenService;
 using ILogger = Serilog.ILogger;
 
@@ -14,42 +17,78 @@ public class TicketService : ITicketService
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ITokenService _tokenService;
     private readonly IQticketsApiProvider _apiProvider;
+    private readonly IClientService _clientService;
+    private readonly IServiceProvider _sp;
 
     public TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
-        IQticketsApiProvider apiProvider)
+        IQticketsApiProvider apiProvider, IClientService clientService, IServiceProvider sp)
     {
         _contextFactory = contextFactory;
         _tokenService = tokenService;
         _apiProvider = apiProvider;
+        _clientService = clientService;
+        _sp = sp;
     }
 
-    public async Task<string?> GetTicketPdfUri(string barcode)
+    private Stream GetQrCode(string token)
     {
-        // TODO: Get token.
-        // var ticket = await _apiProvider.GetTicket(barcode, "oKwXDV5zjGB4PpfPf0JCC0zc0wLPhH6c");
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var ticket2 = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
-        if (ticket2 != null) ticket2.PassedAt = DateTime.UtcNow;
-        await context.SaveChangesAsync();
-        return (string?)string.Empty;
+        var qrCodeGenerator = _sp.GetRequiredService<IQrCodeGenerator>();
+        var linkGenerator = _sp.GetRequiredService<LinkGenerator>();
+
+        var qrContent = linkGenerator.GetPathByAction("InfoToShow", "Client", new { token, }) ?? string.Empty;
+        var qr = qrCodeGenerator.GenerateQrCode(qrContent);
+
+        return qr;
     }
 
-    public Task<Stream?> GetTicketPdf(string barcode)
+    private TicketDocumentModel CreateDefaultDocumentModel(InfoToShow info)
     {
-        throw new NotImplementedException();
-    }
-
-    /*public async Task<Stream> GetTicketPdf(string barcode)
-    {
-        await using var context = await contextFactory.CreateDbContextAsync();
-        var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
-
-        if (ticket is null) return Task.FromException();
-        if (ticket.Barcode is null)
+        return new TicketDocumentModel
         {
+            Name = info.ClientName,
+            Surname = info.ClientSurname,
+            QrStream = GetQrCode(info.Token),
+            FontColor = "#000000",
+            IsHorizontal = true,
+            BackgroundPath = null,
+            LogoPath = null,
+        };
+    }
 
-        }
-    }*/
+    private TicketDocumentModel CreateDocumentModelFromTemplate(InfoToShow info, TicketPdfTemplate template)
+    {
+        return new TicketDocumentModel
+        {
+            Name = info.ClientName,
+            Surname = info.ClientSurname,
+            QrStream = template.HasQrCode ? GetQrCode(info.Token) : null,
+            FontColor = template.TextColor,
+            IsHorizontal = template.IsHorizontal,
+            BackgroundPath = template.BackgroundUri,
+            LogoPath = template.LogoUri,
+        };
+    }
+
+    public async Task<Stream?> GetTicketPdf(Guid scannerId, string barcode)
+    {
+        var info = await _clientService.AddClientData(barcode);
+        if (info is null) return null;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var template = await context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .Select(x => x.TicketPdfTemplate)
+            .FirstOrDefaultAsync();
+
+        await using var model = template is null ? CreateDefaultDocumentModel(info) : CreateDocumentModelFromTemplate(info, template);
+
+        var pdfGenerator = _sp.GetRequiredService<IPdfGenerator>();
+
+        var pdf = pdfGenerator.GenerateTicketPdf(model);
+
+        return pdf;
+    }
 
     public async Task<Ticket?> SetPassTimeOrFalse(string barcode)
     {
@@ -62,7 +101,7 @@ public class TicketService : ITicketService
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var token = await _tokenService.GetToken(userId);
+        var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var tickets = _apiProvider.GetTickets(token);

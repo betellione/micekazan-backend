@@ -7,7 +7,7 @@ public class QrCodeGenerator : IQrCodeGenerator
     public Stream GenerateQrCode(string data)
     {
         using var qrGenerator = new QRCodeGenerator();
-        using var qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
+        using var qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.M);
         using var qrCode = new PngByteQRCode(qrCodeData);
         var qrCodeImage = qrCode.GetGraphic(16, false);
         var stream = new MemoryStream(qrCodeImage);

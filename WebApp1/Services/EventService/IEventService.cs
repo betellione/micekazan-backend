@@ -5,7 +5,6 @@ namespace WebApp1.Services.EventService;
 public interface IEventService
 {
     public Task<bool> ImportEvents(Guid userId);
-    public Task<bool> ImportEventTickets(long eventId);
     public Task GetById();
     public Task<IEnumerable<Event>> GetAll(Guid userId);
 }

@@ -24,7 +24,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<InfoToShow> InfoToShow { get; set; }
     public DbSet<Client> Clients { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -37,14 +36,18 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.City).HasMaxLength(32).HasColumnName("City");
             entity.Property(x => x.Activity).HasColumnName("Activity");
         });
-        
+
         modelBuilder.Entity<InfoToShow>(entity =>
         {
             entity.ToTable("InfoToShow");
+
             entity.HasKey(x => x.Id).HasName("InfoToShow_pk");
+            entity.HasAlternateKey(x => x.Token).HasName("InfoToShow_pk2");
+
             entity.Property(x => x.Email).HasMaxLength(64).HasColumnName("Email");
             entity.Property(x => x.Phone).HasMaxLength(20).HasColumnName("Phone");
             entity.Property(x => x.Barcode).HasMaxLength(32).HasColumnName("Barcode");
+            entity.Property(x => x.Token).HasMaxLength(22).HasColumnName("Token");
             entity.Property(x => x.ClientName).HasMaxLength(64).HasColumnName("ClientName");
             entity.Property(x => x.ClientSurname).HasMaxLength(64).HasColumnName("ClientSurname");
             entity.Property(x => x.ClientMiddleName).HasMaxLength(64).HasColumnName("ClientMiddleName");
@@ -106,7 +109,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasOne(x => x.Event).WithMany(x => x.Collectors)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("EventCollector_Event_EventId_fk");
-            
+
             entity.HasOne(x => x.TicketPdfTemplate).WithMany(x => x.ScannersWithTemplate)
                 .HasForeignKey(x => x.TicketPdfTemplateId)
                 .HasConstraintName("EventCollector_TicketPdfTemplate_TicketPdfTemplateId_fk");
@@ -172,7 +175,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
             entity.Property(x => x.Url).HasMaxLength(256).HasColumnName("Url");
         });
-        
+
         modelBuilder.Entity<TicketPdfTemplate>(entity =>
         {
             entity.ToTable("TicketPdfTemplate");
@@ -185,15 +188,15 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.HasName).HasColumnName("HasName").HasDefaultValue(true);
             entity.Property(x => x.HasSurname).HasColumnName("HasSurname").HasDefaultValue(true);
             entity.Property(x => x.HasQrCode).HasColumnName("HasQrCode").HasDefaultValue(true);
-            
+
             entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
             entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
-            
+
             entity.HasOne(x => x.Organizer).WithMany(x => x.TicketPdfTemplates)
                 .HasForeignKey(x => x.OrganizerId)
                 .HasConstraintName("TicketPdfTemplate_User_OrganizerId_fk");
         });
-        
+
         modelBuilder.Entity<Screen>(entity =>
         {
             entity.ToTable("Screen");
@@ -203,10 +206,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.WelcomeText).HasMaxLength(32).HasColumnName("WelcomeText");
             entity.Property(x => x.Description).HasMaxLength(256).HasColumnName("Description");
             entity.Property(x => x.TextColor).HasMaxLength(7).IsFixedLength().HasColumnName("TextColor").HasDefaultValue("#000000");
-            
+
             entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
             entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
-            
+
             entity.HasOne(x => x.Event).WithMany(x => x.Screens)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("Screen_Event_EventId_fk");

@@ -27,7 +27,7 @@ public class EventService : IEventService
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var token = await _tokenService.GetToken(userId);
+        var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var events = _apiProvider.GetEvents(token)
@@ -81,12 +81,6 @@ public class EventService : IEventService
         }
 
         return true;
-    }
-
-    public async Task<bool> ImportEventTickets(long eventId)
-    {
-        var i = await Task.FromResult(0);
-        return i == 0;
     }
 
     public Task GetById()

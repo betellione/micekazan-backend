@@ -1,6 +1,7 @@
 using QuestPDF.Infrastructure;
 using Serilog;
 using WebApp1.Data.FileManager;
+using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
 using WebApp1.Services.EmailSender;
@@ -70,6 +71,13 @@ public static class WebApplicationBuilderExtensions
         QuestPDF.Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
         builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddStores(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IScannerStore, ScannerStore>();
 
         return builder;
     }

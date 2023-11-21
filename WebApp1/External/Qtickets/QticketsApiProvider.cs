@@ -91,35 +91,12 @@ public class QticketsApiProvider : IQticketsApiProvider
         return GetDataList<Ticket>("baskets", token, builder, 50);
     }
 
-    public async Task<Ticket?> GetTicket(string barcode, string token)
+    public async Task<ClientData?> GetTicketClientData(string barcode, string token)
     {
-        var httpClient = _httpClientFactory.CreateClient("Qtickets");
-
-        // language=json
-        var query = $$"""
-                      {
-                        "where": [
-                          {
-                            "column": "barcode",
-                            "value": "{{barcode}}"
-                          }
-                        ],
-                        "perPage": 100
-                      }
-                      """;
-
-        using var content = new StringContent(query, Encoding.UTF8, "application/json");
-        using var request = new HttpRequestMessage();
-        request.Method = HttpMethod.Get;
-        request.RequestUri = new Uri(httpClient.BaseAddress!, "baskets");
-        request.Content = content;
-        request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {token}");
-
-        using var response = await httpClient.SendAsync(request);
-
-        var ticketBase = await response.Content.ReadFromJsonAsync<BaseResponse<Ticket>>();
-        var ticket = ticketBase?.Data.FirstOrDefault();
-
-        return ticket;
+        var builder = new QueryBuilder()
+            .Select("client_email", "client_phone", "client_name", "client_surname", "client_middlename", "organization_name",
+                "work_position")
+            .Where("barcode", barcode);
+        return await GetDataList<ClientData>("baskets", token, builder, 1).FirstOrDefaultAsync();
     }
 }

@@ -13,9 +13,19 @@ public class TokenService : ITokenService
         _context = context;
     }
 
-    public async Task<string?> GetToken(Guid userId)
+    public async Task<string?> GetCurrentOrganizerToken(Guid userId)
     {
         var token = await _context.CreatorTokens.Where(x => x.CreatorId == userId).Select(x => x.Token).FirstOrDefaultAsync();
+        return token;
+    }
+
+    public async Task<string?> GetTicketToken(string barcode)
+    {
+        var token = await _context.Tickets
+            .Where(x => x.Barcode == barcode)
+            .SelectMany(x => x.Event.Creator.Tokens)
+            .Select(x => x.Token)
+            .FirstOrDefaultAsync();
         return token;
     }
 
@@ -56,10 +66,5 @@ public class TokenService : ITokenService
         }
 
         return true;
-    }
-
-    public Task<bool> RemoveToken(Guid userId)
-    {
-        throw new NotImplementedException();
     }
 }
