@@ -38,33 +38,68 @@
         </a>
     </div>
 </div>
-@if (!Model.Scanners.Any())
-{
-    <p>К этому мероприятию пока не добавлены билетеры</p>
-}
-else
-{
-    <div class="table-responsive custom-table mb-3">
-        <table class="table table-dark table-hover align-middle">
-            <thead>
-            <th>
-                <div class="table-col-header">Логин</div>
-            </th>
-            </thead>
-            <tbody>
-            @foreach (var scanner in Model.Scanners)
-            {
-                <tr onclick="location.href='';">
-                    <td class="table-row">
-                        <div hidden>@scanner.Id</div>
-                        <div class="table-col">@scanner.Username</div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-}
+<div class=" justify-content-between mt-3 mb-3">
+    @if (!Model.Scanners.Any())
+    {
+        <p>К этому мероприятию пока не добавлены билетеры</p>
+    }
+    else
+    {
+        <div class="table-responsive custom-table mb-3">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                <th>
+                    <div class="table-col-header">Логин</div>
+                </th>
+                </thead>
+                <tbody>
+                @foreach (var scanner in Model.Scanners)
+                {
+                    <tr onclick="location.href='';">
+                        <td class="table-row">
+                            <div hidden>@scanner.Id</div>
+                            <div class="table-col">@scanner.Username</div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (!Model.Scanners.Any())
+    {
+        <p>На это мероприятие пока никто не пришел</p>
+    }
+    else
+    {
+        <div class="table-responsive custom-table mb-3">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                <th>
+                    <div class="table-col-header">Билеты</div>
+                </th>
+                </thead>
+                <tbody>
+                @foreach (var tickets in Model.PassedTickets)
+                {
+                    <a>
+                        <tr>
+                            <td class="table-row  d-flex">
+                                <div hidden>@tickets.Id</div>
+                                <div class="table-col">@tickets.Name</div>
+                                <div class="table-col">@tickets.Surname</div>
+                                <div class="table-col">@tickets.Patronymic</div>
+                                <div class="table-col">@tickets.PassedAt</div>
+                            </td>
+                        </tr>
+                    </a>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
 
 <div>
     <a asp-action="Index" asp-controller="Event">Вернуться к списку</a>

@@ -66,6 +66,10 @@ public class EventController : Controller
                 {
                     Id = y.ScannerId, Username = y.Scanner.UserName!,
                 }),
+                PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
+                {
+                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
+                }),
             })
             .FirstOrDefaultAsync(x => x.Id == id);
 

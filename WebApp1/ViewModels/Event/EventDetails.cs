@@ -12,4 +12,5 @@ public class EventDetails
     public int AllTickets { get; set; }
     public string CreatorUsername { get; set; } = null!;
     public IEnumerable<Scanner> Scanners { get; set; } = Enumerable.Empty<Scanner>();
+    public IEnumerable<PassedTickets> PassedTickets { get; set; } = Enumerable.Empty<PassedTickets>();
 }
