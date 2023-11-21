@@ -38,7 +38,7 @@ public class TicketService : ITicketService
     private Stream GetQrCode(string token)
     {
         var linkGenerator = _sp.GetRequiredService<LinkGenerator>();
-        var accessor = _sp.GetRequiredService<HttpContextAccessor>();
+        var accessor = _sp.GetRequiredService<IHttpContextAccessor>();
 
         var qrContent = linkGenerator.GetUriByAction(accessor.HttpContext!, "InfoToShow", "Client", new { token, }) ?? string.Empty;
         var qr = _qrCodeGenerator.GenerateQrCode(qrContent);
