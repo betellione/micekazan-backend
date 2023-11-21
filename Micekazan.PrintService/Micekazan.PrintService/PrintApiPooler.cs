@@ -3,8 +3,17 @@ using Micekazan.PrintDispatcher.Contracts;
 
 namespace Micekazan.PrintService;
 
-public class PrintApiPooler(IHttpClientFactory httpClientFactory, Channel<Document> chPrint) : BackgroundService
+public class PrintApiPooler : BackgroundService
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly Channel<Document> _chPrint;
+
+    public PrintApiPooler(IHttpClientFactory httpClientFactory, Channel<Document> chPrint)
+    {
+        _httpClientFactory = httpClientFactory;
+        _chPrint = chPrint;
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         try
@@ -15,14 +24,14 @@ public class PrintApiPooler(IHttpClientFactory httpClientFactory, Channel<Docume
             {
                 try
                 {
-                    var httpClient = httpClientFactory.CreateClient("PrintApi");
+                    var httpClient = _httpClientFactory.CreateClient("PrintApi");
                     using var response = await httpClient.GetAsync("update", stoppingToken);
                     var update = await response.Content.ReadFromJsonAsync<Update>(stoppingToken);
 
                     switch (update!.Kind)
                     {
                         case UpdateKind.PrintCommand:
-                            await chPrint.Writer.WriteAsync(update.Document!, stoppingToken);
+                            await _chPrint.Writer.WriteAsync(update.Document!, stoppingToken);
                             break;
                         default:
                             throw new Exception();

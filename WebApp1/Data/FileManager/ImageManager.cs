@@ -3,14 +3,20 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Data.FileManager;
 
-public class ImageManager(IFileManager fileManager) : IImageManager
+public class ImageManager : IImageManager
 {
     private readonly ILogger _logger = Log.ForContext<IImageManager>();
+    private readonly IFileManager _fileManager;
+
+    public ImageManager(IFileManager fileManager)
+    {
+        _fileManager = fileManager;
+    }
 
     public async Task<string?> SaveImage(Stream image, string imageName, ImageSizeOptions? options = null)
     {
         return options is null
-            ? await fileManager.SaveFile(image, imageName)
+            ? await _fileManager.SaveFile(image, imageName)
             : await SaveImageWithResize(image, imageName, options.Width, options.Height);
     }
 
@@ -19,14 +25,14 @@ public class ImageManager(IFileManager fileManager) : IImageManager
         var fileName = Path.GetFileName(path);
 
         return options is null
-            ? await fileManager.UpdateFile(fileName, image)
+            ? await _fileManager.UpdateFile(fileName, image)
             : await SaveImageWithResize(image, path, options.Width, options.Height, path) is not null;
     }
 
     private async Task<string?> SaveImageWithResize(Stream stream, string imageName, int width, int height, string? path = null)
     {
         var ext = Path.GetExtension(imageName);
-        path ??= fileManager.GeneratePathToSave(ext);
+        path ??= _fileManager.GeneratePathToSave(ext);
 
         try
         {

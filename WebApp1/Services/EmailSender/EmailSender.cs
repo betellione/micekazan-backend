@@ -6,9 +6,14 @@ using WebApp1.Options;
 
 namespace WebApp1.Services.EmailSender;
 
-public class EmailSender(IOptions<SmtpOptions> optionsAccessor) : IEmailSender
+public class EmailSender : IEmailSender
 {
-    private readonly SmtpOptions _options = optionsAccessor.Value;
+    private readonly SmtpOptions _options;
+
+    public EmailSender(IOptions<SmtpOptions> optionsAccessor)
+    {
+        _options = optionsAccessor.Value;
+    }
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {

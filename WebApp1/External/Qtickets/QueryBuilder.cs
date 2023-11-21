@@ -68,15 +68,13 @@ public class QueryBuilder
         public int? PerPage { get; set; }
     }
 
-    private class WhereClause(string column, object? value, string? @operator)
-    {
-        [JsonPropertyName("column")]
-        public string Column { get; set; } = column;
+    private record WhereClause(
+        // ReSharper disable once NotAccessedPositionalProperty.Local
+        [property: JsonPropertyName("column")] string Column,
 
-        [JsonPropertyName("value")]
-        public object? Value { get; set; } = value;
+        // ReSharper disable once NotAccessedPositionalProperty.Local
+        [property: JsonPropertyName("value")] object? Value,
 
-        [JsonPropertyName("operator")]
-        public string? Operator { get; set; } = @operator;
-    }
+        // ReSharper disable once NotAccessedPositionalProperty.Local
+        [property: JsonPropertyName("operator")] string? Operator);
 }

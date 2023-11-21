@@ -9,20 +9,29 @@ using WebApp1.ViewModels.Settings;
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer")]
-public class SettingsController(ITemplateService templateService, UserManager<User> userManager) : Controller
+public class SettingsController : Controller
 {
+    private readonly ITemplateService _templateService;
+    private readonly UserManager<User> _userManager;
+
+    public SettingsController(ITemplateService templateService, UserManager<User> userManager)
+    {
+        _templateService = templateService;
+        _userManager = userManager;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index(long? templateId = null)
     {
-        var userId = new Guid(userManager.GetUserId(User)!);
+        var userId = new Guid(_userManager.GetUserId(User)!);
         var template = templateId is null
             ? new TemplateViewModel()
-            : (await templateService.GetTemplate(templateId.Value))?.MapToViewModel();
-        
+            : (await _templateService.GetTemplate(templateId.Value))?.MapToViewModel();
+
         var vm = new PrintViewModel
         {
             TemplateViewModel = template ?? new TemplateViewModel(),
-            TemplateIds = await templateService.GetTemplateIds(userId),
+            TemplateIds = await _templateService.GetTemplateIds(userId),
             SelectedTemplateId = templateId,
         };
         return View(vm);
@@ -40,8 +49,8 @@ public class SettingsController(ITemplateService templateService, UserManager<Us
     {
         if (!ModelState.IsValid) return View("Index", new PrintViewModel { TemplateViewModel = vm, });
 
-        var userId = new Guid(userManager.GetUserId(User)!);
-        await templateService.AddTemplate(userId, vm);
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        await _templateService.AddTemplate(userId, vm);
 
         return RedirectToAction("Index");
     }
@@ -52,7 +61,7 @@ public class SettingsController(ITemplateService templateService, UserManager<Us
     {
         if (!ModelState.IsValid) return View("Index", new PrintViewModel { TemplateViewModel = vm, });
 
-        await templateService.UpdateTemplate(vm);
+        await _templateService.UpdateTemplate(vm);
 
         return RedirectToAction("Index", new { templateId = vm.Id, });
     }

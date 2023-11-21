@@ -1,8 +1,11 @@
+using QuestPDF.Infrastructure;
 using Serilog;
 using WebApp1.Data.FileManager;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
 using WebApp1.Services.EmailSender;
+using WebApp1.Services.PdfGenerator;
+using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.SmsSender;
 
 namespace WebApp1.Extensions;
@@ -58,6 +61,15 @@ public static class WebApplicationBuilderExtensions
 
         builder.Services.AddKeyedSingleton<IImageManager>("Logo", logoImageManager);
         builder.Services.AddKeyedSingleton<IImageManager>("Background", backgroundImageManager);
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddMediaGenerationServices(this WebApplicationBuilder builder)
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
+        builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
+        builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
 
         return builder;
     }

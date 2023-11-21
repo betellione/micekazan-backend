@@ -8,19 +8,29 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.EventService;
 
-public class EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
-    IQticketsApiProvider apiProvider) : IEventService
+public class EventService : IEventService
 {
     private readonly ILogger _logger = Log.ForContext<IEventService>();
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ITokenService _tokenService;
+    private readonly IQticketsApiProvider _apiProvider;
+
+    public EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
+        IQticketsApiProvider apiProvider)
+    {
+        _contextFactory = contextFactory;
+        _tokenService = tokenService;
+        _apiProvider = apiProvider;
+    }
 
     public async Task<bool> ImportEvents(Guid userId)
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
-        var token = await tokenService.GetToken(userId);
+        var token = await _tokenService.GetToken(userId);
         if (token is null) return false;
 
-        var events = apiProvider.GetEvents(token)
+        var events = _apiProvider.GetEvents(token)
             .Select(x => new Event
             {
                 Id = x.Id,
@@ -38,8 +48,14 @@ public class EventService(IDbContextFactory<ApplicationDbContext> contextFactory
 
         await foreach (var @event in events)
         {
-            if (existed.Contains(@event.Id)) context.Events.Update(@event);
-            else context.Events.Add(@event);
+            if (existed.Contains(@event.Id))
+            {
+                context.Events.Update(@event);
+            }
+            else
+            {
+                context.Events.Add(@event);
+            }
 
             try
             {
@@ -80,7 +96,7 @@ public class EventService(IDbContextFactory<ApplicationDbContext> contextFactory
 
     public async Task<IEnumerable<Event>> GetAll(Guid userId)
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
 
         var events = await context.Events
             .Where(x => x.CreatorId == userId)

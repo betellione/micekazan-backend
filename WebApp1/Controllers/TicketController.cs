@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebApp1.Data;
 using WebApp1.Models;
 using WebApp1.Services.TicketService;
@@ -8,14 +7,22 @@ namespace WebApp1.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class TicketController(ITicketService ticketService, ApplicationDbContext context) : ControllerBase
+public class TicketController : ControllerBase
 {
+    private readonly ITicketService _ticketService;
+    private readonly ApplicationDbContext _context;
+
+    public TicketController(ITicketService ticketService, ApplicationDbContext context)
+    {
+        _ticketService = ticketService;
+        _context = context;
+    }
+
     [HttpPost]
     public async Task<IActionResult> PrintTicket(string code)
     {
-        
         // TODO: Generate PDF if doesn't exist,
-        var pdfUri = await ticketService.GetTicketPdfUri(code);
+        var pdfUri = await _ticketService.GetTicketPdfUri(code);
         if (pdfUri is null) return BadRequest();
 
         var ticketToPrint = new TicketToPrint
@@ -24,11 +31,9 @@ public class TicketController(ITicketService ticketService, ApplicationDbContext
             CreatedAt = DateTime.UtcNow,
             Url = pdfUri,
         };
-        
-        
 
-        context.TicketsToPrint.Add(ticketToPrint);
-        await context.SaveChangesAsync();
+        _context.TicketsToPrint.Add(ticketToPrint);
+        await _context.SaveChangesAsync();
 
         return Ok();
     }

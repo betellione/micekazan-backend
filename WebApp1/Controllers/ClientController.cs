@@ -8,18 +8,28 @@ using WebApp1.Models;
 namespace WebApp1.Controllers;
 
 [Authorize(Roles = "Organizer", Policy = "RegisterConfirmation")]
-public class ClientController(ApplicationDbContext context, UserManager<User> userManager) : Controller
+public class ClientController : Controller
 {
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<User> _userManager;
+
+    public ClientController(ApplicationDbContext context, UserManager<User> userManager)
+    {
+        _context = context;
+        _userManager = userManager;
+    }
+
     // GET: Client
     public async Task<IActionResult> Index()
     {
-        var userId = new Guid(userManager.GetUserId(User)!);
+        var userId = new Guid(_userManager.GetUserId(User)!);
 
-        if (!await context.CreatorTokens.AnyAsync(x => x.CreatorId == userId))
+        if (!await _context.CreatorTokens.AnyAsync(x => x.CreatorId == userId))
         {
             return RedirectToAction("Token", "Manage");
         }
-        return View(await context.Clients.ToListAsync());
+
+        return View(await _context.Clients.ToListAsync());
     }
 
     // GET: Client/Details/5
@@ -30,7 +40,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Clients
+        var client = await _context.Clients
             .FirstOrDefaultAsync(m => m.Id == id);
         if (client == null)
         {
@@ -55,8 +65,8 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
     {
         if (ModelState.IsValid)
         {
-            context.Add(client);
-            await context.SaveChangesAsync();
+            _context.Add(client);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -71,7 +81,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Clients.FindAsync(id);
+        var client = await _context.Clients.FindAsync(id);
         if (client == null)
         {
             return NotFound();
@@ -96,8 +106,8 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
         {
             try
             {
-                context.Update(client);
-                await context.SaveChangesAsync();
+                _context.Update(client);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -123,7 +133,7 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
             return NotFound();
         }
 
-        var client = await context.Clients
+        var client = await _context.Clients
             .FirstOrDefaultAsync(m => m.Id == id);
         if (client == null)
         {
@@ -139,18 +149,18 @@ public class ClientController(ApplicationDbContext context, UserManager<User> us
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
-        var client = await context.Clients.FindAsync(id);
+        var client = await _context.Clients.FindAsync(id);
         if (client != null)
         {
-            context.Clients.Remove(client);
+            _context.Clients.Remove(client);
         }
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private bool ClientExists(long id)
     {
-        return context.Clients.Any(e => e.Id == id);
+        return _context.Clients.Any(e => e.Id == id);
     }
 }

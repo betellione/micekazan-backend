@@ -6,16 +6,22 @@ using ILogger = Serilog.ILogger;
 
 namespace WebApp1.External.Qtickets;
 
-public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticketsApiProvider
+public class QticketsApiProvider : IQticketsApiProvider
 {
     private readonly ILogger _logger = Log.ForContext<IQticketsApiProvider>();
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public QticketsApiProvider(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
 
     private async IAsyncEnumerable<T> GetDataList<T>(string apiMethod, string token, QueryBuilder builder, int maxPages = 10,
         Action<T>? action = null)
     {
         const int itemsPerPage = 100;
 
-        var httpClient = httpClientFactory.CreateClient("Qtickets");
+        var httpClient = _httpClientFactory.CreateClient("Qtickets");
 
         for (var page = 1; page <= maxPages; ++page)
         {
@@ -63,7 +69,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
         static void Func(Event @event)
         {
             @event.ShowIds = new List<long>();
-            
+
             foreach (var show in @event.Shows)
             {
                 ((List<long>)@event.ShowIds).Add(show.Id);
@@ -87,7 +93,7 @@ public class QticketsApiProvider(IHttpClientFactory httpClientFactory) : IQticke
 
     public async Task<Ticket?> GetTicket(string barcode, string token)
     {
-        var httpClient = httpClientFactory.CreateClient("Qtickets");
+        var httpClient = _httpClientFactory.CreateClient("Qtickets");
 
         // language=json
         var query = $$"""
