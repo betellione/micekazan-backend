@@ -11,9 +11,9 @@ public class ScannerStore : IScannerStore
         _contextFactory = contextFactory;
     }
 
-    public Task<string?> GetScannerPrintingToken(Guid scannerId)
+    public async Task<string?> GetScannerPrintingToken(Guid scannerId)
     {
-        using var context = _contextFactory.CreateDbContext();
-        return context.EventScanners.Where(x => x.ScannerId == scannerId).Select(x => x.PrintingToken).FirstOrDefaultAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.EventScanners.Where(x => x.ScannerId == scannerId).Select(x => x.PrintingToken).FirstOrDefaultAsync();
     }
 }

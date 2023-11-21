@@ -119,9 +119,9 @@ public class ClientService : IClientService
         }
     }
 
-    public Task<InfoToShow?> GetClientData(string token)
+    public async Task<InfoToShow?> GetClientData(string token)
     {
-        using var context = _contextFactory.CreateDbContext();
-        return context.InfoToShow.FirstOrDefaultAsync(x => x.Token == token);
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.InfoToShow.FirstOrDefaultAsync(x => x.Token == token);
     }
 }
