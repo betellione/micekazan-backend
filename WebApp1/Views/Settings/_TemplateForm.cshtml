@@ -19,12 +19,12 @@
 
                 <tr>
                     <td>
-                        <label>Горизонтальная</label>
-                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal)
+                        <label>Вертикальная</label>
+                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical", })
                     </td>
                     <td>
-                        <label>Вертикальная</label>
-                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical)
+                        <label>Горизонтальная</label>
+                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal", })
                     </td>
                 </tr>
 
@@ -110,21 +110,23 @@
 <script>
     const print_card = document.getElementById('print_card_component');
 
-    /*// Вертикальная ориентация
-    document.getElementById('orientation_vertical').addEventListener("change", (event) => {
+    // Горизонтальная ориентация
+    document.querySelector(".ticket-orientation-horizontal").addEventListener("change", (event) => {
+        if (event.target.checked) {
+            print_card.classList.remove('vertical');
+            print_card.classList.add('horizon');
+        }
+    });
+
+    // Вертикальная ориентация
+    let vertical = document.querySelector(".ticket-orientation-vertical");
+    vertical.checked = true;
+    vertical.addEventListener("change", (event) => {    
         if (event.target.checked) {
             print_card.classList.remove('horizon');
             print_card.classList.add('vertical');
         }
     });
-
-    // Горизонтальная ориентация
-    document.getElementById('orientation_horizon').addEventListener("change", (event) => {
-        if (event.target.checked) {
-            print_card.classList.remove('vertical');
-            print_card.classList.add('horizon');
-        }
-    });*/
 
     // Отображение (Имя)
     document.getElementById('card_firstname_input').addEventListener("change", (event) => {
