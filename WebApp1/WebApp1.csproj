@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="7.3.0" />
         <PackageReference Include="MailKit" Version="4.3.0" />
+        <PackageReference Include="MimeKit" Version="4.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
@@ -24,7 +25,6 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
-        <PackageReference Include="MimeKit" Version="4.3.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
         <PackageReference Include="QRCoder" Version="1.4.3" />
         <PackageReference Include="QuestPDF" Version="2023.10.2" />
@@ -42,14 +42,6 @@
         <Content Include="..\.dockerignore">
             <Link>.dockerignore</Link>
         </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Settings\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Settings\Screen.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Settings\_Layout.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Settings\_SettingsNav.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Settings\_ViewImports.cshtml" />
     </ItemGroup>
 
 </Project>
