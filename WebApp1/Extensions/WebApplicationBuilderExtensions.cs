@@ -4,10 +4,16 @@ using WebApp1.Data.FileManager;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
+using WebApp1.Services.ClientService;
 using WebApp1.Services.EmailSender;
+using WebApp1.Services.EventService;
 using WebApp1.Services.PdfGenerator;
+using WebApp1.Services.PrintService;
 using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.SmsSender;
+using WebApp1.Services.TemplateService;
+using WebApp1.Services.TicketService;
+using WebApp1.Services.TokenService;
 
 namespace WebApp1.Extensions;
 
@@ -32,7 +38,7 @@ public static class WebApplicationBuilderExtensions
         return services;
     }
 
-    public static WebApplicationBuilder SetUpLogging(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder SetupLogging(this WebApplicationBuilder builder)
     {
         builder.Host.UseSerilog((ctx, configuration) =>
         {
@@ -79,6 +85,26 @@ public static class WebApplicationBuilderExtensions
     {
         builder.Services.AddScoped<IScannerStore, ScannerStore>();
 
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddCustomServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IEventService, EventService>();
+        builder.Services.AddScoped<ITicketService, TicketService>();
+        builder.Services.AddScoped<IClientService, ClientService>();
+        builder.Services.AddScoped<ITemplateService, TemplateService>();
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddScoped<IPrintService, PrintServiceFileWriterMock>();
+        }
+        else
+        {
+            builder.Services.AddScoped<IPrintService, PrintService>();
+        }
+        
         return builder;
     }
 }
