@@ -64,8 +64,8 @@ public class TicketService : ITicketService
     {
         return new TicketDocumentModel
         {
-            Name = info.ClientName,
-            Surname = info.ClientSurname,
+            Name = template.HasName ? info.ClientName : null,
+            Surname = template.HasSurname ? info.ClientSurname : null,
             QrStream = template.HasQrCode ? GetQrCode(info.Token) : null,
             FontColor = template.TextColor,
             IsHorizontal = template.IsHorizontal,
