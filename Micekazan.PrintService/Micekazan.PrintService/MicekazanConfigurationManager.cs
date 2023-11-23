@@ -66,7 +66,6 @@ public class MicekazanConfigurationManager
         if (!File.Exists(FileName))
         {
             _configuration = await NewConfiguration();
-            return;
         }
 
         _configuration = await ExistingConfiguration();
