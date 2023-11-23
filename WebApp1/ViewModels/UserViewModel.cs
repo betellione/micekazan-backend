@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using WebApp1.Models;
 
 namespace WebApp1.ViewModels;
 
@@ -21,6 +23,10 @@ public class UserViewModel
     [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Токен имеет неверный формат. Разрешены только цифры и латинские буквы")]
     public string Token { get; set; } = null!;
 
+    [Display(Name = "Шаблон печати")]
+    public IEnumerable<SelectListItem> TemplateIds { get; set; } = Enumerable.Empty<SelectListItem>();
+    public string? SelectedTemplateId { get; set; }
+    
     public DateTime? ExpiresAt { get; set; }
     public string? EventName { get; set; }
     public long? EventId { get; set; }

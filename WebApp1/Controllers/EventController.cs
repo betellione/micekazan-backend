@@ -192,7 +192,8 @@ public class EventController : Controller
     [HttpGet]
     public IActionResult AddScanner(long? eventId, string? eventName)
     {
-        var vm = new UserViewModel { EventId = eventId, EventName = eventName, };
+        var vm = new UserViewModel { EventId = eventId, EventName = eventName};
+        vm = FillUpMyViewModel(vm);
         return View(vm);
     }
 
@@ -215,14 +216,17 @@ public class EventController : Controller
         if (!result.Succeeded)
         {
             foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
+            vm = FillUpMyViewModel(vm);
             return View(vm);
         }
 
+        _ = long.TryParse(vm.SelectedTemplateId, out var ticketPdfTemplateId);
         var eventCollector = new EventScanner
         {
             ScannerId = user.Id,
             EventId = vm.EventId!.Value,
             PrintingToken = vm.Token,
+            TicketPdfTemplateId = ticketPdfTemplateId
         };
 
         _context.EventScanners.Add(eventCollector);
@@ -231,5 +235,15 @@ public class EventController : Controller
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
 
         return RedirectToAction("Details", new { id = vm.EventId, });
+    }
+
+    private UserViewModel FillUpMyViewModel(UserViewModel vm)
+    {
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        var templates = _context.TicketPdfTemplate
+            .Where(x => x.OrganizerId == userId)
+            .Select(x => new SelectListItem($"Шаблон {x.Id}", x.Id.ToString()));
+        vm.TemplateIds = templates;
+        return vm;
     }
 }

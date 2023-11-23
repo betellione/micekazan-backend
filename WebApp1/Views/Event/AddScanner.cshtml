@@ -9,6 +9,8 @@
     <form asp-controller="Event" asp-action="AddScanner" method="post" class="d-flex flex-column gap-3 mb-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input asp-for="EventId" hidden/>
+        <select asp-for="SelectedTemplateId" class="form-control" asp-items="Model.TemplateIds">
+        </select>
         <div class="form-group">
             <label asp-for="Email" class="control-label">Почта</label>
             <input asp-for="Email" class="form-control"/>
@@ -28,6 +30,12 @@
             <label asp-for="Token" class="control-label"></label>
             <input asp-for="Token" class="form-control"/>
             <span asp-validation-for="Token" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="IsScanner" class="form-label">
+                <input asp-for="IsScanner" class="form-check-input"/>
+                @Html.DisplayNameFor(m => m.IsScanner)
+            </label>
         </div>
         <div class="form-group">
             <button type="submit" class="w-100 btn btn-lg btn-warning">Сохранить</button>
