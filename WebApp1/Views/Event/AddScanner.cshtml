@@ -31,12 +31,12 @@
             <input asp-for="Token" class="form-control"/>
             <span asp-validation-for="Token" class="text-danger"></span>
         </div>
-        <div class="mb-3">
+        @*<div class="mb-3">
             <label asp-for="IsScanner" class="form-label">
                 <input asp-for="IsScanner" class="form-check-input"/>
                 @Html.DisplayNameFor(m => m.IsScanner)
             </label>
-        </div>
+        </div>*@
         <div class="form-group">
             <button type="submit" class="w-100 btn btn-lg btn-warning">Сохранить</button>
         </div>
