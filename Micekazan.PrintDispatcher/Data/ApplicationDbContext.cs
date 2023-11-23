@@ -18,11 +18,15 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<TicketToPrint>(entity =>
         {
             entity.ToTable("TicketToPrint");
-            entity.HasKey(x => x.Barcode).HasName("TicketToPrint_pk");
 
-            entity.Property(x => x.Barcode).HasColumnName("Barcode");
+            entity.HasKey(x => x.Id).HasName("TicketToPrint_pk");
 
-            entity.Property(x => x.Url).HasMaxLength(256).HasColumnName("Url");
+            entity.Property(x => x.Barcode).HasMaxLength(16).HasColumnName("Barcode");
+            entity.Property(x => x.FilePath).HasMaxLength(256).HasColumnName("FilePath");
+            entity.Property(x => x.PrintingToken).HasMaxLength(256).HasColumnName("PrintingToken");
+            entity.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
+            entity.Property(x => x.DeletedAt).HasColumnName("DeletedAt");
+            entity.Property(x => x.PrintedAt).HasColumnName("PrintedAt");
         });
     }
 }

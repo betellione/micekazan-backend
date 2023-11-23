@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using QuestPDF.Infrastructure;
 using Serilog;
 using WebApp1.Data.FileManager;
@@ -96,15 +97,14 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddScoped<IClientService, ClientService>();
         builder.Services.AddScoped<ITemplateService, TemplateService>();
 
-        if (builder.Environment.IsDevelopment())
+        builder.Services.AddHttpClient("PrintService", client =>
         {
-            builder.Services.AddScoped<IPrintService, PrintServiceFileWriterMock>();
-        }
-        else
-        {
-            builder.Services.AddScoped<IPrintService, PrintService>();
-        }
-        
+            client.BaseAddress = new Uri(builder.Configuration["PrintService:BaseApiUri"]!);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer", builder.Configuration["PrintService:BearerToken"]);
+        });
+        builder.Services.AddScoped<IPrintService, PrintService>();
+
         return builder;
     }
 }

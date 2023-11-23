@@ -2,11 +2,11 @@ namespace WebApp1.Services.PrintService;
 
 public class PrintServiceFileWriterMock : IPrintService
 {
-    public async Task<bool> AddTicketToPrintQueue(Stream ticket, string printingToken)
+    public async Task<bool> AddTicketToPrintQueue(Stream ticket, string printingToken, string barcode)
     {
         try
         {
-            var fileName = Guid.NewGuid() + ".pdf";
+            var fileName = $"{Guid.NewGuid()}_{barcode}.pdf";
             await using var file = File.Create(fileName);
             await ticket.CopyToAsync(file);
             return true;

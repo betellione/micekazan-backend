@@ -1,4 +1,4 @@
-namespace Micekazan.PrintDispatcher.Contracts;
+namespace Micekazan.PrintDispatcher.Domain.Contracts;
 
 public class Update
 {

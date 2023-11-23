@@ -7,11 +7,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 		.env = .env
 		.env.sample = .env.sample
+		print.env.sample = print.env.sample
+		print.env = print.env
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintDispatcher", "Micekazan.PrintDispatcher\Micekazan.PrintDispatcher.csproj", "{AFB68EF0-F902-4975-8FF6-6919E502157B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Micekazan.PrintService", "Micekazan.PrintService", "{69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}"
+	ProjectSection(SolutionItems) = preProject
+		Micekazan.PrintService\.gitignore = Micekazan.PrintService\.gitignore
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService", "Micekazan.PrintService\Micekazan.PrintService\Micekazan.PrintService.csproj", "{802A105B-5124-47CA-BBA8-CE7F87969F9F}"
 EndProject
@@ -26,6 +31,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{599BD191-C02C-40F1-8042-7340339A76BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageManagerTests", "ImageManagerTests\ImageManagerTests.csproj", "{91524791-7813-42DE-A041-41EDDE05C8C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService.Windows", "Micekazan.PrintService\Micekazan.PrintService.Windows\Micekazan.PrintService.Windows.csproj", "{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintDispatcher.Domain", "Micekazan.PrintDispatcher.Domain\Micekazan.PrintDispatcher.Domain.csproj", "{CA726842-1082-49A6-BA4C-F178A78F0FE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService.PrintProvider.File", "Micekazan.PrintService\Micekazan.PrintService.PrintProviders\Micekazan.PrintService.PrintProvider.File\Micekazan.PrintService.PrintProvider.File.csproj", "{0F26F51D-4A98-4254-8BA8-22FD3C4254CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.PrintService.File", "Micekazan.PrintService\Micekazan.PrintService.File\Micekazan.PrintService.File.csproj", "{002473A0-CAF1-4A70-81C1-16EE99CB2026}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +74,22 @@ Global
 		{91524791-7813-42DE-A041-41EDDE05C8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91524791-7813-42DE-A041-41EDDE05C8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91524791-7813-42DE-A041-41EDDE05C8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA726842-1082-49A6-BA4C-F178A78F0FE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA726842-1082-49A6-BA4C-F178A78F0FE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA726842-1082-49A6-BA4C-F178A78F0FE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA726842-1082-49A6-BA4C-F178A78F0FE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F26F51D-4A98-4254-8BA8-22FD3C4254CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F26F51D-4A98-4254-8BA8-22FD3C4254CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F26F51D-4A98-4254-8BA8-22FD3C4254CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F26F51D-4A98-4254-8BA8-22FD3C4254CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{002473A0-CAF1-4A70-81C1-16EE99CB2026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{002473A0-CAF1-4A70-81C1-16EE99CB2026}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{002473A0-CAF1-4A70-81C1-16EE99CB2026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{002473A0-CAF1-4A70-81C1-16EE99CB2026}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{802A105B-5124-47CA-BBA8-CE7F87969F9F} = {69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}
@@ -68,5 +97,8 @@ Global
 		{9A6178FB-31F2-49F6-8D00-3626ADCE32B5} = {0551AA21-2979-48A7-9384-FD78C74C53F4}
 		{095FEA1C-353A-4DBE-BFD5-207F574D9B66} = {0551AA21-2979-48A7-9384-FD78C74C53F4}
 		{91524791-7813-42DE-A041-41EDDE05C8C0} = {599BD191-C02C-40F1-8042-7340339A76BB}
+		{DC111C7F-A75C-4EC5-841B-109C2E3EC5F2} = {69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}
+		{0F26F51D-4A98-4254-8BA8-22FD3C4254CB} = {0551AA21-2979-48A7-9384-FD78C74C53F4}
+		{002473A0-CAF1-4A70-81C1-16EE99CB2026} = {69AFF2F2-EB59-41B5-9C70-373CB9FB4B32}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,5 @@
 using System.Threading.Channels;
-using Micekazan.PrintDispatcher.Contracts;
+using Micekazan.PrintDispatcher.Domain.Contracts;
 using Micekazan.PrintService.PrintProvider;
 
 namespace Micekazan.PrintService;
@@ -34,7 +34,7 @@ public class PrintQueue : BackgroundService
                 try
                 {
                     var doc = await _ch.Reader.ReadAsync(stoppingToken);
-                    var httpClient = _httpClientFactory.CreateClient("Qtickets");
+                    var httpClient = _httpClientFactory.CreateClient("PrintApi");
                     using var response = await httpClient.GetAsync(doc.DocumentUri, stoppingToken);
 
                     await using var stream = await response.Content.ReadAsStreamAsync(stoppingToken);

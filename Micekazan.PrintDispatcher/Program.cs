@@ -1,51 +1,84 @@
-using System.Collections.Concurrent;
-using Micekazan.PrintDispatcher.Contracts;
+using System.Net.Mime;
+using Micekazan.PrintDispatcher;
 using Micekazan.PrintDispatcher.Data;
+using Micekazan.PrintDispatcher.Data.FileManager;
+using Micekazan.PrintDispatcher.Domain.Contracts;
+using Micekazan.PrintDispatcher.Extensions;
+using Micekazan.PrintDispatcher.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:Default"]));
+builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.Services.AddSingleton<PrinterQueuesManager>();
+builder.AddFileManagers();
 
 var app = builder.Build();
 
-var updateId = 0L;
-var dick = new ConcurrentDictionary<long, string>();
-
-app.MapGet("/api/update", async (ApplicationDbContext context) =>
+app.MapGet("/api/update", async ([FromHeader(Name = "D-PrintingToken")] string printingToken, PrinterQueuesManager queues) =>
 {
-    var toPrint = await context.TicketsToPrint.OrderBy(x => x.CreatedAt).FirstOrDefaultAsync();
-    if (toPrint is null) return Results.NoContent();
+    var queue = queues[printingToken];
 
-    // const string uri = "https://qtickets.ru/ticket/pdf/xv1OsQ6rSg/ae7a8a67c9d9addaedb1ccbeb02fdb00";
+    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+    var ct = cts.Token;
 
-    var document = new Update
+    try
     {
-        Kind = UpdateKind.PrintCommand,
-        Id = Interlocked.Increment(ref updateId),
-        Document = new Document
-        {
-            DocumentId = "qwerty",
-            DocumentUri = toPrint.Url,
-        },
+        var document = await queue.Reader.ReadAsync(ct);
+        return Results.Ok(new Update { Kind = UpdateKind.PrintCommand, Document = document, });
+    }
+    catch (OperationCanceledException)
+    {
+        return Results.Ok(new Update { Kind = UpdateKind.NoContent, });
+    }
+});
+
+app.MapGet("/pdf/{documentName}", async (string documentName, IPdfManager pdfManager) =>
+{
+    var document = await pdfManager.ReadTicketPdf(documentName);
+    return document is null ? Results.NotFound() : Results.File(document, MediaTypeNames.Application.Pdf, "ticket.pdf");
+});
+
+app.MapPost("/api/ack", () => Results.Ok());
+
+app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string printingToken, [FromForm] string barcode,
+    IPdfManager pdfManager, ApplicationDbContext dbContext, PrinterQueuesManager queues, HttpRequest request) =>
+{
+    await using var stream = file.OpenReadStream();
+    var path = await pdfManager.SaveTicketPdf(stream, barcode);
+    if (path is null) return Results.BadRequest();
+
+    var ticketToPrint = new TicketToPrint
+    {
+        Barcode = barcode,
+        FilePath = path,
+        PrintingToken = printingToken,
     };
 
-    dick.TryAdd(document.Id, toPrint.Barcode);
+    try
+    {
+        dbContext.TicketsToPrint.Add(ticketToPrint);
+        await dbContext.SaveChangesAsync();
+    }
+    catch (Exception)
+    {
+        return Results.BadRequest();
+    }
 
-    return Results.Ok(document);
-});
+    var document = new Document
+    {
+        Id = ticketToPrint.Id,
+        DocumentPath = ticketToPrint.FilePath,
+        DocumentUri = $"{request.Scheme}://{request.Host}/pdf/{Path.GetFileName(path)}",
+    };
 
-app.MapPost("/api/ack", async (Acknowledgement ack, ApplicationDbContext context) =>
-{
-    if (!dick.TryGetValue(ack.UpdateId, out var barcode)) return Results.NotFound();
-
-    var toPrint = await context.TicketsToPrint.FindAsync(barcode);
-    if (toPrint is null) return Results.NotFound();
-
-    context.TicketsToPrint.Remove(toPrint);
-    await context.SaveChangesAsync();
+    var queue = queues[printingToken];
+    await queue.Writer.WriteAsync(document);
 
     return Results.Ok();
-});
+}).DisableAntiforgery();
+
+await app.SetupDatabaseAsync();
 
 app.Run();

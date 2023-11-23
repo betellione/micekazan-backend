@@ -4,11 +4,11 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Micekazan.PrintDispatcher\Micekazan.PrintDispatcher.csproj" />
-      <ProjectReference Include="..\Micekazan.PrintService.PrintProviders\Micekazan.PrintService.PrintProvider.Windows\Micekazan.PrintService.PrintProvider.Windows.csproj" />
+      <ProjectReference Include="..\..\Micekazan.PrintDispatcher.Domain\Micekazan.PrintDispatcher.Domain.csproj" />
       <ProjectReference Include="..\Micekazan.PrintService.PrintProviders\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj" />
     </ItemGroup>
 
