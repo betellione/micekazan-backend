@@ -85,7 +85,7 @@ public class MicekazanConfigurationManager
     private static void PrintNewConfigurationMessage()
     {
         Console.WriteLine("Не было найдено существующей конфигурации.");
-        Console.WriteLine("Токен сервиса был сгенерирован заново.");
+        Console.WriteLine("Был сгенерирован токен сервиса.");
     }
 
     private static void PrintConfigurationMessage()
@@ -96,7 +96,7 @@ public class MicekazanConfigurationManager
     private static void PrintReadyMessage()
     {
         Console.WriteLine("Сервис печати готов и может принимать входящие запросы на печать.");
-        Console.WriteLine("Будет исполььзован принтер по умолчанию.");
+        Console.WriteLine("Будет использован принтер по умолчанию.");
     }
 
     #endregion
