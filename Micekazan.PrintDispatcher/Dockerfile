@@ -3,9 +3,14 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+
 COPY Micekazan.PrintDispatcher/Micekazan.PrintDispatcher.csproj Micekazan.PrintDispatcher/
+COPY Micekazan.PrintDispatcher.Domain/Micekazan.PrintDispatcher.Domain.csproj Micekazan.PrintDispatcher.Domain/
+
+COPY Micekazan.PrintDispatcher/ Micekazan.PrintDispatcher/
+COPY Micekazan.PrintDispatcher.Domain/ Micekazan.PrintDispatcher.Domain/
+
 RUN dotnet restore "Micekazan.PrintDispatcher/Micekazan.PrintDispatcher.csproj"
-COPY . .
 WORKDIR /src/Micekazan.PrintDispatcher
 RUN dotnet build "Micekazan.PrintDispatcher.csproj" -c Release -o /app/build
 

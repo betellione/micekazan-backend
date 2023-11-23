@@ -1,6 +1,5 @@
 ﻿services:
   api:
-    user: root
     container_name: mice_kazan_api
     build:
       context: .
@@ -15,7 +14,6 @@
     depends_on:
       - db
   print:
-    user: root
     container_name: mice_kazan_print
     build:
       context: .
@@ -31,7 +29,7 @@
       - db
   db:
     container_name: mice_kazan_db
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     restart: always
     env_file: .env
     ports:

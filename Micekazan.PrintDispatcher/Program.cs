@@ -8,12 +8,7 @@ using Micekazan.PrintDispatcher.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
-{
-    WebRootPath = "wwwroot",
-    Args = args,
-    ContentRootPath = Directory.GetCurrentDirectory(),
-});
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.Services.AddSingleton<PrinterQueuesManager>();
