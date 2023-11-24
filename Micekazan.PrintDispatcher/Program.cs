@@ -48,7 +48,7 @@ app.MapGet("/pdf/{documentName}", async (string documentName, IPdfManager pdfMan
 app.MapPost("/api/ack", () => Results.Ok());
 
 app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string printingToken, [FromForm] string barcode,
-    IPdfManager pdfManager, ApplicationDbContext dbContext, PrinterQueuesManager queues, HttpRequest request) =>
+    IPdfManager pdfManager, ApplicationDbContext dbContext, PrinterQueuesManager queues) =>
 {
     await using var stream = file.OpenReadStream();
     var path = await pdfManager.SaveTicketPdf(stream, barcode);
@@ -75,7 +75,7 @@ app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string 
     {
         Id = ticketToPrint.Id,
         DocumentPath = ticketToPrint.FilePath,
-        DocumentUri = $"{request.Scheme}://{request.Host}/pdf/{Path.GetFileName(path)}",
+        DocumentUri = $"/pdf/{Path.GetFileName(path)}",
     };
 
     var queue = queues[printingToken];

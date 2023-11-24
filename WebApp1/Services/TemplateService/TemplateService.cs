@@ -68,6 +68,21 @@ public class TemplateService : ITemplateService
         return template;
     }
 
+    public async Task<TicketPdfTemplate?> GetTemplateForScanner(Guid scannerId)
+    {
+        var template = await _context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .Select(x => x.TicketPdfTemplate)
+            .FirstOrDefaultAsync();
+
+        if (template is null) return null;
+
+        if (template.LogoUri is not null) template.LogoUri = Path.Combine("wwwroot", template.LogoUri);
+        if (template.BackgroundUri is not null) template.BackgroundUri = Path.Combine("wwwroot", template.BackgroundUri);
+
+        return template;
+    }
+
     public async Task<IEnumerable<long>> GetTemplateIds(Guid userId)
     {
         var ids = await _context.TicketPdfTemplate.Where(x => x.OrganizerId == userId).OrderBy(x => x.Id).Select(x => x.Id).ToListAsync();

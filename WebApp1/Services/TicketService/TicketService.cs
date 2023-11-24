@@ -6,6 +6,7 @@ using WebApp1.Models;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.PdfGenerator;
 using WebApp1.Services.QrCodeGenerator;
+using WebApp1.Services.TemplateService;
 using WebApp1.Services.TokenService;
 using ILogger = Serilog.ILogger;
 
@@ -21,10 +22,11 @@ public class TicketService : ITicketService
     private readonly IPdfGenerator _pdfGenerator;
     private readonly IQrCodeGenerator _qrCodeGenerator;
     private readonly IServiceProvider _sp;
+    private readonly ITemplateService _templateService;
 
     public TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
         IQticketsApiProvider apiProvider, IClientService clientService, IServiceProvider sp, IPdfGenerator pdfGenerator,
-        IQrCodeGenerator qrCodeGenerator)
+        IQrCodeGenerator qrCodeGenerator, ITemplateService templateService)
     {
         _contextFactory = contextFactory;
         _tokenService = tokenService;
@@ -32,6 +34,7 @@ public class TicketService : ITicketService
         _clientService = clientService;
         _pdfGenerator = pdfGenerator;
         _qrCodeGenerator = qrCodeGenerator;
+        _templateService = templateService;
         _sp = sp;
     }
 
@@ -80,12 +83,7 @@ public class TicketService : ITicketService
         if (info is null) return null;
 
         await using var context = await _contextFactory.CreateDbContextAsync();
-
-        var template = await context.EventScanners
-            .Where(x => x.ScannerId == scannerId)
-            .Select(x => x.TicketPdfTemplate)
-            .FirstOrDefaultAsync();
-
+        var template = await _templateService.GetTemplateForScanner(scannerId);
         await using var model = template is null ? CreateDefaultDocumentModel(info) : CreateDocumentModelFromTemplate(info, template);
 
         var pdf = _pdfGenerator.GenerateTicketPdf(model);

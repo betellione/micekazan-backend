@@ -8,6 +8,7 @@
       - 8080:8080
     environment:
       - HTTP_PORTS=8080
+      - PrintService__BaseApiUri=http://print:8080/api/
     env_file: .env
     volumes:
       - api:/root/.aspnet/DataProtection-Keys
@@ -20,9 +21,9 @@
       context: .
       dockerfile: Micekazan.PrintDispatcher/Dockerfile
     ports:
-      - 8081:8082
+      - 8081:8080
     environment:
-      - HTTP_PORTS=8082
+      - HTTP_PORTS=8080
     env_file: print.env
     volumes:
       - print:/root/.aspnet/DataProtection-Keys
