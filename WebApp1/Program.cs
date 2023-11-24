@@ -4,7 +4,12 @@ using WebApp1.Extensions;
 using WebApp1.Models;
 using WebApp1.Options;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = Directory.GetCurrentDirectory(),
+    WebRootPath = "wwwroot",
+});
 
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));

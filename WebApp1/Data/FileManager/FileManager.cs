@@ -87,4 +87,9 @@ public class FileManager : IFileManager
         var fileName = Guid.NewGuid() + fileExtension;
         return Path.Combine(_fullBasePath, fileName);
     }
+    
+    public string GetRelativePath(string path)
+    {
+        return Path.GetRelativePath(_basePath, path);
+    }
 }

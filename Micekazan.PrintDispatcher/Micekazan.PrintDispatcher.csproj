@@ -32,4 +32,8 @@
         <ProjectReference Include="..\Micekazan.PrintDispatcher.Domain\Micekazan.PrintDispatcher.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>

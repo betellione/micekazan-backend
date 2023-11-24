@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp1", "WebApp1\WebApp1.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{241433BE-B15C-4683-BBBE-A1B9B706F92D}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
+		docker-compose.yaml = docker-compose.yaml
 		.env = .env
 		.env.sample = .env.sample
 		print.env.sample = print.env.sample

@@ -11,6 +11,8 @@ public class TemplateService : ITemplateService
 {
     private readonly ApplicationDbContext _context;
     private readonly IServiceProvider _sp;
+    private static readonly ImageSizeOptions HorizontalImageSizeOptions = new(1500, 1125);
+    private static readonly ImageSizeOptions VerticalImageSizeOptions = new(1125, 1500);
 
     public TemplateService(ApplicationDbContext context, IServiceProvider sp)
     {
@@ -31,7 +33,8 @@ public class TemplateService : ITemplateService
         if (vm.Background is not null)
         {
             var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
+            backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
         }
 
         var template = new TicketPdfTemplate
@@ -94,7 +97,8 @@ public class TemplateService : ITemplateService
         if (vm.Background is not null)
         {
             var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
+            var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
             template.BackgroundUri = backgroundPath;
         }
 

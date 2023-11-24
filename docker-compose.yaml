@@ -11,6 +11,7 @@
     env_file: .env
     volumes:
       - api:/root/.aspnet/DataProtection-Keys
+      - api_wwwroot:/app/wwwroot
     depends_on:
       - db
   print:
@@ -25,6 +26,7 @@
     env_file: print.env
     volumes:
       - print:/root/.aspnet/DataProtection-Keys
+      - print_wwwroot:/app/wwwroot
     depends_on:
       - db
   db:
@@ -41,5 +43,9 @@ volumes:
     name: mice_kazan_db
   api:
     name: mice_kazan_api
+  api_wwwroot:
+      name: mice_kazan_api_wwwroot
   print:
     name: mice_kazan_print
+  print_wwwroot:
+    name: mice_kazan_print_wwwroot/

@@ -43,13 +43,14 @@ public class ImageManager : IImageManager
                 x.Resize(new ResizeOptions
                 {
                     Size = new Size(width, height),
-                    Mode = ResizeMode.Max,
+                    Mode = ResizeMode.Crop,
+                    Position = AnchorPositionMode.Center,
                 });
             });
 
             await image.SaveAsync(path);
 
-            return path;
+            return _fileManager.GetRelativePath(path);
         }
         catch (Exception e)
         {
