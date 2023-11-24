@@ -20,9 +20,9 @@
       context: .
       dockerfile: Micekazan.PrintDispatcher/Dockerfile
     ports:
-      - 8081:8080
+      - 8081:8082
     environment:
-      - HTTP_PORTS=8080
+      - HTTP_PORTS=8082
     env_file: print.env
     volumes:
       - print:/root/.aspnet/DataProtection-Keys
@@ -48,4 +48,4 @@ volumes:
   print:
     name: mice_kazan_print
   print_wwwroot:
-    name: mice_kazan_print_wwwroot/
+    name: mice_kazan_print_wwwroot

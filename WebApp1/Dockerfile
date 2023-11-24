@@ -18,4 +18,5 @@ RUN dotnet publish "WebApp1.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY WebApp1/wwwroot/fonts/Montserrat-Bold.ttf /
 ENTRYPOINT ["dotnet", "WebApp1.dll"]

@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using Serilog;
 using WebApp1.Data.FileManager;
@@ -78,6 +79,7 @@ public static class WebApplicationBuilderExtensions
         QuestPDF.Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
         builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
+        FontManager.RegisterFont(File.OpenRead("/Montserrat-Bold.ttf"));
 
         return builder;
     }
