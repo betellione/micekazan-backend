@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.Extensions.Options;
 using Serilog;
 using WebApp1.External.SmsRu.Contracts.Responses;
@@ -36,8 +37,34 @@ public class SmsRuApiProvider : ISmsRuApiProvider
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Error while sending SMS");
+            _logger.Error(e, "Error while sending SMS to a number {PhoneNumber}", phoneNumber);
             return false;
+        }
+    }
+
+    public async Task<string?> MakePhoneCall(string phoneNumber, IPAddress? ip = null)
+    {
+        var client = _httpClientFactory.CreateClient("SmsRu");
+        var token = _options.Token;
+
+        try
+        {
+            _logger.Information("Making a phone call to number {PhoneNumber}", phoneNumber);
+
+            // TODO: Check if IP is not in private network or is not blocked or smth.
+            // var ipParameter = ip is null ? string.Empty : $"&ip={ip}";
+            var ipParameter = string.Empty;
+            using var response = await client.PostAsync($"code/call?phone={phoneNumber}{ipParameter}&api_id={token}", null);
+            var json = await response.Content.ReadFromJsonAsync<PhoneCallResponse>();
+
+            _logger.Information("Phone call made with response {PhoneCallResponse}", json);
+
+            return json?.Status == "OK" ? json.Code.ToString("0000") : null;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while making a phone call to a number {PhoneNumber}", phoneNumber);
+            return null;
         }
     }
 }

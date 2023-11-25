@@ -10,6 +10,8 @@ using WebApp1.Services.ClientService;
 using WebApp1.Services.EmailSender;
 using WebApp1.Services.EventService;
 using WebApp1.Services.PdfGenerator;
+using WebApp1.Services.PhoneConfirmationService;
+using WebApp1.Services.PhoneConfirmationService.PhoneCaller;
 using WebApp1.Services.PrintService;
 using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.SmsSender;
@@ -36,6 +38,9 @@ public static class WebApplicationBuilderExtensions
 
         services.AddHttpClient("SmsRu", client => { client.BaseAddress = new Uri("https://sms.ru/"); });
         services.AddSingleton<ISmsRuApiProvider, SmsRuApiProvider>();
+        services.AddSingleton<IPhoneCaller, PhoneCaller>();
+
+        services.AddScoped<IPhoneConfirmationService, PhoneConfirmationService>();
 
         return services;
     }
@@ -79,7 +84,16 @@ public static class WebApplicationBuilderExtensions
         QuestPDF.Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
         builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
-        FontManager.RegisterFont(File.OpenRead("/Montserrat-Bold.ttf"));
+
+        try
+        {
+            using var stream = File.OpenRead("/Montserrat-Bold.ttf");
+            FontManager.RegisterFont(stream);
+        }
+        catch
+        {
+            // ignored
+        }
 
         return builder;
     }

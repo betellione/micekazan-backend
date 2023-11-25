@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Screen> Screen { get; set; }
     public DbSet<InfoToShow> InfoToShow { get; set; }
     public DbSet<Client> Clients { get; set; }
+    public DbSet<UserConfirmationPhoneCall> UserConfirmationPhoneCalls { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -202,6 +203,23 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasOne(x => x.Event).WithMany(x => x.Screens)
                 .HasForeignKey(x => x.EventId)
                 .HasConstraintName("Screen_Event_EventId_fk");
+        });
+
+        modelBuilder.Entity<UserConfirmationPhoneCall>(entity =>
+        {
+            entity.ToTable("UserConfirmationPhoneCall");
+
+            entity.HasKey(x => new { x.UserId, x.Timestamp, }).HasName("UserConfirmationPhoneCall_pk");
+
+            entity.Property(x => x.UserId).HasColumnName("UserId");
+            entity.Property(x => x.UserPhoneNumber).HasMaxLength(16).HasColumnName("UserPhoneNumber");
+            entity.Property(x => x.ConfirmationToken).HasMaxLength(6).IsFixedLength().HasColumnName("ConfirmationToken");
+            entity.Property(x => x.ConfirmationPhoneCode).HasMaxLength(4).IsFixedLength().HasColumnName("ConfirmationPhoneCode");
+            entity.Property(x => x.Timestamp).HasColumnName("Timestamp");
+
+            entity.HasOne(x => x.User).WithMany(x => x.ConfirmationPhoneCalls)
+                .HasForeignKey(x => x.UserId)
+                .HasConstraintName("UserConfirmationPhoneCall_User_UserId_fk");
         });
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
 
@@ -17,7 +18,7 @@ public static class WebApplicationExtensions
         {
             using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await dbContext.Database.EnsureCreatedAsync();
+            await dbContext.Database.MigrateAsync();
             await Seeding.SeedAdmin(scope.ServiceProvider);
 
             return app;

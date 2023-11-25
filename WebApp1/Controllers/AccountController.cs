@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Models;
 using WebApp1.Services.EmailSender;
-using WebApp1.Services.SmsSender;
+using WebApp1.Services.PhoneConfirmationService;
 using WebApp1.ViewModels.Account;
 
 namespace WebApp1.Controllers;
@@ -18,15 +18,15 @@ public class AccountController : Controller
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IEmailSender _emailSender;
-    private readonly ISmsSender _smsSender;
+    private readonly IPhoneConfirmationService _phoneService;
 
     public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
-        ISmsSender smsSender)
+        IPhoneConfirmationService phoneService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _emailSender = emailSender;
-        _smsSender = smsSender;
+        _phoneService = phoneService;
     }
 
     /// <summary>
@@ -228,8 +228,9 @@ public class AccountController : Controller
             return View(vm);
         }
 
-        var smsCode = await _userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
-        await _smsSender.SendSmsAsync(vm.PhoneNumber, $"{smsCode} - код подтверждения номера телефона в Micekazan");
+        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, vm.PhoneNumber);
+        var ip = Request.HttpContext.Connection.RemoteIpAddress;
+        _ = await _phoneService.MakePhoneCallWithToken(user.Id, user.PhoneNumber!, token, ip);
 
         await _signInManager.SignInAsync(user, false, "Default");
 
@@ -399,7 +400,8 @@ public class AccountController : Controller
             return View(vm);
         }
 
-        var result = await _userManager.ChangePhoneNumberAsync(user, vm.PhoneNumber, vm.Code);
+        var token = await _phoneService.GetConfirmationTokenForUser(user.Id, user.PhoneNumber!, vm.Code);
+        var result = await _userManager.ChangePhoneNumberAsync(user, vm.PhoneNumber, token);
 
         if (result.Succeeded)
         {

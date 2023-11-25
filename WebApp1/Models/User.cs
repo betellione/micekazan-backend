@@ -18,10 +18,12 @@ public class User : IdentityUser<Guid>
     public IEnumerable<Event> EventsCreated => _eventsCreated ??= new List<Event>();
     public IEnumerable<TicketPdfTemplate> TicketPdfTemplates => _ticketPdfTemplates ??= new List<TicketPdfTemplate>();
     public IEnumerable<EventScanner> EventsToCollect => _eventsToCollect ??= new List<EventScanner>();
+    public IEnumerable<UserConfirmationPhoneCall> ConfirmationPhoneCalls => _confirmationPhoneCalls ??= new List<UserConfirmationPhoneCall>();
 
     private List<CreatorToken>? _tokens;
     private List<TokenUpdate>? _tokenUpdates;
     private List<Event>? _eventsCreated;
     private List<TicketPdfTemplate>? _ticketPdfTemplates;
     private List<EventScanner>? _eventsToCollect;
+    private List<UserConfirmationPhoneCall>? _confirmationPhoneCalls;
 }
