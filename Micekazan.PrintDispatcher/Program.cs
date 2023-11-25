@@ -1,5 +1,7 @@
 using System.Net.Mime;
 using Micekazan.PrintDispatcher;
+using Micekazan.PrintDispatcher.Auth;
+using Micekazan.PrintDispatcher.Auth.ApiKey;
 using Micekazan.PrintDispatcher.Data;
 using Micekazan.PrintDispatcher.Data.FileManager;
 using Micekazan.PrintDispatcher.Domain.Contracts;
@@ -15,13 +17,17 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     WebRootPath = "wwwroot",
 });
 
+builder.Services.Configure<ApiKeyOptions>(builder.Configuration.GetSection("ApiKeyOptions"));
+
 builder.Services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.Services.AddSingleton<PrinterQueuesManager>();
 builder.AddFileManagers();
 
 var app = builder.Build();
 
-app.MapGet("/api/update", async ([FromHeader(Name = "D-PrintingToken")] string printingToken, PrinterQueuesManager queues) =>
+var appApi = app.MapGroup("/api");
+
+appApi.MapGet("/update", async ([FromHeader(Name = "D-PrintingToken")] string printingToken, PrinterQueuesManager queues) =>
 {
     var queue = queues[printingToken];
 
@@ -45,9 +51,9 @@ app.MapGet("/pdf/{documentName}", async (string documentName, IPdfManager pdfMan
     return document is null ? Results.NotFound() : Results.File(document, MediaTypeNames.Application.Pdf, "ticket.pdf");
 });
 
-app.MapPost("/api/ack", () => Results.Ok());
+appApi.MapPost("/ack", () => Results.Ok());
 
-app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string printingToken, [FromForm] string barcode,
+appApi.MapPost("/enqueue", async ([FromForm] IFormFile file, [FromForm] string printingToken, [FromForm] string barcode,
     IPdfManager pdfManager, ApplicationDbContext dbContext, PrinterQueuesManager queues) =>
 {
     await using var stream = file.OpenReadStream();
@@ -74,7 +80,6 @@ app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string 
     var document = new Document
     {
         Id = ticketToPrint.Id,
-        DocumentPath = ticketToPrint.FilePath,
         DocumentUri = $"/pdf/{Path.GetFileName(path)}",
     };
 
@@ -82,7 +87,7 @@ app.MapPost("/api/enqueue", async ([FromForm] IFormFile file, [FromForm] string 
     await queue.Writer.WriteAsync(document);
 
     return Results.Ok();
-}).DisableAntiforgery();
+}).DisableAntiforgery().AddEndpointFilter<ApiKeyEndpointFilter>();
 
 await app.SetupDatabaseAsync();
 
