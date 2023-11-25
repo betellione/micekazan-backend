@@ -83,9 +83,12 @@ public class EventService : IEventService
         return true;
     }
 
-    public Task GetById()
+    public async Task<Event?> GetById(long id)
     {
-        throw new NotImplementedException();
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var events = await context.Events.FirstAsync(x => x.Id == id);
+        return events;
     }
 
     public async Task<IEnumerable<Event>> GetAll(Guid userId)
@@ -98,4 +101,53 @@ public class EventService : IEventService
             .ToListAsync();
         return events;
     }
+
+    public async Task<int> GetAllTicketsNumber(Guid scannerId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var allTicketsNumber = await context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .SelectMany(x => x.Event.Tickets)
+            .CountAsync();
+        return allTicketsNumber;
+    }
+
+    public async Task<int> GetScannedTicketsNumber(Guid scannerId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var scannedTickets = await context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .SelectMany(x => x.Event.Tickets)
+            .Where(x => x.PassedAt != null)
+            .CountAsync();
+        return scannedTickets;
+    }
+
+    public async Task<int> GetAllTicketsNumber(long eventId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var allTicketsNumber = await context.Events
+            .SelectMany(x => x.Tickets)
+            .CountAsync();
+        return allTicketsNumber;
+    }
+
+    public async Task<int> GetScannedTicketsNumber(long eventId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var allTicketsNumber = await context.Events
+            .SelectMany(x => x.Tickets).Where(x => x.PassedAt != null)
+            .CountAsync();
+        return allTicketsNumber;
+    }
+
+    private async Task<long> GetEventByScanner(Guid scannerId, ApplicationDbContext context)
+    {
+        var eventId = await context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .Select(x => x.EventId)
+            .FirstOrDefaultAsync();
+        return eventId;
+    }
+    
 }

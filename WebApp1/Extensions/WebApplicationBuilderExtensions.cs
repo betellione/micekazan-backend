@@ -101,6 +101,7 @@ public static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder AddStores(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IScannerStore, ScannerStore>();
+        builder.Services.AddScoped<IScreenStore, ScreenStore>();
 
         return builder;
     }

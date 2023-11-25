@@ -233,6 +233,8 @@ public class EventController : Controller
         await _context.SaveChangesAsync();
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Actor, "Automate"));
+        
 
         return RedirectToAction("Details", new { id = vm.EventId, });
     }

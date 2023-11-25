@@ -19,7 +19,7 @@ public class UserViewModel
     [DisplayName("Токен")]
     [MinLength(32)]
     [MaxLength(256)]
-    [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Токен имеет неверный формат. Разрешены только цифры и латинские буквы")]
+    [RegularExpression("^[a-zA-Z0-9_-]*$", ErrorMessage = "Токен имеет неверный формат. Разрешены только цифры и латинские буквы")]
     public string Token { get; set; } = null!;
 
     [Display(Name = "Шаблон печати")]

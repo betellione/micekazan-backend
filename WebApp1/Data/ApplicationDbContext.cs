@@ -113,6 +113,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasOne(x => x.TicketPdfTemplate).WithMany(x => x.ScannersWithTemplate)
                 .HasForeignKey(x => x.TicketPdfTemplateId)
                 .HasConstraintName("EventCollector_TicketPdfTemplate_TicketPdfTemplateId_fk");
+            entity.HasIndex(x => x.ScannerId).IsUnique();
         });
 
         modelBuilder.Entity<Ticket>(entity =>
