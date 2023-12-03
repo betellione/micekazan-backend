@@ -20,4 +20,17 @@ public static class Event
             Scanners = scanners.Select(x => x.MapToScanner()),
         };
     }
+    
+    public static ScreenViewModel MapToEventDisplay(this Screen @screen)
+    {
+        return new ScreenViewModel
+        {
+            Id = @screen.Id,
+            MainText = @screen.WelcomeText,
+            Description = @screen.Description,
+            LogoPath = @screen.LogoUri,
+            BackgroundPath = @screen.BackgroundUri,
+            BackgroundColor = @screen.TextColor,
+        };
+    }
 }

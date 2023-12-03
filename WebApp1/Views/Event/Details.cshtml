@@ -5,7 +5,14 @@
 
 <div class="d-flex justify-content-between mt-3 mb-3">
     <h1 class="d-block">@Model.Name</h1>
-    <h1 class="d-block">Количество отсканированных билетов: @Model.AllTickets</h1>
+     <div class="d-block">
+         <a asp-controller="Event"
+            asp-action="EditDisplay"
+            asp-route-eventId="@Model.Id"
+            class="w-100 btn btn-lg btn-warning">
+             Настроить экран
+         </a>
+        </div>
 </div>
 <div>
     <hr/>

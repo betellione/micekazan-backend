@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
+using WebApp1.Data.Stores;
+using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
 using WebApp1.ViewModels;
@@ -16,13 +18,15 @@ namespace WebApp1.Controllers;
 public class EventController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IScreenStore _screenStore;
     private readonly IEventService _eventService;
     private readonly IUserStore<User> _userStore;
     private readonly UserManager<User> _userManager;
 
-    public EventController(ApplicationDbContext context, IEventService eventService, IUserStore<User> userStore,
+    public EventController(ApplicationDbContext context, IScreenStore screenStore, IEventService eventService, IUserStore<User> userStore,
         UserManager<User> userManager)
     {
+        _screenStore = screenStore;
         _context = context;
         _eventService = eventService;
         _userStore = userStore;
@@ -237,6 +241,33 @@ public class EventController : Controller
         
 
         return RedirectToAction("Details", new { id = vm.EventId, });
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> EditDisplay(long eventId)
+    {
+        var waiting = await _screenStore.GetScreenByType(eventId, ScreenTypes.Waiting) ?? new Screen();
+        var success = await _screenStore.GetScreenByType(eventId, ScreenTypes.Success) ?? new Screen();
+        var fail = await _screenStore.GetScreenByType(eventId, ScreenTypes.Fail) ?? new Screen();
+        var vm = new DisplayViewModel()
+        {
+            EventId = eventId,
+            WaitingDisplayViewModel = Mapping.Event.MapToEventDisplay(waiting),
+            SuccessDisplayViewModel = Mapping.Event.MapToEventDisplay(success),
+            FailDisplayViewModel = Mapping.Event.MapToEventDisplay(fail),
+        };
+        return View(vm);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditDisplay(DisplayViewModel vm)
+    {
+        if (!ModelState.IsValid) return View(vm);
+        await _screenStore.AddTemplate(vm.EventId, vm.WaitingDisplayViewModel, ScreenTypes.Waiting);
+        await _screenStore.AddTemplate(vm.EventId, vm.SuccessDisplayViewModel, ScreenTypes.Success);
+        await _screenStore.AddTemplate(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
+        return RedirectToAction("Index");
     }
 
     private UserViewModel FillUpMyViewModel(UserViewModel vm)
