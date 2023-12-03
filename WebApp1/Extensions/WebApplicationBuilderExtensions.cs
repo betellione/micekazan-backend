@@ -118,7 +118,7 @@ public static class WebApplicationBuilderExtensions
         {
             client.BaseAddress = new Uri(builder.Configuration["PrintService:BaseApiUri"]!);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Bearer", builder.Configuration["PrintService:BearerToken"]);
+                "Bearer", builder.Configuration["PrintService:ApiKey"]);
         });
         builder.Services.AddScoped<IPrintService, PrintService>();
 

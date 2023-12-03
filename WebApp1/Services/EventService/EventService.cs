@@ -140,14 +140,4 @@ public class EventService : IEventService
             .CountAsync();
         return allTicketsNumber;
     }
-
-    private async Task<long> GetEventByScanner(Guid scannerId, ApplicationDbContext context)
-    {
-        var eventId = await context.EventScanners
-            .Where(x => x.ScannerId == scannerId)
-            .Select(x => x.EventId)
-            .FirstOrDefaultAsync();
-        return eventId;
-    }
-    
 }
