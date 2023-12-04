@@ -4,7 +4,7 @@ namespace WebApp1.ViewModels.Event;
 
 public class ScreenViewModel
 {
-    public long? Id { get; set; }
+    public long Id { get; set; }
 
     [DisplayName("Главный текст")]
     public string? MainText { get; set; }

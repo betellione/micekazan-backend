@@ -192,6 +192,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         {
             entity.ToTable("Screen");
             entity.HasKey(x => x.Id).HasName("Screen_pk");
+            entity.HasIndex(x => new { x.EventId, x.Type, }).IsUnique();
 
             entity.Property(x => x.Type).HasColumnName("Type");
             entity.Property(x => x.WelcomeText).HasMaxLength(32).HasColumnName("WelcomeText");

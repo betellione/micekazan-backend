@@ -9,8 +9,11 @@
 <div id="tab_print" class="tabcontent">
     <h1>@ViewData["Title"]</h1>
     
-    <form asp-controller="Event" asp-action="EditDisplay" id="registerForm" method="post">
+    <form asp-controller="Event" asp-action="EditDisplay" id="registerForm" method="post" enctype="multipart/form-data">
         <input asp-for="EventId" hidden/>
+        <input asp-for="WaitingDisplayViewModel.Id" hidden/>
+        <input asp-for="SuccessDisplayViewModel.Id" hidden/>
+        <input asp-for="FailDisplayViewModel.Id" hidden/>
         <h1>Режим ожидания</h1>
         <div class="page_content">
             <div class="page_block">

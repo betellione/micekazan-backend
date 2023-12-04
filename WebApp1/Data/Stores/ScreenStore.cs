@@ -1,15 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using WebApp1.Data.FileManager;
 using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.ViewModels.Event;
+using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Data.Stores;
 
-public class ScreenStore: IScreenStore
+public class ScreenStore : IScreenStore
 {
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly IServiceProvider _sp;
+    private readonly ILogger _logger = Log.ForContext<IScreenStore>();
 
     public ScreenStore(IDbContextFactory<ApplicationDbContext> contextFactory, IServiceProvider sp)
     {
@@ -24,7 +27,35 @@ public class ScreenStore: IScreenStore
         return screen;
     }
 
-    public async Task<long> AddTemplate(long eventId, ScreenViewModel vm, ScreenTypes type)
+    public async Task<Screen> AddOrUpdateScreen(long eventId, ScreenViewModel vm, ScreenTypes type)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var screen = await context.Screen.FirstOrDefaultAsync(x => x.EventId == eventId && x.Type == type);
+        if (screen is null) return await AddScreen(context, eventId, vm, type);
+        return await UpdateScreen(context, screen, vm);
+    }
+
+    private async Task<Screen> UpdateScreen(ApplicationDbContext context, Screen screen, ScreenViewModel vm)
+    {
+        screen.WelcomeText = vm.MainText ?? string.Empty;
+        screen.Description = vm.Description ?? string.Empty;
+        screen.TextColor = vm.BackgroundColor;
+        screen.LogoUri = vm.LogoPath;
+        screen.BackgroundUri = vm.BackgroundPath;
+
+        try
+        {
+            await context.SaveChangesAsync();
+            return screen;
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Паша пидор потому что:");
+            throw;
+        }
+    }
+
+    private async Task<Screen> AddScreen(ApplicationDbContext context, long eventId, ScreenViewModel vm, ScreenTypes type)
     {
         string? logoPath = null, backgroundPath = null;
 
@@ -40,7 +71,7 @@ public class ScreenStore: IScreenStore
             backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
         }
 
-        var template = new Screen()
+        var screen = new Screen
         {
             BackgroundUri = backgroundPath,
             LogoUri = logoPath,
@@ -49,18 +80,17 @@ public class ScreenStore: IScreenStore
             TextColor = vm.BackgroundColor,
             Type = type,
             EventId = eventId,
-            
         };
-        await using var context = await _contextFactory.CreateDbContextAsync();
         try
         {
-            context.Screen.Add(template);
+            context.Screen.Add(screen);
             await context.SaveChangesAsync();
-            return template.Id;
+            return screen;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return 0;
+            _logger.Error(e, "Паша пидор потому что:");
+            throw;
         }
     }
 }

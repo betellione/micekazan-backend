@@ -249,7 +249,7 @@ public class EventController : Controller
         var waiting = await _screenStore.GetScreenByType(eventId, ScreenTypes.Waiting) ?? new Screen();
         var success = await _screenStore.GetScreenByType(eventId, ScreenTypes.Success) ?? new Screen();
         var fail = await _screenStore.GetScreenByType(eventId, ScreenTypes.Fail) ?? new Screen();
-        var vm = new DisplayViewModel()
+        var vm = new DisplayViewModel
         {
             EventId = eventId,
             WaitingDisplayViewModel = Mapping.Event.MapToEventDisplay(waiting),
@@ -264,9 +264,9 @@ public class EventController : Controller
     public async Task<IActionResult> EditDisplay(DisplayViewModel vm)
     {
         if (!ModelState.IsValid) return View(vm);
-        await _screenStore.AddTemplate(vm.EventId, vm.WaitingDisplayViewModel, ScreenTypes.Waiting);
-        await _screenStore.AddTemplate(vm.EventId, vm.SuccessDisplayViewModel, ScreenTypes.Success);
-        await _screenStore.AddTemplate(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
+        await _screenStore.AddOrUpdateScreen(vm.EventId, vm.WaitingDisplayViewModel, ScreenTypes.Waiting);
+        await _screenStore.AddOrUpdateScreen(vm.EventId, vm.SuccessDisplayViewModel, ScreenTypes.Success);
+        await _screenStore.AddOrUpdateScreen(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
         return RedirectToAction("Index");
     }
 

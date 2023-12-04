@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApp1.Data.Stores;
-using WebApp1.Enums;
 using WebApp1.Mapping;
 using WebApp1.Models;
-using WebApp1.Services.EventService;
 using WebApp1.Services.TemplateService;
 using WebApp1.ViewModels.Settings;
 
@@ -15,15 +12,11 @@ namespace WebApp1.Controllers;
 public class SettingsController : Controller
 {
     private readonly ITemplateService _templateService;
-    private readonly IEventService _eventService;
-    private readonly IScreenStore _screenStore;
     private readonly UserManager<User> _userManager;
 
-    public SettingsController(ITemplateService templateService, IEventService eventService, IScreenStore screenStore, UserManager<User> userManager)
+    public SettingsController(ITemplateService templateService, UserManager<User> userManager)
     {
-        _screenStore = screenStore;
         _templateService = templateService;
-        _eventService = eventService;
         _userManager = userManager;
     }
 
@@ -43,21 +36,7 @@ public class SettingsController : Controller
         };
         return View(vm);
     }
-
-    [HttpGet]
-    public async Task<IActionResult> Display(long eventId)
-    {
-        var userId = new Guid(_userManager.GetUserId(User)!);
-        var selectedEvent = await _eventService.GetById(eventId);
-        var events = await _eventService.GetAll(userId);
-        var waiting = _screenStore.GetScreenByType(eventId, ScreenTypes.Waiting);
-        var vm = new DisplayViewModel()
-        {
-            Events = events,
-            SelectedEventId = selectedEvent?.Id,
-        };
-        return View();
-    }
+    
 
     [HttpPost]
     [ValidateAntiForgeryToken]
