@@ -1,20 +1,12 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace WebApp1.ViewModels;
+namespace WebApp1.ViewModels.Event;
 
-public class UserViewModel
+public class EditScannerViewModel
 {
     public Guid Id { get; set; }
-    [Display(Name = "Email")]
-    [EmailAddress]
-    [DataType(DataType.EmailAddress)]
-    public string Email { get; set; } = null!;
-
-    [Display(Name = "Password")]
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = null!;
 
     [DisplayName("Токен")]
     [MinLength(32)]

@@ -62,7 +62,9 @@
                 <tbody>
                 @foreach (var scanner in Model.Scanners)
                 {
-                    <tr onclick="location.href='';">
+                    <tr onclick="location.href='@Url.Action("EditScanner", new { userId = scanner.Id,
+                                                    eventId = Model.Id,
+                                                    eventName = Model.Name})';">
                         <td class="table-row">
                             <div hidden>@scanner.Id</div>
                             <div class="table-col">@scanner.Username</div>

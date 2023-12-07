@@ -1,26 +1,18 @@
-@model WebApp1.ViewModels.UserViewModel
+@model WebApp1.ViewModels.Event.EditScannerViewModel
 @{
-    ViewData["Title"] = "Создание билетера для мероприятия";
+    ViewData["Title"] = "Изменение билетера для мероприятия";
 }
 
 <div class="col-md-4 mx-auto">
     <h1 class="text-center">@ViewData["Title"]</h1>
     <h2 class="text-center">@Model.EventName</h2>
-    <form asp-controller="Event" asp-action="AddScanner" method="post" class="d-flex flex-column gap-3 mb-3">
+    <form asp-controller="Event" asp-action="EditScanner" method="post" class="d-flex flex-column gap-3 mb-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input asp-for="EventId" hidden/>
+        <input asp-for="EventName" hidden/>
+        <input asp-for="Id" hidden/>
         <select asp-for="SelectedTemplateId" class="form-control" asp-items="Model.TemplateIds">
         </select>
-        <div class="form-group">
-            <label asp-for="Email" class="control-label">Почта</label>
-            <input asp-for="Email" class="form-control"/>
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Password" class="control-label">Пароль</label>
-            <input asp-for="Password" class="form-control"/>
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
         <div class="form-group">
             <label asp-for="Token" class="control-label"></label>
             <input asp-for="Token" class="form-control"/>

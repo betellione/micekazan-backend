@@ -19,13 +19,15 @@ public class EventController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly IScreenStore _screenStore;
+    private readonly IScannerStore _scannerStore;
     private readonly IEventService _eventService;
     private readonly IUserStore<User> _userStore;
     private readonly UserManager<User> _userManager;
 
-    public EventController(ApplicationDbContext context, IScreenStore screenStore, IEventService eventService, IUserStore<User> userStore,
+    public EventController(ApplicationDbContext context, IScreenStore screenStore, IScannerStore scannerStore, IEventService eventService, IUserStore<User> userStore,
         UserManager<User> userManager)
     {
+        _scannerStore = scannerStore;
         _screenStore = screenStore;
         _context = context;
         _eventService = eventService;
@@ -237,9 +239,48 @@ public class EventController : Controller
         await _context.SaveChangesAsync();
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, vm.Email));
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Actor, "Automate"));
+        if (vm.IsAutomate)
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Actor, "Automate"));
         
 
+        return RedirectToAction("Details", new { id = vm.EventId, });
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> EditScanner(long? eventId, string? eventName, Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var scanner = await _scannerStore.FindScannerById(userId);
+        if (user is null || scanner is null) return NotFound();
+        var isAutomate = (await _userManager.GetClaimsAsync(user)).Any(x => x.Value == "Automate");
+
+        var vm = new EditScannerViewModel
+        {
+            Id = userId,
+            Token = scanner.PrintingToken,
+            SelectedTemplateId = scanner.TicketPdfTemplateId.ToString(),
+            IsAutomate = isAutomate,
+            EventId = eventId,
+            EventName = eventName
+        };
+        vm = FillUpMyEditViewModel(vm);
+        return View(vm);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> EditScanner(EditScannerViewModel vm)
+    {
+        var user = await _userManager.FindByIdAsync(vm.Id.ToString());
+        var scanner = await _context.EventScanners.FirstOrDefaultAsync(x => x.ScannerId == vm.Id);
+        if (user is null || scanner is null) return NotFound();
+        
+        _ = long.TryParse(vm.SelectedTemplateId, out var ticketPdfTemplateId);
+        scanner.TicketPdfTemplateId = ticketPdfTemplateId;
+        scanner.PrintingToken = vm.Token;
+        if (await _scannerStore.SetClaimsForScanner(vm.Id, vm.IsAutomate))
+            await _userManager.UpdateSecurityStampAsync(user);
+        
+        await _context.SaveChangesAsync();
         return RedirectToAction("Details", new { id = vm.EventId, });
     }
     
@@ -271,6 +312,16 @@ public class EventController : Controller
     }
 
     private UserViewModel FillUpMyViewModel(UserViewModel vm)
+    {
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        var templates = _context.TicketPdfTemplate
+            .Where(x => x.OrganizerId == userId)
+            .Select(x => new SelectListItem($"Шаблон {x.Id}", x.Id.ToString()));
+        vm.TemplateIds = templates;
+        return vm;
+    }
+    
+    private EditScannerViewModel FillUpMyEditViewModel(EditScannerViewModel vm)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
         var templates = _context.TicketPdfTemplate
