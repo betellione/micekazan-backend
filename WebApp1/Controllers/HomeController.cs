@@ -52,13 +52,15 @@ public class HomeController : Controller
     {
         var scanner = await _scannerStore.FindScannerById(new Guid(_userManager.GetUserId(User)!));
         if (scanner is null) return NotFound();
-        var vm = await _screenStore.GetScreenByType(scanner.EventId, ScreenTypes.Waiting);
-        if (vm is null) return View(new ScreenViewModel());
+        var screen = await _screenStore.GetScreenByType(scanner.EventId, ScreenTypes.Waiting);
+        if (screen is null) return View(new ScreenViewModel());
         return View(new ScreenViewModel
         {
-            MainText = vm.WelcomeText,
-            Description = vm.Description,
-            BackgroundColor = vm.TextColor,
+            MainText = screen.WelcomeText,
+            Description = screen.Description,
+            BackgroundColor = screen.TextColor,
+            LogoPath = screen.LogoUri,
+            BackgroundPath = screen.BackgroundUri,
         });
     }
 }
