@@ -7,90 +7,104 @@
 <form asp-controller="Settings" method="post" enctype="multipart/form-data">
     <input asp-for="Id" hidden/>
 
-    <div class="page_content">
-        <div class="page_block">
+    <div class="content_block">
+        <div class="content_row">
             <table>
                 <tr>
-                    <td>Цвет шрифта</td>
+                    <td><p>Цвет шрифта<p></td>
                     <td colspan="3">
                         <input asp-for="FontColor" type="color" id="card_color_input">
                     </td>
                 </tr>
 
                 <tr>
+                    <td><p>Вертикальная</p></td>
                     <td>
-                        <label>Вертикальная</label>
-                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical", })
-                    </td>
-                    <td>
-                        <label>Горизонтальная</label>
-                        @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal", })
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <label asp-for="DisplayName" class="form-label">
-                            <input asp-for="DisplayName" class="form-check-input" id="card_firstname_input" checked="checked"/>
-                            @Html.DisplayNameFor(m => m.DisplayName)
+                        <label class="custom-radio-btm">
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical", })
+                            <span class="point"></span>
                         </label>
                     </td>
+                    <td><p>Горизонтальная</p></td>
                     <td>
-                        <label asp-for="DisplaySurname" class="form-label">
-                            <input asp-for="DisplaySurname" class="form-check-input" id="card_lastname_input" checked="checked"/>
-                            @Html.DisplayNameFor(m => m.DisplaySurname)
+                        <label class="custom-radio-btm">
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal", })
+                            <span class="point"></span>
                         </label>
                     </td>
                 </tr>
 
                 <tr>
+                    <td><p>Имя</p></td>
                     <td>
-                        <label asp-for="DisplayQrCode" class="form-label">
-                            <input asp-for="DisplayQrCode" class="form-check-input" id="card_qr_input" checked="checked"/>
-                            @Html.DisplayNameFor(m => m.DisplayQrCode)
+                        <label asp-for="DisplayName" class="custom-checkbox-btm">
+                            <input asp-for="DisplayName" id="card_firstname_input" checked="checked"/>
+                            <!--@Html.DisplayNameFor(m => m.DisplayName)-->
+                            <span class="point"></span>
+                        </label>
+                    </td>
+                    <td><p>Фамилия</p></td>
+                    <td>
+                        <label asp-for="DisplaySurname" class="custom-checkbox-btm">
+                            <input asp-for="DisplaySurname" id="card_lastname_input" checked="checked"/>
+                            <!--@Html.DisplayNameFor(m => m.DisplaySurname)-->
+                            <span class="point"></span>
+                        </label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><p>QR код</p></td>
+                    <td>
+                        <label asp-for="DisplayQrCode" class="custom-checkbox-btm">
+                            <input asp-for="DisplayQrCode" id="card_qr_input" checked="checked"/>
+                            <!--@Html.DisplayNameFor(m => m.DisplayQrCode)-->
+                            <span class="point"></span>
                         </label>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label asp-for="Logo"></label>
+                        <p><label asp-for="Logo"></label></p>
                     </td>
                     <td>
-                        <input asp-for="Logo" id="card_logo_input">
-                        <span asp-validation-for="Logo"></span>
+                        <label class="custom-file-btm">
+                            <input asp-for="Logo" id="card_logo_input">
+                            <span asp-validation-for="Logo">ЗАГРУЗИТЬ ФАЙЛ</span>
+                        </label>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label asp-for="Background"></label>
+                        <p><label asp-for="Background"></label></p>
                     </td>
                     <td>
-                        <input asp-for="Background" id="card_background_input">
-                        <span asp-validation-for="Background"></span>
+                        <label class="custom-file-btm">
+                            <input asp-for="Background" id="card_background_input">
+                            <span asp-validation-for="Background">ЗАГРУЗИТЬ ФАЙЛ</span>
+                        </label>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <div class="page_block">
-            <div class="component">
-                <div class="component_main_block vertical" id="print_card_component" style="background-image: url('@Model.BackgroundPath');">
-                    <div>
-                        <div class="component_card_logo">
-                            <img id="card_logo" alt="" src="@Model.LogoPath">
+        <div class="content_row">
+            <div class="preview_block">
+                <div class="preview vertical" id="print_card_component" style="background-image: url('@Model.BackgroundPath');">
+                    <div class="preview_logo">
+                        <img id="card_logo" alt="" src="@Model.LogoPath">
+                    </div>
+                    <div class="preview_info">
+                        <div class="preview_name" id="card_firstname">
+                            Сергеей
                         </div>
-                        <div class="component_card_info">
-                            <div class="block_right size_50" id="card_firstname">
-                                Сергеей
-                            </div>
-                            <div class="block_right size_40" id="card_lastname">
-                                Прокофьев
-                            </div>
-                            <div id="card_qr">
-                                <img src="/images/qr_logo.png" alt="">
-                            </div>
+                        <div class="preview_surname" id="card_lastname">
+                            Прокофьев
+                        </div>
+                        <div class="preview_qr" id="card_qr">
+                            <img src="/images/qr_logo.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -98,12 +112,17 @@
         </div>
     </div>
 
-    <div class="page_content">
+    <div class="content_bottom">
         @if (Model.Id is not null)
         {
-            <button type="submit" asp-action="UpdateTemplate">Сохранить</button>
+            <div class="custom-btm">
+                <button type="submit" asp-action="UpdateTemplate">Сохранить</button>
+            </div>
         }
-        <button type="submit" asp-action="SaveTemplateAsNew">Сохранить как новый шаблон</button>
+
+        <div class="custom-btm">
+            <button type="submit" asp-action="SaveTemplateAsNew">Сохранить как ШАБЛОН</button>
+        </div>
     </div>
 </form>
 

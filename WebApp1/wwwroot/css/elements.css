@@ -1,0 +1,247 @@
+@font-face {
+  font-family: TildaSansBlack;
+  src: url("/fonts/TildaSans-Black.ttf");
+}
+
+@font-face {
+  font-family: TildaSansBold;
+  src: url("/fonts/TildaSans-Bold.ttf");
+}
+
+@font-face {
+  font-family: TildaSansLight;
+  src: url("/fonts/TildaSans-Light.ttf");
+}
+
+:root {
+	--main-color: #ffca2c;
+	--secondary-color: #ffcf3e;
+	--bs-link-hover-color: white;
+}
+
+/* Шрифты */
+h1, h3 {
+    margin: 0 !important;
+}
+
+h1 {
+    font-family: TildaSansBlack;
+    font-size: 30px;
+
+    padding: 10px 0;
+}
+
+h3 {
+    font-family: TildaSansBold;
+    font-size: 25px;
+
+    padding: 10px 0;
+}
+
+p {
+    font-family: TildaSansLight;
+    font-size: 20px;
+
+    display: contents;
+}
+
+/* Кнопки */
+.custom-btm {
+    display: contents;
+}
+
+.custom-btm button {
+    color: #000;
+    background-color: var(--main-color);
+
+    font-family: TildaSansBold;
+    font-size: 20px;
+
+    padding: 5px 25px;
+    margin: 25px 0;
+    margin-right: 15px;
+
+    border: none;
+}
+
+/* Выпадающий список */
+.custom-select {
+  display: contents;
+}
+
+.custom-select select {
+    appearance: none;
+    outline: none;
+
+    font-family: TildaSansLight;
+    font-size: 20px;
+
+    border: 1px solid #a0a0a0;
+    border-radius: 5px;
+
+    padding: 5px 15px 5px 10px;
+    margin: 0 15px;
+
+    -webkit-appearance: none;
+}
+
+/* Radio button */
+.custom-radio-btm {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.custom-radio-btm input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-radio-btm .point {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+
+    background-color: #fff;
+    border: 2px solid #000;
+}
+
+.custom-radio-btm input:checked ~ .point {
+    background-color: #fff;
+}
+
+.custom-radio-btm .point:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-radio-btm input:checked ~ .point:after {
+    display: block;
+}
+
+.custom-radio-btm .point:after {
+ 	top: 2px;
+	left: 2px;
+
+	width: 17px;
+	height: 17px;
+
+	background: #000;
+}
+
+/* Checkbox button */
+.custom-checkbox-btm {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.custom-checkbox-btm input {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 25px;
+    width: 25px;
+
+    z-index: 100;
+
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox-btm .point {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+
+    background-color: #fff;
+    border: 2px solid #000;
+}
+
+.custom-checkbox-btm input:checked ~ .point {
+    background-color: #fff;
+}
+
+.custom-checkbox-btm .point:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox-btm input:checked ~ .point:after {
+    display: block;
+}
+
+.custom-checkbox-btm .point:after {
+ 	top: 2px;
+	left: 2px;
+
+	width: 17px;
+	height: 17px;
+
+	background: #000;
+}
+
+/* File button */
+.custom-file-btm {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-file-btm span {
+	position: relative;
+	display: inline-block;
+
+	background-color: #000;
+	color: #fff;
+
+	cursor: pointer;
+	outline: 0;
+	text-decoration: none;
+
+    padding: 5px 20px;
+    margin: 0;
+
+	font-family: TildaSansBold;
+    font-size: 20px;
+
+	box-sizing: border-box;
+	border: none;
+}
+
+.custom-file-btm input[type=file] {
+	position: absolute;
+
+	z-index: -1;
+	opacity: 0;
+	width: 0;
+	height: 0;
+
+	display: block;
+}
+
+.custom-file-btm:hover span {
+    color: #000;
+	background-color: var(--main-color);
+}

@@ -8,35 +8,43 @@
 }
 
 <div id="tab_print" class="tabcontent">
-    <h1>@ViewData["Title"]</h1>
+    <div class="content_header">
+        <h1>@ViewData["Title"]</h1>
 
-    <label>Шаблон</label>
-    <select onchange="PassSelectedValue(this)">
-        @if (Model.TemplateIds.Any())
-        {
-            foreach (var templateId in Model.TemplateIds)
-            {
-                if (templateId == Model.SelectedTemplateId)
+        <label>Шаблон</label>
+
+        <div class="custom-select">
+            <select onchange="PassSelectedValue(this)">
+                @if (Model.TemplateIds.Any())
                 {
-                    <option value="@templateId" selected>Шаблон @templateId</option>
+                    foreach (var templateId in Model.TemplateIds)
+                    {
+                        if (templateId == Model.SelectedTemplateId)
+                        {
+                            <option value="@templateId" selected>Шаблон @templateId</option>
+                        }
+                        else
+                        {
+                            <option value="@templateId">Шаблон @templateId</option>
+                        }
+                    }
+                }
+                @if (Model.SelectedTemplateId is null)
+                {
+                    <option value="" selected>Новый шаблон</option>
                 }
                 else
                 {
-                    <option value="@templateId">Шаблон @templateId</option>
+                    <option value="">Новый шаблон</option>
                 }
-            }
-        }
-        @if (Model.SelectedTemplateId is null)
-        {
-            <option value="" selected>Новый шаблон</option>
-        }
-        else
-        {
-            <option value="">Новый шаблон</option>
-        }
-    </select>
+            </select>
+        </div>
 
-    <h3>Ориентация и данные</h3>
+        <hr>
+
+        <h3>Ориентация и данные</h3>
+    </div>
+
     <partial name="_TemplateForm" model="Model.TemplateViewModel"/>
 </div>
 

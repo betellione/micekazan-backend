@@ -9,12 +9,6 @@ body {
 	color: var(--main-color);
 }
 
-:root {
-	--main-color: #ffca2c;
-	--secondary-color: #ffcf3e;
-	--bs-link-hover-color: white;
-}
-
 a.navbar-brand {
 	white-space: normal;
 	text-align: center;
@@ -302,7 +296,9 @@ html body header nav .container div button {
     border: 1px solid white !important;
 
     padding: 20px;
-    font-size: 20px;
+
+    font-family: TildaSansBlack;
+    font-size: 25px;
 
     max-height: 72px;
 }
@@ -353,7 +349,10 @@ body>div.container {
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
-    font-size: 17px;
+
+    font-family: TildaSansBold;
+    font-size: 20px;
+
     text-decoration: none;
     color: #717171;
     border: 1px solid white;
@@ -378,13 +377,19 @@ body>div.container {
 }
 
 .tabcontent {
-    padding: 20px 0;
+    color: black;
+
+    padding: 0 10px 100px 10px;
+    margin-top: 20px;
+
     border-top: none;
 }
 
+/*
 .tabcontent h1, .tabcontent h2, .tabcontent h3 {
     margin: 20px 0;
 }
+*/
 
 /* Таблица */
 .tabcontent table {
@@ -559,6 +564,9 @@ td.cell-left {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+
+    border: 1px solid black;
+    border-radius: 5px;
 
     background-color: white;
     color: black;

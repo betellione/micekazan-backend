@@ -1,0 +1,119 @@
+@font-face {
+  font-family: TildaSansBlack;
+  src: url("/fonts/TildaSans-Black.ttf");
+}
+
+@font-face {
+  font-family: TildaSansBold;
+  src: url("/fonts/TildaSans-Bold.ttf");
+}
+
+@font-face {
+  font-family: TildaSansLight;
+  src: url("/fonts/TildaSans-Light.ttf");
+}
+
+:root {
+	--main-color: #ffca2c;
+	--secondary-color: #ffcf3e;
+	--bs-link-hover-color: white;
+}
+
+.content_header {
+    background-color: #ffffff;
+
+    padding: 0 10px 0 10px;
+}
+
+.content_block {
+    background-color: #ffffff;
+
+    display: flex;
+    flex-direction: row;
+
+    padding: 0 10px 0 10px;
+}
+
+.content_row {
+    width: 100%;
+}
+
+.content_block table {
+
+}
+
+.preview_block {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.preview {
+    border: 1px solid #000;
+    margin: 0 auto;
+
+    position: relative;
+
+    font-family: TildaSansBlack;
+}
+
+.preview.vertical {
+    width: 225px;
+    height: 300px;
+
+    font-size: 19px;
+}
+
+.preview.horizon {
+    width: 300px;
+    height: 225px;
+
+    font-size: 25px;
+}
+
+.preview_logo {
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    text-align: center;
+}
+
+.preview_info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+
+    text-align: right;
+    gap: 0 10px;
+
+    width: 100%;
+}
+
+.preview_name {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row-reverse;
+}
+
+.preview_surname {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row-reverse;
+}
+
+.preview_qr {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+}
+
+.preview_qr img {
+    width: 100%;
+}
