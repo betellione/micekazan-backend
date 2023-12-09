@@ -1,0 +1,11 @@
+@using WebApp1.Views.Event
+
+<div class="tab">
+    <a class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
+    <a class="tablinks">Билетеры</a>
+    <a class="tablinks">Статистика</a>
+    <a class="tablinks">Настройка печати</a>
+    <a class="tablinks" asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.Id">Настройка экрана</a>
+</div>
+
+<div class="tab_line"></div>

@@ -1,12 +1,14 @@
 @model DisplayViewModel
 
-@using WebApp1.Views.Settings
+@using WebApp1.Views.Event
 @{
     ViewData["Title"] = "Настройка Экрана";
-    ViewData["ActivePage"] = SettingsNavPages.Display;
+    ViewData["ActivePage"] = EventNavPages.Details;
 }
 
-<div id="tab_print" class="tabcontent">
+<partial name="_DetailsNav"/>
+
+<div class="tabcontent">
     <h1>@ViewData["Title"]</h1>
     
     <form asp-controller="Event" asp-action="EditDisplay" id="registerForm" method="post" enctype="multipart/form-data">

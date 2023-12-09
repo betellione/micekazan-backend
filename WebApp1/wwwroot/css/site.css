@@ -301,6 +301,8 @@ html body header nav .container div button {
     font-size: 25px;
 
     max-height: 72px;
+
+    text-transform: uppercase;
 }
 
 html body header nav .container div button:hover {
@@ -340,6 +342,8 @@ body>div.container {
     position: relative;
     margin-bottom: -2px;
     z-index: 90;
+
+    display: flex;
 }
 
 .tab a {
@@ -356,6 +360,11 @@ body>div.container {
     text-decoration: none;
     color: #717171;
     border: 1px solid white;
+
+    text-transform: uppercase;
+
+    width: 100%;
+    text-align: center;
 }
 
 .tab a:hover {
