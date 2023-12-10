@@ -24,7 +24,7 @@ public class FileManager : IFileManager
         {
             await using var fileStream = new FileStream(savePath, FileMode.Create);
             await file.CopyToAsync(fileStream);
-            return Path.GetRelativePath(_basePath, savePath);
+            return Path.GetRelativePath(_basePath, savePath).Replace('\\', '/');
         }
         catch (Exception e)
         {
