@@ -1,11 +1,36 @@
 @using WebApp1.Views.Event
 
 <div class="tab">
-    <a class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
-    <a class="tablinks">Билетеры</a>
-    <a class="tablinks">Статистика</a>
-    <a class="tablinks">Настройка печати</a>
-    <a class="tablinks" asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.Id">Настройка экрана</a>
+    @if (Model.GetType().GetProperty("EventId") != null) {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
+    } else {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
+    }
+
+    @if (Model.GetType().GetProperty("EventId") != null) {
+        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.EventId" class="tablinks">Билетеры</a>
+    } else {
+        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.Id" class="tablinks">Билетеры</a>
+    }
+
+    @if (Model.GetType().GetProperty("EventId") != null) {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks">Статистика</a>
+    } else {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks">Статистика</a>
+    }
+    
+
+    @if (Model.GetType().GetProperty("EventId") != null) {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks">Настройка печати</a>
+    } else {
+        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks">Настройка печати</a>
+    }
+
+    @if (Model.GetType().GetProperty("EventId") != null) {
+        <a asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.EventId" class="tablinks @EventNavPages.EditDisplayNavClass(ViewContext)">Настройка экрана</a>
+    } else {
+        <a asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.Id" class="tablinks @EventNavPages.EditDisplayNavClass(ViewContext)">Настройка экрана</a>
+    }
 </div>
 
 <div class="tab_line"></div>

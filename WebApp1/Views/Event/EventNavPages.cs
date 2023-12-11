@@ -5,10 +5,19 @@ namespace WebApp1.Views.Event;
 public static class EventNavPages
 {
     public const string Details = "Details";
+    public const string Tickets = "Tickets";
+    public const string Statistics = "Statistics";
+    public const string EditPrint = "EditPrint";
+    public const string EditDisplay = "EditDisplay";
 
     public static string DetailsNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, Details);
+    }
+
+    public static string EditDisplayNavClass(ViewContext viewContext)
+    {
+        return PageNavClass(viewContext, EditDisplay);
     }
 
     private static string PageNavClass(ViewContext viewContext, string page)

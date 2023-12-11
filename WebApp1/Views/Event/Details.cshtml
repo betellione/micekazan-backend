@@ -2,29 +2,54 @@
 
 @using WebApp1.Views.Event
 @{
-    ViewData["Title"] = "Информация";
+    Layout = "_Layout";
     ViewData["ActivePage"] = EventNavPages.Details;
 }
 
-<partial name="_DetailsNav"/>
-
 <div class="tabcontent">
-    <dl class="row">
-        <dt class="col-sm-2">Наименование</dt>
-        <dd class="col-sm-10">@Model.Name</dd>
-        <dt class="col-sm-2">Город</dt>
-        <dd class="col-sm-10">@Model.City</dd>
-        <dt class="col-sm-2">Создано</dt>
-        <dd class="col-sm-10">@Model.CreatedAt</dd>
-        <dt class="col-sm-2">Начало</dt>
-        <dd class="col-sm-10">@Model.StartedAt</dd>
-        <dt class="col-sm-2">Завершение</dt>
-        <dd class="col-sm-10">@Model.FinishedAt</dd>
-        <dt class="col-sm-2">Создатель</dt>
-        <dd class="col-sm-10">@Model.CreatorUsername</dd>
-    </dl>
+    <div class="content_block">
+        <dl class="row">
+            <dt class="col-sm-2">
+                <p>Наименование</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.Name</p>
+            </dd>
+            <dt class="col-sm-2">
+                <p>Город</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.City</p>
+            </dd>
+            <dt class="col-sm-2">
+                <p>Создано</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.CreatedAt</p>
+            </dd>
+            <dt class="col-sm-2">
+                <p>Начало</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.StartedAt</p>
+            </dd>
+            <dt class="col-sm-2">
+                <p>Завершение</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.FinishedAt</p>
+            </dd>
+            <dt class="col-sm-2">
+                <p>Создатель</p>
+            </dt>
+            <dd class="col-sm-10">
+                <p>@Model.CreatorUsername</p>
+            </dd>
+        </dl>
+    </div>
 </div>
 
+@*<partial name="_DetailsNav"/>
 <!--
 <div class="d-flex justify-content-between mt-3 mb-3">
     <h1 class="d-block">@Model.Name</h1>
@@ -137,4 +162,4 @@
 
 <div>
     <a asp-action="Index" asp-controller="Event">Вернуться к списку</a>
-</div>
+</div>*@

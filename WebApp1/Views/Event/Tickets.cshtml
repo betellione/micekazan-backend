@@ -1,4 +1,13 @@
+@model EventDetails
+
+@using WebApp1.Views.Event
 @{
+    Layout = "_Layout";
+    ViewData["ActivePage"] = EventNavPages.Details;
 }
 
-<p>Билеты></p>
+<div class="tabcontent">
+    <div class="content_block">
+        Билеты
+    </div>
+</div>
