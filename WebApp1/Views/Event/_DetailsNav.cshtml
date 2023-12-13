@@ -8,23 +8,18 @@
     }
 
     @if (Model.GetType().GetProperty("EventId") != null) {
-        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.EventId" class="tablinks">Билетеры</a>
+        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.TicketsNavClass(ViewContext)">Билетеры</a>
     } else {
-        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.Id" class="tablinks">Билетеры</a>
+        <a asp-controller="Event" asp-action="Tickets" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.TicketsNavClass(ViewContext)">Билетеры</a>
     }
 
     @if (Model.GetType().GetProperty("EventId") != null) {
-        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks">Статистика</a>
+        <a asp-controller="Event" asp-action="Statistics" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.StatisticsNavClass(ViewContext)">Статистика</a>
     } else {
-        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks">Статистика</a>
+        <a asp-controller="Event" asp-action="Statistics" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.StatisticsNavClass(ViewContext)">Статистика</a>
     }
     
-
-    @if (Model.GetType().GetProperty("EventId") != null) {
-        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks">Настройка печати</a>
-    } else {
-        <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks">Настройка печати</a>
-    }
+    <a class="tablinks">Настройка печати</a>
 
     @if (Model.GetType().GetProperty("EventId") != null) {
         <a asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.EventId" class="tablinks @EventNavPages.EditDisplayNavClass(ViewContext)">Настройка экрана</a>

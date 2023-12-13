@@ -8,44 +8,32 @@
 
 <div class="tabcontent">
     <div class="content_block">
-        <dl class="row">
-            <dt class="col-sm-2">
-                <p>Наименование</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.Name</p>
-            </dd>
-            <dt class="col-sm-2">
-                <p>Город</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.City</p>
-            </dd>
-            <dt class="col-sm-2">
-                <p>Создано</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.CreatedAt</p>
-            </dd>
-            <dt class="col-sm-2">
-                <p>Начало</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.StartedAt</p>
-            </dd>
-            <dt class="col-sm-2">
-                <p>Завершение</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.FinishedAt</p>
-            </dd>
-            <dt class="col-sm-2">
-                <p>Создатель</p>
-            </dt>
-            <dd class="col-sm-10">
-                <p>@Model.CreatorUsername</p>
-            </dd>
-        </dl>
+        <table class="details">
+            <tr>
+                <td><p>Наименование:</p></td>
+                <td><p>@Model.Name</p></td>
+            </tr>
+            <tr>
+                <td><p>Город:</p></td>
+                <td><p>@Model.City</p></td>
+            </tr>
+            <tr>
+                <td><p>Создано:</p></td>
+                <td><p>@Model.CreatedAt</p></td>
+            </tr>
+            <tr>
+                <td><p>Начало:</p></td>
+                <td><p>@Model.StartedAt</p></td>
+            </tr>
+            <tr>
+                <td><p>Завершение:</p></td>
+                <td><p>@Model.FinishedAt</p></td>
+            </tr>
+            <tr>
+                <td><p>Создатель:</p></td>
+                <td><p>@Model.CreatorUsername</p></td>
+            </tr>
+        </table>        
     </div>
 </div>
 

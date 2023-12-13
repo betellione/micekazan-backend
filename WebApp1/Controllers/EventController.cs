@@ -83,6 +83,70 @@ public class EventController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult>Statistics(long? id)
+    {
+        if (id is null) return BadRequest();
+
+        var vm = await _context.Events
+            .Select(x => new EventStatistics
+            {
+                Id = x.Id,
+                Name = x.Name,
+                City = x.City,
+                CreatedAt = x.CreatedAt,
+                StartedAt = x.StartedAt,
+                FinishedAt = x.FinishedAt,
+                CreatorId = x.CreatorId,
+                CreatorUsername = x.Creator.UserName!,
+                AllTickets = _context.Tickets.Where(q => q.PassedAt != null)
+                    .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
+                Scanners = x.Collectors.Select(y => new Scanner
+                {
+                    Id = y.ScannerId, Username = y.Scanner.UserName!,
+                }),
+                PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
+                {
+                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
+                }),
+            })
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        return vm is null ? NotFound() : View(vm);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult>Tickets(long? id)
+    {
+        if (id is null) return BadRequest();
+
+        var vm = await _context.Events
+            .Select(x => new EventTickets
+            {
+                Id = x.Id,
+                Name = x.Name,
+                City = x.City,
+                CreatedAt = x.CreatedAt,
+                StartedAt = x.StartedAt,
+                FinishedAt = x.FinishedAt,
+                CreatorId = x.CreatorId,
+                CreatorUsername = x.Creator.UserName!,
+                AllTickets = _context.Tickets.Where(q => q.PassedAt != null)
+                    .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
+                Scanners = x.Collectors.Select(y => new Scanner
+                {
+                    Id = y.ScannerId, Username = y.Scanner.UserName!,
+                }),
+                PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
+                {
+                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
+                }),
+            })
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        return vm is null ? NotFound() : View(vm);
+    }
+
+    [HttpGet]
     public IActionResult Create()
     {
         ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");

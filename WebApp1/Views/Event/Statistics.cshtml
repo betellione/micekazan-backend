@@ -1,13 +1,46 @@
-@model EventDetails
+@model EventStatistics
 
 @using WebApp1.Views.Event
 @{
     Layout = "_Layout";
-    ViewData["ActivePage"] = EventNavPages.Details;
+    ViewData["ActivePage"] = EventNavPages.Statistics;
 }
 
 <div class="tabcontent">
     <div class="content_block">
-        Статистика
+        <div class=" justify-content-between mt-3 mb-3">
+            @if (!Model.Scanners.Any())
+            {
+                <p>На это мероприятие пока никто не пришел</p>
+            }
+            else
+            {
+                <div class="table-responsive custom-table mb-3">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead>
+                            <th>
+                                <div class="table-col-header">Билеты</div>
+                            </th>
+                        </thead>
+                        <tbody>
+                        @foreach (var tickets in Model.PassedTickets)
+                        {
+                            <a>
+                                <tr>
+                                    <td class="table-row  d-flex">
+                                        <div hidden>@tickets.Id</div>
+                                        <div class="table-col">@tickets.Name</div>
+                                        <div class="table-col">@tickets.Surname</div>
+                                        <div class="table-col">@tickets.Patronymic</div>
+                                        <div class="table-col">@tickets.PassedAt</div>
+                                    </td>
+                                </tr>
+                            </a>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
     </div>
 </div>

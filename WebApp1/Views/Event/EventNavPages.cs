@@ -15,6 +15,16 @@ public static class EventNavPages
         return PageNavClass(viewContext, Details);
     }
 
+    public static string TicketsNavClass(ViewContext viewContext)
+    {
+        return PageNavClass(viewContext, Tickets);
+    }
+
+    public static string StatisticsNavClass(ViewContext viewContext)
+    {
+        return PageNavClass(viewContext, Statistics);
+    }
+
     public static string EditDisplayNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, EditDisplay);

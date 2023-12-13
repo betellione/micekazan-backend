@@ -401,6 +401,22 @@ body>div.container {
 */
 
 /* Таблица */
+.tabcontent table.details {
+    width: auto;
+    margin: auto;
+
+    margin-bottom: 15px;
+}
+
+.tabcontent table.details tr {
+    border-bottom: 1px dashed;
+}
+
+.tabcontent table.details td,th {
+    padding: 10px 0;
+    padding-right: 10px;
+}
+
 .tabcontent table {
     width: 100%;
 

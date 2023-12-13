@@ -245,3 +245,33 @@ p {
     color: #000;
 	background-color: var(--main-color);
 }
+
+/* Кнопки */
+.custom-btm-mini.margin {
+    margin: 10px;
+    position: absolute;
+}
+
+.custom-btm-mini button, a {
+    color: #fff;
+    background-color: #000;
+
+    font-family: TildaSansBold;
+    font-size: 17px;
+
+    padding: 3px 20px;
+
+    border: none;
+
+    text-decoration: none;
+}
+
+.custom-btm-mini button:hover, a:hover {
+    color: #000;
+    background-color: var(--main-color);
+}
+
+/* textarea */
+.custom-textarea textarea {
+    resize: auto !important;
+}
