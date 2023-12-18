@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using WebApp1.Data;
 using WebApp1.Data.Stores;
 using WebApp1.Enums;
+using WebApp1.Mapping;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
+using WebApp1.Services.TemplateService;
 using WebApp1.ViewModels;
 using WebApp1.ViewModels.Event;
 
@@ -23,9 +25,10 @@ public class EventController : Controller
     private readonly IEventService _eventService;
     private readonly IUserStore<User> _userStore;
     private readonly UserManager<User> _userManager;
+    private readonly ITemplateService _templateService;
 
     public EventController(ApplicationDbContext context, IScreenStore screenStore, IScannerStore scannerStore, IEventService eventService, IUserStore<User> userStore,
-        UserManager<User> userManager)
+        UserManager<User> userManager, ITemplateService templateService)
     {
         _scannerStore = scannerStore;
         _screenStore = screenStore;
@@ -33,6 +36,7 @@ public class EventController : Controller
         _eventService = eventService;
         _userStore = userStore;
         _userManager = userManager;
+        _templateService = templateService;
     }
 
     [HttpGet]
@@ -81,61 +85,38 @@ public class EventController : Controller
 
         return vm is null ? NotFound() : View(vm);
     }
-
+    
     [HttpGet]
-    public async Task<IActionResult>Statistics(long? id)
+    public async Task<IActionResult>Scanners(long? id)
     {
         if (id is null) return BadRequest();
 
         var vm = await _context.Events
-            .Select(x => new EventStatistics
+            .Select(x => new Scanners
             {
                 Id = x.Id,
-                Name = x.Name,
-                City = x.City,
-                CreatedAt = x.CreatedAt,
-                StartedAt = x.StartedAt,
-                FinishedAt = x.FinishedAt,
-                CreatorId = x.CreatorId,
-                CreatorUsername = x.Creator.UserName!,
-                AllTickets = _context.Tickets.Where(q => q.PassedAt != null)
-                    .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
-                Scanners = x.Collectors.Select(y => new Scanner
+                EventName = x.Name,
+                EventId = x.Id,
+                ScannersList = x.Collectors.Select(y => new Scanner
                 {
                     Id = y.ScannerId, Username = y.Scanner.UserName!,
-                }),
-                PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
-                {
-                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
                 }),
             })
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return vm is null ? NotFound() : View(vm);
     }
-
+    
     [HttpGet]
-    public async Task<IActionResult>Tickets(long? id)
+    public async Task<IActionResult>Statistics(long? id)
     {
         if (id is null) return BadRequest();
 
         var vm = await _context.Events
-            .Select(x => new EventTickets
+            .Select(x => new Tickets
             {
                 Id = x.Id,
-                Name = x.Name,
-                City = x.City,
-                CreatedAt = x.CreatedAt,
-                StartedAt = x.StartedAt,
-                FinishedAt = x.FinishedAt,
-                CreatorId = x.CreatorId,
-                CreatorUsername = x.Creator.UserName!,
-                AllTickets = _context.Tickets.Where(q => q.PassedAt != null)
-                    .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
-                Scanners = x.Collectors.Select(y => new Scanner
-                {
-                    Id = y.ScannerId, Username = y.Scanner.UserName!,
-                }),
+                EventId = x.Id,
                 PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
                 {
                     Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
@@ -357,9 +338,9 @@ public class EventController : Controller
         var vm = new DisplayViewModel
         {
             EventId = eventId,
-            WaitingDisplayViewModel = Mapping.Event.MapToEventDisplay(waiting),
-            SuccessDisplayViewModel = Mapping.Event.MapToEventDisplay(success),
-            FailDisplayViewModel = Mapping.Event.MapToEventDisplay(fail),
+            WaitingDisplayViewModel = waiting.MapToEventDisplay(),
+            SuccessDisplayViewModel = success.MapToEventDisplay(),
+            FailDisplayViewModel = fail.MapToEventDisplay(),
         };
         return View(vm);
     }
@@ -373,6 +354,48 @@ public class EventController : Controller
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.SuccessDisplayViewModel, ScreenTypes.Success);
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
         return RedirectToAction("Index");
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Print(long eventId, long? templateId)
+    {
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        var template = templateId is null
+            ? new TemplateViewModel()
+            : (await _templateService.GetTemplate(templateId.Value))?.MapToViewModel();
+
+        var vm = new PrintViewModel
+        {
+            EventId = eventId,
+            TemplateViewModel = template ?? new TemplateViewModel(),
+            TemplateIds = await _templateService.GetTemplateIds(userId),
+            SelectedTemplateId = templateId,
+        };
+        return View(vm);
+    }
+    
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveTemplateAsNew(TemplateViewModel vm)
+    {
+        if (!ModelState.IsValid) return View("Print", new PrintViewModel { TemplateViewModel = vm, });
+
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        await _templateService.AddTemplate(userId, vm);
+
+        return RedirectToAction("Print");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateTemplate(TemplateViewModel vm)
+    {
+        if (!ModelState.IsValid) return View("Print", new PrintViewModel { TemplateViewModel = vm, });
+
+        await _templateService.UpdateTemplate(vm);
+
+        return RedirectToAction("Print", new { templateId = vm.Id, });
     }
 
     private UserViewModel FillUpMyViewModel(UserViewModel vm)

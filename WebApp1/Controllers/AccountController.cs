@@ -76,13 +76,6 @@ public class AccountController : Controller
 
     #endregion
 
-    [HttpGet]
-    [Authorize(Roles = "Organizer")]
-    public IActionResult Settings()
-    {
-        return RedirectToAction("Index", "Settings");
-    }
-
     #region Login
 
     [HttpGet]

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using WebApp1.Enums;
 
-namespace WebApp1.ViewModels.Settings;
+namespace WebApp1.ViewModels.Event;
 
 public class TemplateViewModel
 {

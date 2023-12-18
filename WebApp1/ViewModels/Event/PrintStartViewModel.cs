@@ -1,6 +1,6 @@
-namespace WebApp1.ViewModels.Settings;
+namespace WebApp1.ViewModels.Event;
 
-public class IndexViewModel
+public class PrintStartViewModel
 {
     public string TemplateName { get; set; } = null!;
     public string TextColor { get; set; } = "#000000";

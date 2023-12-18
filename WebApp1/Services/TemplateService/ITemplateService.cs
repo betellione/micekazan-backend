@@ -1,5 +1,5 @@
 using WebApp1.Models;
-using WebApp1.ViewModels.Settings;
+using WebApp1.ViewModels.Event;
 
 namespace WebApp1.Services.TemplateService;
 
