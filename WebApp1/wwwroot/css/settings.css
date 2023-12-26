@@ -34,6 +34,11 @@
     padding: 0 10px 0 10px;
 }
 
+.content_block.black {
+    background-color: rgb(17, 17, 17);
+    color: #fff;
+}
+
 .content_row {
     width: 100%;
 }

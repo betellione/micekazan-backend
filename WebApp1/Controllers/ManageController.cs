@@ -54,6 +54,13 @@ public class ManageController : Controller
         var vm = new IndexViewModel
         {
             Username = await _userManager.GetUserNameAsync(user) ?? string.Empty,
+
+            Name = user.Name,
+            Surname = user.Surname,
+            Patronymic = user.Patronymic,
+            City = user.City,
+
+            ActivityTypes = user.Activity, 
         };
 
         return View(vm);

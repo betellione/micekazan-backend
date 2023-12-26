@@ -17,11 +17,6 @@
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
         }
-        @if (User.IsInRole("Scanner"))
-        {
-            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>
-            <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
-        }
     }
     else
     {

@@ -5,16 +5,21 @@
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
-<h3>@ViewData["Title"]</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        Создание новых кодов восстановления не меняет ключи, используемые в приложениях для проверки подлинности. Если вы хотите изменить ключ
-        используется в приложении для проверки подлинности, вам следует <a asp-controller="Manage" asp-action="ResetAuthenticatorKey">сбросить ключи проверки подлинности.</a>
-    </p>
-</div>
-<div>
-    <form asp-controller="Manage" asp-action="GenerateRecoveryCodesPost" method="post">
-        <button class="btn btn-danger" type="submit">Генерация кодов восстановления</button>
-    </form>
+<div class="tabcontent">
+    <div class="content_block">
+        <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
+
+        <h3>@ViewData["Title"]</h3>
+        <div class="alert alert-warning" role="alert">
+            <p>
+                Создание новых кодов восстановления не меняет ключи, используемые в приложениях для проверки подлинности. Если вы хотите изменить ключ
+                используется в приложении для проверки подлинности, вам следует <a asp-controller="Manage" asp-action="ResetAuthenticatorKey">сбросить ключи проверки подлинности.</a>
+            </p>
+        </div>
+        <div>
+            <form asp-controller="Manage" asp-action="GenerateRecoveryCodesPost" method="post">
+                <button class="btn btn-danger" type="submit">Генерация кодов восстановления</button>
+            </form>
+        </div>
+    </div>
 </div>

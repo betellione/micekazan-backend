@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService As
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -14,22 +17,26 @@
     <link rel="stylesheet" href="~/css/settings.css" asp-append-version="true"/>
     <!--Мероприятия настройки -->
     <link rel="stylesheet" href="~/css/display.css" asp-append-version="true"/>
+    <!-- Сканирование с видео -->
+    <link rel="stylesheet" href="~/css/scanner_video.css" asp-append-version="true"/>
 
     <!-- Элементы -->
     <link rel="stylesheet" href="~/css/elements.css" asp-append-version="true"/>
 </head>
 
 <body>
-<header>
-    <nav class="navbar bg-black navbar-expand-sm">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/images/GR_logo.png" alt="MiceKazan" width="150" height="40">
-            </a>
-            <partial name="_LoginPartial" class="text-white"/>
-        </div>
-    </nav>
-</header>
+@if (!User.IsInRole("Scanner")){
+    <header>
+        <nav class="navbar bg-black navbar-expand-sm">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/GR_logo.png" alt="MiceKazan" width="150" height="40">
+                </a>
+                <partial name="_LoginPartial" class="text-white"/>
+            </div>
+        </nav>    
+    </header>
+}
 
 <div class="container mt-5">
     <main role="main" class="main">

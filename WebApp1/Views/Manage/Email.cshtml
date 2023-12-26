@@ -6,39 +6,44 @@
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 
-<h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
-<div class="row">
-    <div class="col-md-6">
-        @if (Model.IsEmailConfirmed ?? false)
-        {
-            <div class="form-floating mb-3 input-group">
-                <input asp-for="Email" class="form-control bg-black" disabled/>
-                <div class="input-group-append">
-                    <span class="h-100 input-group-text text-warning bg-black font-weight-bold">✓</span>
-                </div>
-                <label asp-for="Email" class="form-label">Почта</label>
+
+<div class="tabcontent">
+    <div class="content_block black">
+        @if (Model.IsEmailConfirmed ?? false) {
+            <div class="custom-text black">
+                <label asp-for="Email">Текущая почта</label>
+                <input asp-for="Email" disabled/>                        
+                
             </div>
+        } else {            
+            <div class="custom-text black">
+                <label asp-for="Email">Текущая почта</label>
+                <input asp-for="Email" disabled/>
+            </div>
+
+            <form asp-controller="Manage" asp-action="SendVerificationEmail" method="post">
+                <button type="submit">Отправить письмо с подтверждением</button>
+            </form>         
         }
-        else
-        {
-            <div class="form-floating mb-3">
-                <input asp-for="Email" class="form-control" disabled/>
-                <label asp-for="Email" class="form-label">Почта</label>
-                <form asp-controller="Manage" asp-action="SendVerificationEmail" method="post">
-                    <button type="submit" class="btn btn-link">Отправить письмо с подтверждением</button>
-                </form>
-            </div>
-        }
-        <form asp-controller="Manage" asp-action="ChangeEmail" method="post">
-            <div class="form-floating mb-3">
-                <input asp-for="NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Please enter new email."/>
-                <label asp-for="NewEmail" class="form-label">Новая почта</label>
-                <span asp-validation-for="NewEmail" class="text-danger"></span>
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Изменить почту</button>
-        </form>
     </div>
+                
+    <form asp-controller="Manage" asp-action="ChangeEmail" method="post">
+        
+        <div class="content_block black">
+            <div class="custom-text black">
+                <label asp-for="NewEmail">Новая почта</label>
+                <input asp-for="NewEmail" autocomplete="email" aria-required="true"/>
+            </div>
+        </div>
+
+
+        <div class="content_bottom">
+            <div class="custom-btm left-margin">
+                <button type="submit">Изменить почту</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

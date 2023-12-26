@@ -365,6 +365,10 @@ body>div.container {
 
     width: 100%;
     text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tab a:hover {
@@ -406,6 +410,10 @@ body>div.container {
     margin: auto;
 
     margin-bottom: 15px;
+}
+
+.tabcontent table.details.left {
+    margin-left: 20px;
 }
 
 .tabcontent table.details tr {

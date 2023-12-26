@@ -3,14 +3,35 @@
     ViewData["Title"] = "Home page";
 }
 
-<div id="videoContainer">
+<div class="scanner_video" id="videoContainer">
     <video id="videoElement" autoplay playsinline></video>
+
+    <div class="progress_bar_block">
+        <div class="progress_bar">
+            <span id="progress_bar"></span>
+        </div>
+        <div class="progress_info">
+            <label id="progress_value" asp-for="ScannedTickets">@Model.ScannedTickets</label>
+            <label id="progress_max" asp-for="AllTickets">@Model.AllTickets</label>
+        </div>
+    </div>
 </div>
 
-<div id="result"></div>
-<label asp-for="AllTickets">@Model.AllTickets</label>/
-<label asp-for="ScannedTickets">@Model.ScannedTickets</label>
+<script>
+    function set_progres_bar() {
+        let max_progress = parseInt(document.getElementById("progress_max").innerHTML);
+        let value_progress = parseInt(document.getElementById("progress_value").innerHTML);
 
+        let progress = 100 / max_progress * value_progress;
+    
+
+        document.getElementById("progress_bar").style.width = `${progress}%`;
+    }
+    
+    set_progres_bar();
+</script>
+
+<div id="result"></div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>

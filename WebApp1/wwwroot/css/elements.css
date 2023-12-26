@@ -50,6 +50,10 @@ p {
     display: contents;
 }
 
+.custom-btm.left-margin button{
+    margin-left: 20px;
+}
+
 .custom-btm button {
     color: #000;
     background-color: var(--main-color);
@@ -274,4 +278,43 @@ p {
 /* textarea */
 .custom-textarea textarea {
     resize: auto !important;
+}
+
+/* text field */
+.custom-text {
+    margin: 10px 0;
+}
+
+.custom-text input {
+    border: none;
+
+    padding: 5px 10px;
+    margin-left: 10px;
+
+    font-family: TildaSansLight;
+    font-size: 25px;
+
+    width: 300px;
+
+    outline: none;
+}
+
+.custom-text.black input {
+    background-color: #fff;
+    color: #000;
+
+    display: block;
+}
+
+.custom-text.black input:disabled {
+    background-color: #b0b0b0;
+}
+
+.custom-text label {
+    color: #fff;
+
+    margin-left: 10px;
+
+    font-family: TildaSansLight;
+    font-size: 25px;
 }

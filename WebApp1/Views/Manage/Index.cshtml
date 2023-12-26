@@ -1,15 +1,40 @@
 ﻿@using WebApp1.Views.Manage
+@using static WebApp1.Enums.ActivityTypes
+
 @model IndexViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Профиль";
     ViewData["ActivePage"] = ManageNavPages.Profile;
 }
-<h2 class="text-left">@ViewData["Title"]</h2>
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <h5>@Model.Username</h5>
-        </div>
+
+<div class="tabcontent">
+    <div class="content_block black">
+        <table class="details left">
+            <tr>
+                <td><p>Почта:</p></td>
+                <td><p>@Model.Username</p></td>
+            </tr>
+            <tr>
+                <td><p>ФИО:</p></td>
+                <td><p>@Model.Surname @Model.Name @Model.Patronymic</p></td>
+            </tr>
+            <tr>
+                <td><p>Город:</p></td>
+                <td><p>@Model.City</p></td>
+            </tr>
+            <tr>
+                <td><p>Тип</p></td>
+                <td>
+                    @if (@Model.ActivityTypes == Individual) {
+                        <p>Физическое лицо</p>
+                    } else if (@Model.ActivityTypes == Entrepreneur) {
+                        <p>ИП/Самозанятый</p>
+                    } else if (@Model.ActivityTypes == Business) {
+                        <p>Юридическое лицо</p>
+                    }
+                </td>
+            </tr>
+        </table>        
     </div>
 </div>
