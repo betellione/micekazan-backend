@@ -45,6 +45,7 @@ public class SmsRuApiProvider : ISmsRuApiProvider
     public async Task<string?> MakePhoneCall(string phoneNumber, IPAddress? ip = null)
     {
         var client = _httpClientFactory.CreateClient("SmsRu");
+        client.Timeout = TimeSpan.FromSeconds(300);
         var token = _options.Token;
 
         try

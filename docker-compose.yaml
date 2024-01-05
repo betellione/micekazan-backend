@@ -4,7 +4,7 @@
     build:
       context: .
       dockerfile: WebApp1/Dockerfile
-    ports:      
+    ports:
       - 8080:8080
     environment:
       - HTTP_PORTS=8080
@@ -45,7 +45,7 @@ volumes:
   api:
     name: mice_kazan_api
   api_wwwroot:
-      name: mice_kazan_api_wwwroot
+    name: mice_kazan_api_wwwroot
   print:
     name: mice_kazan_print
   print_wwwroot:
