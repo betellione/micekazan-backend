@@ -36,4 +36,12 @@
             </div>
         }
     </div>
+
+    <a asp-controller="Event"
+        asp-action="AddScanner"
+        asp-route-eventId="@Model.EventId"
+        asp-route-eventName="@Model.EventName"
+        class="w-100 btn btn-lg btn-warning">
+        Добавить билетера
+    </a>
 </div>
