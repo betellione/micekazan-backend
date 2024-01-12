@@ -318,3 +318,18 @@ p {
     font-family: TildaSansLight;
     font-size: 25px;
 }
+
+/* Table link button */
+.details .custom-link-btm {
+    color: #000;
+    background: unset;
+
+    font-family: TildaSansLight;
+    font-size: 20px;
+
+    text-decoration: unset !important;
+}
+
+.details .custom-link-btm:hover {
+    text-decoration: underline !important;
+}

@@ -8,6 +8,48 @@
 
 <div class="tabcontent">
     <div class="content_block">
+        <table class="details">
+            <tr>
+                <th><p>Логин</p></td>
+                <th></td>
+            </tr>
+            
+            @if (!Model.ScannersList.Any())
+            {
+                <tr><td colspan="99">К этому мероприятию пока не добавлены билетеры</td></tr>
+            }
+            else
+            {
+                @foreach (var scanner in Model.ScannersList) {
+                    <tr>
+                        <td>
+                            <p hidden>@scanner.Id</p>
+                            <p>@scanner.Username</p>
+                        </td>
+                        <td class="custom-link-btm">
+                            <p onclick="location.href='@Url.Action("EditScanner", new { userId = scanner.Id, eventId = Model.EventId, eventName = Model.EventName })';">подробнее</p>
+                        </td>
+                    </tr>
+                }            
+            }
+        </table>        
+    </div>
+
+    <div class="content_bottom">
+        <div class="custom-btm">
+            <button asp-controller="Event"
+                asp-action="AddScanner"
+                asp-route-eventId="@Model.EventId"
+                asp-route-eventName="@Model.EventName">
+                Добавить билетера
+            </button>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="tabcontent">
+    <div class="content_block">
         @if (!Model.ScannersList.Any())
         {
             <p>К этому мероприятию пока не добавлены билетеры</p>
@@ -45,3 +87,4 @@
         Добавить билетера
     </a>
 </div>
+-->
