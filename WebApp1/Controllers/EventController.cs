@@ -361,13 +361,13 @@ public class EventController : Controller
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
         var template = templateId is null
-            ? new TemplateViewModel()
+            ? new TemplateViewModel{EventId = eventId}
             : (await _templateService.GetTemplate(templateId.Value))?.MapToViewModel();
 
         var vm = new PrintViewModel
         {
             EventId = eventId,
-            TemplateViewModel = template ?? new TemplateViewModel(),
+            TemplateViewModel = template ?? new TemplateViewModel{EventId = eventId},
             TemplateIds = await _templateService.GetTemplateIds(userId),
             SelectedTemplateId = templateId,
         };
@@ -384,7 +384,7 @@ public class EventController : Controller
         var userId = new Guid(_userManager.GetUserId(User)!);
         await _templateService.AddTemplate(userId, vm);
 
-        return RedirectToAction("Print");
+        return RedirectToAction("Print", new {EventId = vm.EventId});
     }
 
     [HttpPost]
@@ -395,7 +395,7 @@ public class EventController : Controller
 
         await _templateService.UpdateTemplate(vm);
 
-        return RedirectToAction("Print", new { templateId = vm.Id, });
+        return RedirectToAction("Print", new { templateId = vm.Id, EventId = vm.EventId});
     }
 
     private UserViewModel FillUpMyViewModel(UserViewModel vm)

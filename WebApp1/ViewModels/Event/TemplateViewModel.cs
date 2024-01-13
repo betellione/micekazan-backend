@@ -6,6 +6,7 @@ namespace WebApp1.ViewModels.Event;
 public class TemplateViewModel
 {
     public long? Id { get; set; }
+    public long? EventId { get; set; }
     public string FontColor { get; set; } = "#000000";
     public PageOrientation PageOrientation { get; set; }
 

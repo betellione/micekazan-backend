@@ -51,7 +51,7 @@
 {
     <script>
         function PassSelectedValue(selectObject) {
-            window.location.href = "Settings?templateId=" + selectObject.value;
+            window.location.href = "Print?eventId=" + @Model.EventId + "&templateId=" + selectObject.value;
         }
     </script>
 }
