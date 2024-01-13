@@ -39,6 +39,11 @@
     color: #fff;
 }
 
+.content_block.black hr{
+    width: 100%;
+    color: #fff;
+}
+
 .content_row {
     width: 100%;
 }

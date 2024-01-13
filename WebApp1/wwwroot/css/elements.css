@@ -50,7 +50,7 @@ p {
     display: contents;
 }
 
-.custom-btm.left-margin button{
+.custom-btm.left-margin button {
     margin-left: 20px;
 }
 
@@ -66,6 +66,27 @@ p {
     margin-right: 15px;
 
     border: none;
+}
+
+/* Link button */
+.custom-btm.left-margin a {
+    margin-left: 20px;
+}
+
+.custom-btm a {
+    color: #000;
+    background-color: var(--main-color);
+
+    font-family: TildaSansBold;
+    font-size: 20px;
+
+    padding: 5px 25px;
+    margin: 25px 0;
+    margin-right: 15px;
+
+    border: none;
+
+    display: inline-block;
 }
 
 /* Выпадающий список */
