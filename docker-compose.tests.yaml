@@ -1,0 +1,8 @@
+﻿version: '3.8'
+services:
+  emailing:
+    container_name: mice_kazan_emailing_tests
+    build:
+      context: .
+      dockerfile: EmailingTests/Dockerfile
+    env_file: tests.env

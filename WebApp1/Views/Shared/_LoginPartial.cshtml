@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService As
+
 <div class="d-flex flex-nowrap align-items-center">
     @if (User.Identity?.IsAuthenticated ?? false)
     {
         var result = await As.AuthorizeAsync(User, "RegisterConfirmation");
+
         @if (User.IsInRole("Organizer") && result.Succeeded)
         {
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Event")'">Мероприятия</button>
@@ -11,6 +13,7 @@
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "Manage")'">Профиль</button>
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Lockout", "Account")'">Выйти</button>
         }
+
         @if (User.IsInRole("Admin"))
         {
             <button class="btn btn-outline-primary me-5" onclick="location.href='@Url.Action("Index", "User")'">Пользователи</button>
@@ -21,7 +24,7 @@
     else
     {
         <div class="login_img">
-            <img src=/images/GR_logo.png>
+            <img src=/images/GR_logo.png alt="">
         </div>
 
         @if (ViewContext.RouteData.Values["Action"] as string != "Login")

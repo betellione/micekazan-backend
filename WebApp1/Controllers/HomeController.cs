@@ -33,7 +33,7 @@ public class HomeController : Controller
         if (!_signInManager.IsSignedIn(User)) return RedirectToAction("Login", "Account");
 
         if (User.Claims.Any(x => x is { Type: ClaimTypes.Actor, Value: "Automate" })) return RedirectToAction("Terminal", "Home");
-        
+
         return User.Claims.First(x => x.Type == ClaimTypes.Role).Value switch
         {
             "Organizer" => RedirectToAction("Index", "Event"),

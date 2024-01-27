@@ -384,7 +384,7 @@ public class EventController : Controller
         var userId = new Guid(_userManager.GetUserId(User)!);
         await _templateService.AddTemplate(userId, vm);
 
-        return RedirectToAction("Print", new {EventId = vm.EventId});
+        return RedirectToAction("Print", new { vm.EventId, });
     }
 
     [HttpPost]
@@ -395,7 +395,7 @@ public class EventController : Controller
 
         await _templateService.UpdateTemplate(vm);
 
-        return RedirectToAction("Print", new { templateId = vm.Id, EventId = vm.EventId});
+        return RedirectToAction("Print", new { templateId = vm.Id, vm.EventId, });
     }
 
     private UserViewModel FillUpMyViewModel(UserViewModel vm)
