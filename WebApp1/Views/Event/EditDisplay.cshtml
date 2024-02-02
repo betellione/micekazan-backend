@@ -63,13 +63,11 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block">
+                <div class="display-preview-block" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');>">
                     <div class="display-preview">
-                        <div class="display-text">
-                            <h2 id="waiting-display-description"></h2>
-                            <h1 id="waiting-display"></h1>
-                        </div>
-                        
+                        <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" height="70">
+                        <h1 id="waiting-display"></h1>
+                        <h2 id="waiting-display-description"></h2>
                     </div>
                 </div>
             </div>
@@ -92,7 +90,7 @@
                         <td><p>Описание</p></td>
                         <td>
                             <div class="custom-textarea">
-                                <textarea asp-for="SuccessDisplayViewModel.Description" rows="1"></textarea>
+                                <textarea asp-for="SuccessDisplayViewModel.Description" id="success-display-description-input" rows="1"></textarea>
                             </div>
                         </td>
                     </tr>
@@ -124,10 +122,11 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block">
+                <div class="display-preview-block" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath');>">
                     <div class="display-preview">
-                        <h2 id="success-display-description"></h2>
+                        <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" height="70">
                         <h1 id="success-display"></h1>
+                        <h2 id="success-display-description"></h2>
                     </div>
                 </div>
             </div>
@@ -142,7 +141,7 @@
                         <td><p>Текст приветствия</p></td>
                         <td>
                             <div class="custom-textarea">
-                                <textarea asp-for="FailDisplayViewModel.MainText" rows="1"></textarea>
+                                <textarea asp-for="FailDisplayViewModel.MainText" rows="1" id="fail-display-input"></textarea>
                             </div>
                         </td>
                     </tr>
@@ -150,7 +149,7 @@
                         <td><p>Описание</p></td>
                         <td>
                             <div class="custom-textarea">
-                                <textarea asp-for="FailDisplayViewModel.Description" rows="1"></textarea>
+                                <textarea asp-for="FailDisplayViewModel.Description" rows="1" id="fail-display-description-input"></textarea>
                             </div>
                         </td>
                     </tr>
@@ -182,10 +181,11 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block">
+                <div class="display-preview-block" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath');>">
                     <div class="display-preview">
-                        <h2 id="fail-display-description"></h2>
+                        <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" height="70">
                         <h1 id="fail-display"></h1>
+                        <h2 id="fail-display-description"></h2>
                     </div>
                 </div>
             </div>

@@ -40,7 +40,7 @@ public class EventController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string sortOrder)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
 
@@ -50,8 +50,16 @@ public class EventController : Controller
         }
 
         var applicationDbContext = _context.Events.Include(x => x.Creator);
+        var orderedQueryable = sortOrder switch
+        {
+            "name" => applicationDbContext.OrderBy(x => x.Name),
+            "city" => applicationDbContext.OrderBy(x => x.City),
+            "start" => applicationDbContext.OrderBy(x => x.StartedAt),
+            "finish" => applicationDbContext.OrderBy(x => x.FinishedAt),
+            _ => applicationDbContext.OrderByDescending(x => x.StartedAt)
+        };
 
-        return View(await applicationDbContext.ToListAsync());
+        return View(await orderedQueryable.ToListAsync());
     }
 
     [HttpGet]
