@@ -153,11 +153,19 @@
     width: 50%;
 }
 
-.preview_qr .vertical {
+.preview_qr .horizon img {
+    width: 40%;
 }
 
 .preview_qr.vertical img {
     margin-top: 50px;
     width: 40%;
+}
+
+.display-preview-block {
+    padding: 5px;
+    height: 100%;
+    width: 255px;
+    border: 1px solid #000;
 }
 
