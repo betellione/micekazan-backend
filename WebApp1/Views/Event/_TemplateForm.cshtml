@@ -98,7 +98,7 @@
                     <div class="preview_logo">
                         <img id="card_logo" alt="" src="/@Model.LogoPath">
                     </div>
-                    <div class="preview_info">
+                    <div class="preview_info" id="preview_info">
                         <div class="preview_name" id="card_firstname">
                             Сергеей
                         </div>
@@ -132,6 +132,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const print_card = document.getElementById('print_card_component');
     const preview_info = document.getElementById('preview_info');
+    const card_qr = document.getElementById('card_qr');
     const orientationVertical = document.querySelector(".ticket-orientation-vertical");
     const orientationHorizontal = document.querySelector(".ticket-orientation-horizontal");
     const cardFirstnameInput = document.getElementById('card_firstname_input');
@@ -147,13 +148,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (orientationVertical.checked) {
             print_card.classList.add('vertical');
             preview_info.classList.add('vertical');
+            card_qr.classList.add('vertical');
             print_card.classList.remove('horizon');
             preview_info.classList.remove('horizon');
+            card_qr.classList.remove('horizon');
         } else if (orientationHorizontal.checked) {
             print_card.classList.add('horizon');
             preview_info.classList.add('horizon');
+            card_qr.classList.add('horizon');
             print_card.classList.remove('vertical');
             preview_info.classList.remove('vertical');
+            card_qr.classList.remove('vertical');
         }
     }
 
@@ -172,12 +177,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // Изменение ориентации
     orientationVertical.addEventListener("change", function () {
         print_card.classList.add('vertical');
+        preview_info.classList.add('vertical');
+        card_qr.classList.add('vertical');
         print_card.classList.remove('horizon');
+        preview_info.classList.remove('horizon');
+        card_qr.classList.remove('horizon');
     });
 
     orientationHorizontal.addEventListener("change", function () {
         print_card.classList.add('horizon');
+        preview_info.classList.add('horizon');
+        card_qr.classList.add('horizon');
         print_card.classList.remove('vertical');
+        preview_info.classList.remove('vertical');
+        card_qr.classList.remove('vertical');
     });
 
     // Изменение видимости имени, фамилии, QR
