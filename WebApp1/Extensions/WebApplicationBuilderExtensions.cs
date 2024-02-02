@@ -1,7 +1,11 @@
 using System.Net.Http.Headers;
+using Hangfire;
+using Hangfire.PostgreSql;
+using QuestPDF;
 using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using Serilog;
+using WebApp1.Data;
 using WebApp1.Data.FileManager;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
@@ -81,7 +85,7 @@ public static class WebApplicationBuilderExtensions
 
     public static WebApplicationBuilder AddMediaGenerationServices(this WebApplicationBuilder builder)
     {
-        QuestPDF.Settings.License = LicenseType.Community;
+        Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
         builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
 
@@ -121,6 +125,24 @@ public static class WebApplicationBuilderExtensions
                 "Bearer", builder.Configuration["PrintService:ApiKey"]);
         });
         builder.Services.AddScoped<IPrintService, PrintService>();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddJobs(this WebApplicationBuilder builder)
+    {
+        var connectionString = builder.Configuration["ConnectionStrings:Hangfire"];
+        using var context = new HangfireDbContext(connectionString!);
+        context.Database.EnsureCreated();
+
+        builder.Services.AddHangfire(configuration =>
+            configuration.UsePostgreSqlStorage(options =>
+                options.UseNpgsqlConnection(connectionString)));
+        builder.Services.AddHangfireServer();
+
+        // builder.Services.AddHostedService<EventImportJob>();
+        // builder.Services.AddHostedService<ClientImportJob>();
+        // builder.Services.AddHostedService<TicketImportJob>();
 
         return builder;
     }

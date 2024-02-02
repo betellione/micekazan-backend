@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -40,6 +41,8 @@ builder.Services.AddMessageSenders();
 builder.AddMediaGenerationServices();
 builder.AddCustomServices();
 builder.SetupLogging();
+
+builder.AddJobs();
 
 builder.Services.AddDefaultIdentity<User>(options =>
     {
@@ -98,5 +101,7 @@ app.UseAuthorization();
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
 await app.SetupDatabaseAsync();
+
+app.UseHangfireDashboard();
 
 app.Run();
