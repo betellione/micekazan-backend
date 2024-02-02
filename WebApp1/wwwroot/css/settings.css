@@ -163,8 +163,10 @@
 }
 
 .display-preview-block {
-    padding: 5px;
-    height: 100%;
+    display: block;
+    position: absolute;
+    text-align: center;
+    height: 348px;
     width: 255px;
     border: 1px solid #000;
 }

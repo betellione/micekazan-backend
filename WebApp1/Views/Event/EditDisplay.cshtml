@@ -63,7 +63,7 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');>">
+                <div class="display-preview-block" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');">
                     <div class="display-preview">
                         <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" height="70">
                         <h1 id="waiting-display"></h1>
@@ -181,7 +181,7 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath');>">
+                <div class="display-preview-block" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover;">
                     <div class="display-preview">
                         <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" height="70">
                         <h1 id="fail-display"></h1>
@@ -233,7 +233,7 @@
 
         <div class="content_bottom">
             <div class="custom-btm">
-                <button type="submit">Сохранить</button>
+                <button type="submit" asp-action="EditDisplay">Сохранить</button>
             </div>
         </div>
     </form>
