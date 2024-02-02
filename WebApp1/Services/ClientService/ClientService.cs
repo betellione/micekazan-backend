@@ -47,7 +47,7 @@ public class ClientService : IClientService
         {
             if (existed.Contains(client.Email))
             {
-                context.Update(client);
+                context.Clients.Update(client);
             }
             else
             {

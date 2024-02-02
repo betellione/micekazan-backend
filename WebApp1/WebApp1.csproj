@@ -56,4 +56,8 @@
       <_ContentIncludedByDefault Remove="Views\Settings\_ViewImports.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Jobs\TicketSyncJob\" />
+    </ItemGroup>
+
 </Project>
