@@ -7,6 +7,7 @@
     body, html {
         height: 100%;
         margin: 0;
+        background-color: @Model.BackgroundColor;
     }
 
     .background-image {
@@ -15,7 +16,7 @@
         left: 0; 
         min-width: 100%; 
         min-height: 100%;
-        background-image: url('~/@Model.BackgroundPath');
+        background-image: url('../@Model.BackgroundPath');
         background-size: cover;
         background-position: center;
     }
@@ -37,14 +38,7 @@
     }
 </style>
 
-<div class="background-image"></div>
-
-<div id="videoContainer" hidden>
-    <video id="videoElement" autoplay playsinline></video>
-</div>
-
-<div id="result"></div>
-<div id="content">
+<div id="content" class="background-image">
     <img alt="Logo" id="logo" src="~/@Model.LogoPath">
     <label asp-for="MainText">@Model.MainText</label>
     <label asp-for="Description">@Model.Description</label>
