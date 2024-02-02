@@ -65,7 +65,7 @@ public static class WebApplicationBuilderExtensions
 
     public static WebApplicationBuilder AddFileManagers(this WebApplicationBuilder builder)
     {
-        var basePath = builder.Environment.WebRootPath;
+        var basePath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot-user");
 
         var logoFileManager = new FileManager(basePath, builder.Configuration["Path:LogoImagePath"]!);
         var backgroundFileManager = new FileManager(basePath, builder.Configuration["Path:BackgroundImagePath"]!);

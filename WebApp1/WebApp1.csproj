@@ -42,9 +42,6 @@
         <Content Include="..\.dockerignore">
             <Link>.dockerignore</Link>
         </Content>
-        <Content Update="wwwroot\fonts\Montserrat-Bold.ttf">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -58,6 +55,7 @@
 
     <ItemGroup>
       <Folder Include="Jobs\TicketSyncJob\" />
+      <Folder Include="wwwroot-user\" />
     </ItemGroup>
 
 </Project>
