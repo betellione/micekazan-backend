@@ -169,3 +169,6 @@
     border: 1px solid #000;
 }
 
+.preview_qr img {
+    width: 40%;
+}

@@ -225,9 +225,9 @@ document.addEventListener('DOMContentLoaded', function () {
         cardBackgroundInput.addEventListener("change", function () {
             if (this.files && this.files[0]) {
                 const fileURL = URL.createObjectURL(this.files[0]);
-                printCard.style.backgroundImage = `url(${fileURL})`;
-                printCard.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
-                printCard.style.backgroundPosition = "center"; // Центрирование фона
+                print_card.style.backgroundImage = `url(${fileURL})`;
+                print_card.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
+                print_card.style.backgroundPosition = "center"; // Центрирование фона
             }
         });
 

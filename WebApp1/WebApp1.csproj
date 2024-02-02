@@ -51,11 +51,18 @@
       <_ContentIncludedByDefault Remove="Views\Settings\_SettingsNav.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Settings\_TemplateForm.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Settings\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\16094eb2-fd61-477a-990f-7b149688889a.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\23edc0c2-d634-449b-a4ac-f128be3a1a79.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\6bcc4ad6-a0b2-4b05-ad00-dded97193f9c.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\af5be1cc-b6a0-4ac2-a6f8-b1e1ebc0e152.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\d09e3957-2703-4714-8272-e0f41251d932.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\eb04ee4f-a43f-4830-badb-13c493a9f0d8.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\logo\f868523f-c874-4572-aba0-718c440d4eaf.jpg" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Jobs\TicketSyncJob\" />
-      <Folder Include="wwwroot-user\" />
+      <Folder Include="wwwroot-user\images\" />
     </ItemGroup>
 
 </Project>
