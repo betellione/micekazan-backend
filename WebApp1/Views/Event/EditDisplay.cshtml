@@ -39,7 +39,7 @@
                         <td><p>Загрузите логотип</p></td>
                         <td>
                             <label class="custom-file-btm">
-                                <input asp-for="WaitingDisplayViewModel.Logo">
+                                <input asp-for="WaitingDisplayViewModel.Logo" id="wait-logo-input">
                                 <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
                             </label>
                         </td>
@@ -49,7 +49,7 @@
                         <td>
                             <label class="custom-file-btm">
                                 <input asp-for="WaitingDisplayViewModel.Background">
-                                <span asp-validation-for="WaitingDisplayViewModel.Background">Загрузить файл</span>
+                                <span asp-validation-for="WaitingDisplayViewModel.Background" id="wait-bg-input">Загрузить файл</span>
                             </label>
                         </td>
                     </tr>
@@ -63,9 +63,9 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');">
+                <div class="display-preview-block" id="preview-wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');">
                     <div class="display-preview">
-                        <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" height="70">
+                        <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait-logo" height="70">
                         <h1 id="waiting-display"></h1>
                         <h2 id="waiting-display-description"></h2>
                     </div>
@@ -98,7 +98,7 @@
                         <td><p>Загрузите логотип</p></td>
                         <td>
                             <label class="custom-file-btm">
-                                <input asp-for="SuccessDisplayViewModel.Logo">
+                                <input asp-for="SuccessDisplayViewModel.Logo" id="success_logo_input">
                                 <span asp-validation-for="SuccessDisplayViewModel.Logo">Загрузить файл</span>
                             </label>
                         </td>
@@ -107,7 +107,7 @@
                         <td><p>Загрузите фон</p></td>
                         <td>
                             <label class="custom-file-btm">
-                                <input asp-for="SuccessDisplayViewModel.Background">
+                                <input asp-for="SuccessDisplayViewModel.Background" id="success_bg_input">
                                 <span asp-validation-for="SuccessDisplayViewModel.Background">Загрузить файл</span>
                             </label>
                         </td>
@@ -122,9 +122,9 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath');>">
+                <div class="display-preview-block" id="preview-success" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath');>">
                     <div class="display-preview">
-                        <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" height="70">
+                        <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" id="success-logo" height="70">
                         <h1 id="success-display"></h1>
                         <h2 id="success-display-description"></h2>
                     </div>
@@ -157,7 +157,7 @@
                         <td><p>Загрузите логотип</p></td>
                         <td>
                             <label class="custom-file-btm">
-                                <input asp-for="FailDisplayViewModel.Logo">
+                                <input asp-for="FailDisplayViewModel.Logo" id="fail_logo_input">
                                 <span asp-validation-for="FailDisplayViewModel.Logo">Загрузить файл</span>
                             </label>
                         </td>
@@ -166,7 +166,7 @@
                         <td><p>Загрузите фон</p></td>
                         <td>
                             <label class="custom-file-btm">
-                                <input asp-for="FailDisplayViewModel.Background">
+                                <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
                                 <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
                             </label>
                         </td>
@@ -181,9 +181,9 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover;">
+                <div class="display-preview-block" id="preview-fail" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover;">
                     <div class="display-preview">
-                        <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" height="70">
+                        <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" id="fail-logo" height="70">
                         <h1 id="fail-display"></h1>
                         <h2 id="fail-display-description"></h2>
                     </div>
@@ -192,42 +192,112 @@
         </div>
 
         <script>
-            function UpdateDisplay() {
-                // Ожидание
-                const waiting_input = document.getElementById("waiting-display-input");
-                const waiting = document.getElementById("waiting-display");
-
+        document.addEventListener('DOMContentLoaded', function () {
+            const waiting_input = document.getElementById("waiting-display-input");
+            const waiting = document.getElementById("waiting-display");
+            const waiting_description_input = document.getElementById("waiting-display-description-input");
+            const waiting_description = document.getElementById("waiting-display-description");
+            const success_input = document.getElementById("success-display-input");
+            const success = document.getElementById("success-display");
+            const success_description_input = document.getElementById("success-display-description-input");
+            const success_description = document.getElementById("success-display-description");
+            const fail_input = document.getElementById("fail-display-input");
+            const fail = document.getElementById("fail-display");
+            const fail_description_input = document.getElementById("fail-display-description-input");
+            const fail_description = document.getElementById("fail-display-description");
+            const fail_logo_input = document.getElementById("fail_logo_input");
+            const fail_bg_input = document.getElementById("fail_bg_input");
+            const fail_logo = document.getElementById("fail-logo");
+            const preview_fail = document.getElementById("preview-fail");
+            const success_logo_input = document.getElementById("success_logo_input");
+            const success_bg_input = document.getElementById("success_bg_input");
+            const success_logo = document.getElementById("success-logo");
+            const preview_success = document.getElementById("preview-success");
+            const wait_logo_input = document.getElementById("wait_logo_input");
+            const wait_bg_input = document.getElementById("wait_bg_input");
+            const wait_logo = document.getElementById("wait-logo");
+            const preview_wait = document.getElementById("preview-wait");
+            
+            function setInitial() {
                 waiting.innerHTML = waiting_input.value;
-
-                const waiting_description_input = document.getElementById("waiting-display-description-input");
-                const waiting_description = document.getElementById("waiting-display-description");
-
                 waiting_description.innerHTML = waiting_description_input.value;
-
-                // Удачно
-                const success_input = document.getElementById("success-display-input");
-                const success = document.getElementById("success-display");
-
                 success.innerHTML = success_input.value;
-
-                const success_description_input = document.getElementById("success-display-description-input");
-                const success_description = document.getElementById("success-display-description");
-
                 success_description.innerHTML = success_description_input.value;
-
-                // Ошибка
-                const fail_input = document.getElementById("fail-display-input");
-                const fail = document.getElementById("fail-display");
-
                 fail.innerHTML = fail_input.value;
-
-                const fail_description_input = document.getElementById("fail-display-description-input");
-                const fail_description = document.getElementById("fail-display-description");
-
                 fail_description.innerHTML = fail_description_input.value;
             }
+            
+            waiting_input.addEventListener("change", function () {
+                waiting.innerHTML = waiting_input.value;
+            });
+            waiting_description_input.addEventListener("change", function () {
+                waiting_description.innerHTML = waiting_description_input.value;
+            });
+            success_input.addEventListener("change", function () {
+                success.innerHTML = success_input.value;
+            });
+            success_description_input.addEventListener("change", function () {
+                success_description.innerHTML = success_description_input.value;
+            });
+            fail_input.addEventListener("change", function () {
+                fail.innerHTML = fail_input.value;
+            });
+            fail_description_input.addEventListener("change", function () {
+                fail_description.innerHTML = fail_description_input.value;
+            });
+            fail_logo_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    fail_logo.src = URL.createObjectURL(this.files[0]);
+                    fail_logo.onload = function() {
+                        URL.revokeObjectURL(fail_logo.src); // Освобождение памяти
+                    };
+                }
+            });
+            fail_bg_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    const fileURL = URL.createObjectURL(this.files[0]);
+                    preview_fail.style.backgroundImage = `url(${fileURL})`;
+                    preview_fail.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
+                    preview_fail.style.backgroundPosition = "center"; // Центрирование фона
+                }
+            });
+            success_logo_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    success_logo.src = URL.createObjectURL(this.files[0]);
+                    success_logo.onload = function() {
+                        URL.revokeObjectURL(success_logo.src); // Освобождение памяти
+                    };
+                }
+            });
+            success_bg_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    const fileURL = URL.createObjectURL(this.files[0]);
+                    preview_success.style.backgroundImage = `url(${fileURL})`;
+                    preview_success.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
+                    preview_success.style.backgroundPosition = "center"; // Центрирование фона
+                }
+            });
+            wait_logo_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    wait_logo.src = URL.createObjectURL(this.files[0]);
+                    wait_logo.onload = function() {
+                        URL.revokeObjectURL(wait_logo.src); // Освобождение памяти
+                    };
+                }
+            });
+            wait_bg_input.addEventListener("change", function () {
+                if (this.files && this.files[0]) {
+                    const fileURL = URL.createObjectURL(this.files[0]);
+                    preview_wait.style.backgroundImage = `url(${fileURL})`;
+                    preview_wait.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
+                    preview_wait.style.backgroundPosition = "center"; // Центрирование фона
+                }
+            });
+            setInitial();
+            });
+        
+            
 
-            UpdateDisplay();
         </script>
         
 
