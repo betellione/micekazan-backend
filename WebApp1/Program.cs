@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using WebApp1.Data;
 using WebApp1.Extensions;
+using WebApp1.Jobs;
 using WebApp1.Models;
 using WebApp1.Options;
 
@@ -20,6 +21,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.Zero;   
 });
+builder.Services.Configure<JobSettings>(builder.Configuration.GetSection("JobSettings"));
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.AddFileManagers();
@@ -102,6 +104,6 @@ app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
 await app.SetupDatabaseAsync();
 
-app.UseHangfireDashboard();
+// app.UseHangfireDashboard();
 
 app.Run();

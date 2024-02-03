@@ -10,6 +10,7 @@ using WebApp1.Data.FileManager;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
+using WebApp1.Jobs;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.EmailSender;
 using WebApp1.Services.EventService;
@@ -129,7 +130,7 @@ public static class WebApplicationBuilderExtensions
         return builder;
     }
 
-    public static WebApplicationBuilder AddJobs(this WebApplicationBuilder builder)
+    private static void AddHangfire(WebApplicationBuilder builder)
     {
         var connectionString = builder.Configuration["ConnectionStrings:Hangfire"];
         using var context = new HangfireDbContext(connectionString!);
@@ -139,10 +140,15 @@ public static class WebApplicationBuilderExtensions
             configuration.UsePostgreSqlStorage(options =>
                 options.UseNpgsqlConnection(connectionString)));
         builder.Services.AddHangfireServer();
+    }
 
-        // builder.Services.AddHostedService<EventImportJob>();
-        // builder.Services.AddHostedService<ClientImportJob>();
-        // builder.Services.AddHostedService<TicketImportJob>();
+    public static WebApplicationBuilder AddJobs(this WebApplicationBuilder builder)
+    {
+        // AddHangfire(builder);
+
+        builder.Services.AddHostedService<EventImportJob>();
+        builder.Services.AddHostedService<ClientImportJob>();
+        builder.Services.AddHostedService<TicketImportJob>();
 
         return builder;
     }

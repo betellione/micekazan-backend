@@ -23,9 +23,9 @@ public class EventService : IEventService
         _apiProvider = apiProvider;
     }
 
-    public async Task<bool> ImportEvents(Guid userId)
+    public async Task<bool> ImportEvents(Guid userId, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
@@ -44,7 +44,7 @@ public class EventService : IEventService
             });
 
         var batchCounter = 0;
-        var existed = (await context.Events.Select(x => x.Id).ToListAsync()).ToHashSet();
+        var existed = (await context.Events.Select(x => x.Id).ToListAsync(cancellationToken)).ToHashSet();
 
         await foreach (var @event in events)
         {
@@ -62,7 +62,7 @@ public class EventService : IEventService
                 if (++batchCounter >= 100)
                 {
                     batchCounter = 0;
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancellationToken);
                 }
             }
             catch (Exception e)
@@ -73,7 +73,7 @@ public class EventService : IEventService
 
         try
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {
