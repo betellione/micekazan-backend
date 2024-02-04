@@ -63,7 +63,7 @@
             </div>
 
             <div class="content_row">
-                <div class="display-preview-block" id="preview-wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath');">
+                <div class="display-preview-block" id="preview-wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover;">
                     <div class="display-preview">
                         <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait-logo" height="70">
                         <h1 id="waiting-display"></h1>
@@ -217,7 +217,7 @@
             const wait_bg_input = document.getElementById("wait_bg_input");
             const wait_logo = document.getElementById("wait-logo");
             const preview_wait = document.getElementById("preview-wait");
-            
+            setInitial();
             function setInitial() {
                 waiting.innerHTML = waiting_input.value;
                 waiting_description.innerHTML = waiting_description_input.value;
@@ -293,11 +293,8 @@
                     preview_wait.style.backgroundPosition = "center"; // Центрирование фона
                 }
             });
-            setInitial();
-            });
-        
             
-
+            });
         </script>
         
 

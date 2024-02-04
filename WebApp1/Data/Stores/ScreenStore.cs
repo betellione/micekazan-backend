@@ -40,8 +40,20 @@ public class ScreenStore : IScreenStore
         screen.WelcomeText = vm.MainText ?? string.Empty;
         screen.Description = vm.Description ?? string.Empty;
         screen.TextColor = vm.BackgroundColor;
-        screen.LogoUri = vm.LogoPath;
-        screen.BackgroundUri = vm.BackgroundPath;
+        
+        if (vm.Logo is not null)
+        {
+            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
+            var logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
+            screen.LogoUri = logoPath;
+        }
+
+        if (vm.Background is not null)
+        {
+            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
+            var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+            screen.BackgroundUri = backgroundPath;
+        }
 
         try
         {
