@@ -361,7 +361,7 @@ public class EventController : Controller
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.WaitingDisplayViewModel, ScreenTypes.Waiting);
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.SuccessDisplayViewModel, ScreenTypes.Success);
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
-        return RedirectToAction("Index");
+        return RedirectToAction("Details", new { id = vm.EventId, });
     }
     
     [HttpGet]
