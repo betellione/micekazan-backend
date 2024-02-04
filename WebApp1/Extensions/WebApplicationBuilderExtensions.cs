@@ -1,11 +1,8 @@
 using System.Net.Http.Headers;
-using Hangfire;
-using Hangfire.PostgreSql;
 using QuestPDF;
 using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using Serilog;
-using WebApp1.Data;
 using WebApp1.Data.FileManager;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
@@ -130,22 +127,8 @@ public static class WebApplicationBuilderExtensions
         return builder;
     }
 
-    private static void AddHangfire(WebApplicationBuilder builder)
-    {
-        var connectionString = builder.Configuration["ConnectionStrings:Hangfire"];
-        using var context = new HangfireDbContext(connectionString!);
-        context.Database.EnsureCreated();
-
-        builder.Services.AddHangfire(configuration =>
-            configuration.UsePostgreSqlStorage(options =>
-                options.UseNpgsqlConnection(connectionString)));
-        builder.Services.AddHangfireServer();
-    }
-
     public static WebApplicationBuilder AddJobs(this WebApplicationBuilder builder)
     {
-        // AddHangfire(builder);
-
         builder.Services.AddHostedService<EventImportJob>();
         builder.Services.AddHostedService<ClientImportJob>();
         builder.Services.AddHostedService<TicketImportJob>();

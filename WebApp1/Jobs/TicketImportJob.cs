@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebApp1.Data;
+using WebApp1.Options;
 using WebApp1.Services.TicketService;
 
 namespace WebApp1.Jobs;
 
 public class TicketImportJob : ImportJobBase
 {
-    public TicketImportJob(IDbContextFactory<ApplicationDbContext> contextFactory, IOptions<JobSettings> options,
+    public TicketImportJob(IDbContextFactory<ApplicationDbContext> contextFactory, IOptions<JobOptions> options,
         IServiceProvider serviceProvider)
         : base(contextFactory, options.Value.ImportTicketsPeriod, serviceProvider)
     {
