@@ -1,197 +1,227 @@
 @model DisplayViewModel
 
 @using WebApp1.Views.Event
-@{    
+@{
     Layout = "_Layout";
     ViewData["ActivePage"] = EventNavPages.EditDisplay;
 }
 
-<div class="tabcontent">    
-    <form asp-controller="Event" asp-action="EditDisplay" id="registerForm" method="post" enctype="multipart/form-data">
-        <input asp-for="EventId" hidden/>
-        <input asp-for="WaitingDisplayViewModel.Id" hidden/>
-        <input asp-for="SuccessDisplayViewModel.Id" hidden/>
-        <input asp-for="FailDisplayViewModel.Id" hidden/>
+<div class="tabcontent">
+<form asp-controller="Event" asp-action="EditDisplay" id="registerForm" method="post" enctype="multipart/form-data">
+<input asp-for="EventId" hidden/>
+<input asp-for="WaitingDisplayViewModel.Id" hidden/>
+<input asp-for="SuccessDisplayViewModel.Id" hidden/>
+<input asp-for="FailDisplayViewModel.Id" hidden/>
 
-        <div class="content_block">
-            <div class="content_row">
-                <h1>Режим ожидания</h1>
+<div class="content_block">
+    <div class="content_row">
+        <h1>Режим ожидания</h1>
 
-                <table>
-                    <tr>
-                        <td><p>Текст приветствия</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="WaitingDisplayViewModel.MainText" rows="1" id="waiting-display-input"></textarea>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td><p>Описание</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="WaitingDisplayViewModel.Description" rows="1" id="waiting-display-description-input"></textarea>
-                            </div>
-                        </td>
-                    </tr>                    
-                    <tr>
-                        <td><p>Загрузите логотип</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="WaitingDisplayViewModel.Logo" id="wait-logo-input">
-                                <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Загрузите фон</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="WaitingDisplayViewModel.Background">
-                                <span asp-validation-for="WaitingDisplayViewModel.Background" id="wait-bg-input">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Выберите цвет фона</p></td>
-                        <td>
-                            <input asp-for="WaitingDisplayViewModel.BackgroundColor" type="color">
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="content_row">
-                <div class="display-preview-block" id="preview-wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover;">
-                    <div class="display-preview">
-                        <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait-logo" height="70">
-                        <h1 id="waiting-display"></h1>
-                        <h2 id="waiting-display-description"></h2>
+        <table>
+            <tr>
+                <td>
+                    <p>Текст приветствия</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="WaitingDisplayViewModel.MainText" rows="1" id="waiting-display-input"></textarea>
                     </div>
-                </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <p>Описание</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="WaitingDisplayViewModel.Description" rows="1" id="waiting-display-description-input"></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите логотип</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="WaitingDisplayViewModel.Logo" id="wait_logo_input">
+                        <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите фон</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="WaitingDisplayViewModel.Background" id="wait_bg_input">
+                        <span asp-validation-for="WaitingDisplayViewModel.Background">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет фона</p>
+                </td>
+                <td>
+                    <input asp-for="WaitingDisplayViewModel.BackgroundColor" type="color">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content_row">
+        <div class="display-preview-block" id="preview_wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover;">
+            <div class="display-preview">
+                <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait_logo" height="70">
+                <h1 id="waiting-display"></h1>
+                <h2 id="waiting-display-description"></h2>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="content_block">
-            <div class="content_row">
-                <h1>Успешное сканирования</h1>
-                
-                <table>
-                    <tr>
-                        <td><p>Текст приветствия</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="SuccessDisplayViewModel.MainText" rows="1" id="success-display-input"></textarea>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Описание</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="SuccessDisplayViewModel.Description" id="success-display-description-input" rows="1"></textarea>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Загрузите логотип</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="SuccessDisplayViewModel.Logo" id="success_logo_input">
-                                <span asp-validation-for="SuccessDisplayViewModel.Logo">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Загрузите фон</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="SuccessDisplayViewModel.Background" id="success_bg_input">
-                                <span asp-validation-for="SuccessDisplayViewModel.Background">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Выберите цвет фона</p></td>
-                        <td>
-                            <input asp-for="SuccessDisplayViewModel.BackgroundColor" type="color">
-                        </td>
-                    </tr>
-                </table>
-            </div>
+<div class="content_block">
+    <div class="content_row">
+        <h1>Успешное сканирования</h1>
 
-            <div class="content_row">
-                <div class="display-preview-block" id="preview-success" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath');>">
-                    <div class="display-preview">
-                        <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" id="success-logo" height="70">
-                        <h1 id="success-display"></h1>
-                        <h2 id="success-display-description"></h2>
+        <table>
+            <tr>
+                <td>
+                    <p>Текст приветствия</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="SuccessDisplayViewModel.MainText" rows="1" id="success-display-input"></textarea>
                     </div>
-                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Описание</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="SuccessDisplayViewModel.Description" id="success-display-description-input" rows="1"></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите логотип</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="SuccessDisplayViewModel.Logo" id="success_logo_input">
+                        <span asp-validation-for="SuccessDisplayViewModel.Logo">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите фон</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="SuccessDisplayViewModel.Background" id="success_bg_input">
+                        <span asp-validation-for="SuccessDisplayViewModel.Background">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет фона</p>
+                </td>
+                <td>
+                    <input asp-for="SuccessDisplayViewModel.BackgroundColor" type="color">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content_row">
+        <div class="display-preview-block" id="preview_success" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath'); background-size: cover;">
+            <div class="display-preview">
+                <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" id="success-logo" height="70">
+                <h1 id="success-display"></h1>
+                <h2 id="success-display-description"></h2>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="content_block">
-            <div class="content_row">
-                <h1>Ошибка сканирования</h1>
+<div class="content_block">
+    <div class="content_row">
+        <h1>Ошибка сканирования</h1>
 
-                <table>
-                    <tr>
-                        <td><p>Текст приветствия</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="FailDisplayViewModel.MainText" rows="1" id="fail-display-input"></textarea>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Описание</p></td>
-                        <td>
-                            <div class="custom-textarea">
-                                <textarea asp-for="FailDisplayViewModel.Description" rows="1" id="fail-display-description-input"></textarea>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Загрузите логотип</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="FailDisplayViewModel.Logo" id="fail_logo_input">
-                                <span asp-validation-for="FailDisplayViewModel.Logo">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Загрузите фон</p></td>
-                        <td>
-                            <label class="custom-file-btm">
-                                <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
-                                <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><p>Выберите цвет фона</p></td>
-                        <td>
-                            <input asp-for="FailDisplayViewModel.BackgroundColor" type="color">
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="content_row">
-                <div class="display-preview-block" id="preview-fail" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover;">
-                    <div class="display-preview">
-                        <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" id="fail-logo" height="70">
-                        <h1 id="fail-display"></h1>
-                        <h2 id="fail-display-description"></h2>
+        <table>
+            <tr>
+                <td>
+                    <p>Текст приветствия</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="FailDisplayViewModel.MainText" rows="1" id="fail-display-input"></textarea>
                     </div>
-                </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Описание</p>
+                </td>
+                <td>
+                    <div class="custom-textarea">
+                        <textarea asp-for="FailDisplayViewModel.Description" rows="1" id="fail-display-description-input"></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите логотип</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="FailDisplayViewModel.Logo" id="fail_logo_input">
+                        <span asp-validation-for="FailDisplayViewModel.Logo">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Загрузите фон</p>
+                </td>
+                <td>
+                    <label class="custom-file-btm">
+                        <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
+                        <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет фона</p>
+                </td>
+                <td>
+                    <input asp-for="FailDisplayViewModel.BackgroundColor" type="color">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content_row">
+        <div class="display-preview-block" id="preview-fail" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover;">
+            <div class="display-preview">
+                <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" id="fail-logo" height="70">
+                <h1 id="fail-display"></h1>
+                <h2 id="fail-display-description"></h2>
             </div>
         </div>
+    </div>
+</div>
 
-        <script>
+<script>
         document.addEventListener('DOMContentLoaded', function () {
             const waiting_input = document.getElementById("waiting-display-input");
             const waiting = document.getElementById("waiting-display");
@@ -212,11 +242,11 @@
             const success_logo_input = document.getElementById("success_logo_input");
             const success_bg_input = document.getElementById("success_bg_input");
             const success_logo = document.getElementById("success-logo");
-            const preview_success = document.getElementById("preview-success");
+            const preview_success = document.getElementById("preview_success");
             const wait_logo_input = document.getElementById("wait_logo_input");
             const wait_bg_input = document.getElementById("wait_bg_input");
-            const wait_logo = document.getElementById("wait-logo");
-            const preview_wait = document.getElementById("preview-wait");
+            const wait_logo = document.getElementById("wait_logo");
+            const preview_wait = document.getElementById("preview_wait");
             setInitial();
             function setInitial() {
                 waiting.innerHTML = waiting_input.value;
@@ -293,17 +323,16 @@
                     preview_wait.style.backgroundPosition = "center"; // Центрирование фона
                 }
             });
-            
             });
         </script>
-        
 
-        <div class="content_bottom">
-            <div class="custom-btm">
-                <button type="submit" asp-action="EditDisplay">Сохранить</button>
-            </div>
-        </div>
-    </form>
+
+<div class="content_bottom">
+    <div class="custom-btm">
+        <button type="submit" asp-action="EditDisplay">Сохранить</button>
+    </div>
+</div>
+</form>
 </div>
 
 @section Scripts
