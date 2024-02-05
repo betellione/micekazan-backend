@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WebApp1.Data;
+using WebApp1.Options;
 using WebApp1.Services.ClientService;
 
 namespace WebApp1.Jobs;
 
 public class ClientImportJob : ImportJobBase
 {
-    public ClientImportJob(IDbContextFactory<ApplicationDbContext> contextFactory, IOptions<JobSettings> options,
+    public ClientImportJob(IDbContextFactory<ApplicationDbContext> contextFactory, IOptions<JobOptions> options,
         IServiceProvider serviceProvider)
         : base(contextFactory, options.Value.ImportClientsPeriod, serviceProvider)
     {

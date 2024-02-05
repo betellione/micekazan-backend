@@ -1,6 +1,6 @@
-namespace WebApp1.Jobs;
+namespace WebApp1.Options;
 
-public class JobSettings
+public class JobOptions
 {
     public int ImportEventsMinutePeriod { get; set; }
     public int ImportClientsMinutePeriod { get; set; }
