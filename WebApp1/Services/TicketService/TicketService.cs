@@ -62,7 +62,7 @@ public class TicketService : ITicketService
         var tickets = _apiProvider.GetTickets(token);
 
         var batchCounter = 0;
-        var existed = (await context.Tickets.Select(x => x.Barcode).ToListAsync(cancellationToken)).ToHashSet();
+        var existed = await context.Tickets.ToDictionaryAsync(x => x.Barcode, x => x.Id, cancellationToken);
         var clientEmailIdPairs = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id, cancellationToken);
         var eventShowIdPairs = await context.Events.Select(x => new { x.Id, x.ForeignShowIds, }).ToListAsync(cancellationToken);
 
@@ -75,13 +75,14 @@ public class TicketService : ITicketService
                     throw new Exception($"Client with email {ticketForeign.ClientEmail} not found");
                 }
 
-                var eventId = eventShowIdPairs.FirstOrDefault(x => x.ForeignShowIds.Contains(ticketForeign.ShowId));
-                if (eventId is null) throw new Exception($"Event with show with ID {ticketForeign.ShowId} not found");
+                var @event = eventShowIdPairs.FirstOrDefault(x => x.ForeignShowIds.Contains(ticketForeign.ShowId));
+                if (@event is null) throw new Exception($"Event with show with ID {ticketForeign.ShowId} not found");
 
-                var ticket = new Ticket { Barcode = ticketForeign.Barcode, ClientId = clientId, EventId = eventId.Id, };
+                var ticket = new Ticket { Barcode = ticketForeign.Barcode, ClientId = clientId, EventId = @event.Id, };
 
-                if (existed.Contains(ticketForeign.Barcode))
+                if (existed.TryGetValue(ticketForeign.Barcode, out var ticketId))
                 {
+                    ticket.Id = ticketId;
                     context.Tickets.Update(ticket);
                 }
                 else
@@ -91,6 +92,7 @@ public class TicketService : ITicketService
 
                 if (++batchCounter < 100) continue;
                 batchCounter = 0;
+
                 await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)

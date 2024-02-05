@@ -10,10 +10,10 @@ namespace WebApp1.Services.EventService;
 
 public class EventService : IEventService
 {
-    private readonly ILogger _logger = Log.ForContext<IEventService>();
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly ITokenService _tokenService;
     private readonly IQticketsApiProvider _apiProvider;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ILogger _logger = Log.ForContext<IEventService>();
+    private readonly ITokenService _tokenService;
 
     public EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
         IQticketsApiProvider apiProvider)
@@ -57,13 +57,12 @@ public class EventService : IEventService
                 context.Events.Add(@event);
             }
 
+            if (++batchCounter < 100) continue;
+            batchCounter = 0;
+
             try
             {
-                if (++batchCounter >= 100)
-                {
-                    batchCounter = 0;
-                    await context.SaveChangesAsync(cancellationToken);
-                }
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {

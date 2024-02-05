@@ -139,6 +139,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         {
             entity.ToTable("Client");
 
+            entity.HasKey(x => x.Id).HasName("Client_pk");
+
             entity.Property(x => x.Id).HasColumnName("Id");
             entity.Property(x => x.ForeignId).HasColumnName("ForeignId");
             entity.Property(x => x.Name).HasMaxLength(64).HasColumnName("Name");
@@ -148,7 +150,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.PhoneNumber).HasMaxLength(64).HasColumnName("PhoneNumber");
 
             entity.HasIndex(x => x.Email).IsUnique();
-            entity.HasAlternateKey(x => x.Email);
         });
 
         modelBuilder.Entity<TokenUpdate>(entity =>

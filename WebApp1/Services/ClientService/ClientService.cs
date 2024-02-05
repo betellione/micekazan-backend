@@ -41,12 +41,13 @@ public class ClientService : IClientService
         });
 
         var batchCounter = 0;
-        var existed = (await context.Clients.Select(x => x.Email).ToListAsync(cancellationToken)).ToHashSet();
+        var existed = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id, cancellationToken);
 
         await foreach (var client in clients)
         {
-            if (existed.Contains(client.Email))
+            if (existed.TryGetValue(client.Email, out var clientId))
             {
+                client.Id = clientId;
                 context.Clients.Update(client);
             }
             else
@@ -54,13 +55,12 @@ public class ClientService : IClientService
                 context.Clients.Add(client);
             }
 
+            if (++batchCounter < 100) continue;
+            batchCounter = 0;
+
             try
             {
-                if (++batchCounter >= 100)
-                {
-                    batchCounter = 0;
-                    await context.SaveChangesAsync(cancellationToken);
-                }
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
