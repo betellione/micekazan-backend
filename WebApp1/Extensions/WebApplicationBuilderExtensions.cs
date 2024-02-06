@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using QuestPDF;
 using QuestPDF.Drawing;
 using QuestPDF.Infrastructure;
 using Serilog;
@@ -6,6 +7,7 @@ using WebApp1.Data.FileManager;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.External.SmsRu;
+using WebApp1.Jobs;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.EmailSender;
 using WebApp1.Services.EventService;
@@ -65,7 +67,7 @@ public static class WebApplicationBuilderExtensions
 
     public static WebApplicationBuilder AddFileManagers(this WebApplicationBuilder builder)
     {
-        var basePath = builder.Environment.WebRootPath;
+        var basePath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot-user");
 
         var logoFileManager = new FileManager(basePath, builder.Configuration["Path:LogoImagePath"]!);
         var backgroundFileManager = new FileManager(basePath, builder.Configuration["Path:BackgroundImagePath"]!);
@@ -81,7 +83,7 @@ public static class WebApplicationBuilderExtensions
 
     public static WebApplicationBuilder AddMediaGenerationServices(this WebApplicationBuilder builder)
     {
-        QuestPDF.Settings.License = LicenseType.Community;
+        Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
         builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
 
@@ -121,6 +123,15 @@ public static class WebApplicationBuilderExtensions
                 "Bearer", builder.Configuration["PrintService:ApiKey"]);
         });
         builder.Services.AddScoped<IPrintService, PrintService>();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddJobs(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddHostedService<EventImportJob>();
+        builder.Services.AddHostedService<ClientImportJob>();
+        builder.Services.AddHostedService<TicketImportJob>();
 
         return builder;
     }

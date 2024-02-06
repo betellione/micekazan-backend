@@ -25,13 +25,17 @@
             </div>
         </nav>
     </header>
+    <div class="container mt-5">
+        <main role="main" class="main">
+            @RenderBody()
+        </main>
+    </div>
+}
+else
+{
+    @RenderBody()
 }
 
-<div class="container mt-5">
-    <main role="main" class="main">
-        @RenderBody()
-    </main>
-</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 

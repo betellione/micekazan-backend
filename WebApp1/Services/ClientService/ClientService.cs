@@ -10,10 +10,10 @@ namespace WebApp1.Services.ClientService;
 
 public class ClientService : IClientService
 {
-    private readonly ILogger _logger = Log.ForContext<IClientService>();
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly ITokenService _tokenService;
     private readonly IQticketsApiProvider _apiProvider;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ILogger _logger = Log.ForContext<IClientService>();
+    private readonly ITokenService _tokenService;
 
     public ClientService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
         IQticketsApiProvider apiProvider)
@@ -23,9 +23,9 @@ public class ClientService : IClientService
         _apiProvider = apiProvider;
     }
 
-    public async Task<bool> ImportClients(Guid userId)
+    public async Task<bool> ImportClients(Guid userId, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
@@ -41,26 +41,26 @@ public class ClientService : IClientService
         });
 
         var batchCounter = 0;
-        var existed = (await context.Clients.Select(x => x.Email).ToListAsync()).ToHashSet();
+        var existed = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id, cancellationToken);
 
         await foreach (var client in clients)
         {
-            if (existed.Contains(client.Email))
+            if (existed.TryGetValue(client.Email, out var clientId))
             {
-                context.Update(client);
+                client.Id = clientId;
+                context.Clients.Update(client);
             }
             else
             {
                 context.Clients.Add(client);
             }
 
+            if (++batchCounter < 100) continue;
+            batchCounter = 0;
+
             try
             {
-                if (++batchCounter >= 100)
-                {
-                    batchCounter = 0;
-                    await context.SaveChangesAsync();
-                }
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
@@ -70,7 +70,7 @@ public class ClientService : IClientService
 
         try
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {
@@ -91,7 +91,7 @@ public class ClientService : IClientService
         var tokenSpan = new byte[16];
         Random.Shared.NextBytes(tokenSpan);
         var infoToken = Convert.ToBase64String(tokenSpan).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-        
+
         var info = new InfoToShow
         {
             Email = data.ClientEmail,

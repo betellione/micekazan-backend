@@ -16,19 +16,21 @@
                         <input asp-for="FontColor" type="color" id="card_color_input">
                     </td>
                 </tr>
-
+                
                 <tr>
                     <td><p>Вертикальная</p></td>
                     <td>
                         <label class="custom-radio-btm">
-                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical", })
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical",
+                                @checked = Model.PageOrientation == PageOrientation.Vertical ? "checked" : ""})
                             <span class="point"></span>
                         </label>
                     </td>
                     <td><p>Горизонтальная</p></td>
                     <td>
                         <label class="custom-radio-btm">
-                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal", })
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal",
+                                @checked = Model.PageOrientation == PageOrientation.Horizontal ? "" : "checked"})
                             <span class="point"></span>
                         </label>
                     </td>
@@ -38,7 +40,7 @@
                     <td><p>Имя</p></td>
                     <td>
                         <label asp-for="DisplayName" class="custom-checkbox-btm">
-                            <input asp-for="DisplayName" id="card_firstname_input" checked="checked"/>
+                            <input asp-for="DisplayName" id="card_firstname_input"/>
                             <!--@Html.DisplayNameFor(m => m.DisplayName)-->
                             <span class="point"></span>
                         </label>
@@ -46,7 +48,7 @@
                     <td><p>Фамилия</p></td>
                     <td>
                         <label asp-for="DisplaySurname" class="custom-checkbox-btm">
-                            <input asp-for="DisplaySurname" id="card_lastname_input" checked="checked"/>
+                            <input asp-for="DisplaySurname" id="card_lastname_input"/>
                             <!--@Html.DisplayNameFor(m => m.DisplaySurname)-->
                             <span class="point"></span>
                         </label>
@@ -57,7 +59,7 @@
                     <td><p>QR код</p></td>
                     <td>
                         <label asp-for="DisplayQrCode" class="custom-checkbox-btm">
-                            <input asp-for="DisplayQrCode" id="card_qr_input" checked="checked"/>
+                            <input asp-for="DisplayQrCode" id="card_qr_input"/>
                             <!--@Html.DisplayNameFor(m => m.DisplayQrCode)-->
                             <span class="point"></span>
                         </label>
@@ -92,11 +94,11 @@
 
         <div class="content_row">
             <div class="preview_block">
-                <div class="preview vertical" id="print_card_component" style="background-image: url('@Model.BackgroundPath');">
+                <div class="preview vertical" id="print_card_component" style="background-image: url('../@Model.BackgroundPath'); background-size: cover;">
                     <div class="preview_logo">
-                        <img id="card_logo" alt="" src="@Model.LogoPath">
+                        <img id="card_logo" alt="" src="/@Model.LogoPath" height="70">
                     </div>
-                    <div class="preview_info">
+                    <div class="preview_info" id="preview_info">
                         <div class="preview_name" id="card_firstname">
                             Сергеей
                         </div>
@@ -127,64 +129,111 @@
 </form>
 
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const print_card = document.getElementById('print_card_component');
+    const preview_info = document.getElementById('preview_info');
+    const card_qr = document.getElementById('card_qr');
+    const orientationVertical = document.querySelector(".ticket-orientation-vertical");
+    const orientationHorizontal = document.querySelector(".ticket-orientation-horizontal");
+    const cardFirstnameInput = document.getElementById('card_firstname_input');
+    const cardLastnameInput = document.getElementById('card_lastname_input');
+    const cardQrInput = document.getElementById('card_qr_input');
+    const cardColorInput = document.getElementById('card_color_input');
+    const cardLogoInput = document.getElementById('card_logo_input');
+    const logoImage = print_card.querySelector("#card_logo");
+    const cardBackgroundInput = document.getElementById('card_background_input');
 
-    // Горизонтальная ориентация
-    document.querySelector(".ticket-orientation-horizontal").addEventListener("change", (event) => {
-        if (event.target.checked) {
-            print_card.classList.remove('vertical');
-            print_card.classList.add('horizon');
-        }
-    });
-
-    // Вертикальная ориентация
-    let vertical = document.querySelector(".ticket-orientation-vertical");
-    vertical.checked = true;
-    vertical.addEventListener("change", (event) => {    
-        if (event.target.checked) {
-            print_card.classList.remove('horizon');
+    // Устанавливаем начальное состояние ориентации
+    function setInitialOrientation() {
+        if (orientationVertical.checked) {
             print_card.classList.add('vertical');
+            preview_info.classList.add('vertical');
+            card_qr.classList.add('vertical');
+            print_card.classList.remove('horizon');
+            preview_info.classList.remove('horizon');
+            card_qr.classList.remove('horizon');
+        } else if (orientationHorizontal.checked) {
+            print_card.classList.add('horizon');
+            preview_info.classList.add('horizon');
+            card_qr.classList.add('horizon');
+            print_card.classList.remove('vertical');
+            preview_info.classList.remove('vertical');
+            card_qr.classList.remove('vertical');
         }
+    }
+
+    // Устанавливаем начальное состояние отображения имени, фамилии и QR
+    function setInitialVisibility() {
+        print_card.querySelector("#card_firstname").style.opacity = cardFirstnameInput.checked ? "1" : "0";
+        print_card.querySelector("#card_lastname").style.opacity = cardLastnameInput.checked ? "1" : "0";
+        print_card.querySelector("#card_qr").style.opacity = cardQrInput.checked ? "1" : "0";
+    }
+
+    // Устанавливаем начальный цвет текста
+    function setInitialTextColor() {
+        print_card.style.color = cardColorInput.value;
+    }
+
+    // Изменение ориентации
+    orientationVertical.addEventListener("change", function () {
+        print_card.classList.add('vertical');
+        preview_info.classList.add('vertical');
+        card_qr.classList.add('vertical');
+        print_card.classList.remove('horizon');
+        preview_info.classList.remove('horizon');
+        card_qr.classList.remove('horizon');
     });
 
-    // Отображение (Имя)
-    document.getElementById('card_firstname_input').addEventListener("change", (event) => {
-        if (event.target.checked) {
-            print_card.querySelector("#card_firstname").style.opacity = "1";
-        } else {
-            print_card.querySelector("#card_firstname").style.opacity = "0";
-        }
-    });
-    // Отображение (Фамилия)
-    document.getElementById('card_lastname_input').addEventListener("change", (event) => {
-        if (event.target.checked) {
-            print_card.querySelector("#card_lastname").style.opacity = "1";
-        } else {
-            print_card.querySelector("#card_lastname").style.opacity = "0";
-        }
-    });
-    // Отображение (QR)
-    document.getElementById('card_qr_input').addEventListener("change", (event) => {
-        if (event.target.checked) {
-            print_card.querySelector("#card_qr").style.opacity = "1";
-        } else {
-            print_card.querySelector("#card_qr").style.opacity = "0";
-        }
+    orientationHorizontal.addEventListener("change", function () {
+        print_card.classList.add('horizon');
+        preview_info.classList.add('horizon');
+        card_qr.classList.add('horizon');
+        print_card.classList.remove('vertical');
+        preview_info.classList.remove('vertical');
+        card_qr.classList.remove('vertical');
     });
 
-    // Цвет текста
-    document.getElementById('card_color_input').addEventListener("change", (event) => {
-        print_card.style.color = event.target.value;
+    // Изменение видимости имени, фамилии, QR
+    cardFirstnameInput.addEventListener("change", function () {
+        print_card.querySelector("#card_firstname").style.opacity = this.checked ? "1" : "0";
     });
 
-    // Логотип
-    document.getElementById('card_logo_input').addEventListener("change", (event) => {
-        print_card.querySelector("#card_logo").src = URL.createObjectURL(event.target.files[0]);
+    cardLastnameInput.addEventListener("change", function () {
+        print_card.querySelector("#card_lastname").style.opacity = this.checked ? "1" : "0";
     });
 
-    // Фон
-    document.getElementById('card_background_input').addEventListener("change", (event) => {
-        let file = URL.createObjectURL(event.target.files[0]);
-        print_card.style.backgroundImage = `url(${file})`;
+    cardQrInput.addEventListener("change", function () {
+        print_card.querySelector("#card_qr").style.opacity = this.checked ? "1" : "0";
     });
+
+    // Изменение цвета текста
+    cardColorInput.addEventListener("change", function () {
+        print_card.style.color = this.value;
+    });
+
+    // Загрузка логотипа и фона
+    cardLogoInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                logoImage.src = URL.createObjectURL(this.files[0]);
+                logoImage.onload = function() {
+                    URL.revokeObjectURL(logoImage.src); // Освобождение памяти
+                };
+            }
+        });
+    
+        // Функция для обновления фона
+        cardBackgroundInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                const fileURL = URL.createObjectURL(this.files[0]);
+                print_card.style.backgroundImage = `url(${fileURL})`;
+                print_card.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
+                print_card.style.backgroundPosition = "center"; // Центрирование фона
+            }
+        });
+
+    // Вызываем начальные установки при загрузке
+    setInitialOrientation();
+    setInitialVisibility();
+    setInitialTextColor();
+});
 </script>

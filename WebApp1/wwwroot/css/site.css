@@ -629,7 +629,7 @@ td.cell-left {
 }
 
 .component_card_info #card_qr {
-    grid-area: 5 / 2 / 1 / 3;
+    grid-area: 1 / 3 / 5 / 2;
 }
 
 .component_card_info .block_right {

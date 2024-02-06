@@ -10,10 +10,10 @@ namespace WebApp1.Services.EventService;
 
 public class EventService : IEventService
 {
-    private readonly ILogger _logger = Log.ForContext<IEventService>();
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly ITokenService _tokenService;
     private readonly IQticketsApiProvider _apiProvider;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ILogger _logger = Log.ForContext<IEventService>();
+    private readonly ITokenService _tokenService;
 
     public EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
         IQticketsApiProvider apiProvider)
@@ -23,9 +23,9 @@ public class EventService : IEventService
         _apiProvider = apiProvider;
     }
 
-    public async Task<bool> ImportEvents(Guid userId)
+    public async Task<bool> ImportEvents(Guid userId, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
@@ -44,7 +44,7 @@ public class EventService : IEventService
             });
 
         var batchCounter = 0;
-        var existed = (await context.Events.Select(x => x.Id).ToListAsync()).ToHashSet();
+        var existed = (await context.Events.Select(x => x.Id).ToListAsync(cancellationToken)).ToHashSet();
 
         await foreach (var @event in events)
         {
@@ -57,13 +57,12 @@ public class EventService : IEventService
                 context.Events.Add(@event);
             }
 
+            if (++batchCounter < 100) continue;
+            batchCounter = 0;
+
             try
             {
-                if (++batchCounter >= 100)
-                {
-                    batchCounter = 0;
-                    await context.SaveChangesAsync();
-                }
+                await context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
@@ -73,7 +72,7 @@ public class EventService : IEventService
 
         try
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {

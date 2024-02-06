@@ -85,25 +85,36 @@
     position: absolute;
     left: 0;
     right: 0;
-
-    text-align: center;
+    height: 70px;
+    
 }
 
-.preview_info {
+.preview_logo img {
+    height: 100%;
+}
+
+.preview_info.horizon {
     display: grid;
     grid-template-columns: 1fr 1fr;
 
     position: absolute;
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
+    top: 30%;
 
     text-align: right;
     gap: 0 10px;
 
     width: 100%;
+}
+
+.preview_info.vertical {
+    top: 90px;
+    display: block;
+    grid-template-rows: 70px 1fr 1fr;
+
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    height: 100%;
 }
 
 .preview_name {
@@ -118,12 +129,48 @@
     flex-direction: row-reverse;
 }
 
-.preview_qr {
+.preview_info.vertical .preview_name  {
+    display: block;
+    horiz-align: center;
+    flex-direction: row;
+}
+.preview_info.vertical .preview_surname  {
+    display: block;
+    flex-direction: row;
+}
+
+.preview_qr.horizon  {
     grid-column-start: 2;
     grid-row-start: 1;
     grid-row-end: 3;
+    text-align: center;
+}
+
+.preview_qr.horizon img {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    width: 50%;
+}
+
+.preview_qr .horizon img {
+    width: 40%;
+}
+
+.preview_qr.vertical img {
+    margin-top: 50px;
+    width: 40%;
+}
+
+.display-preview-block {
+    display: block;
+    position: absolute;
+    text-align: center;
+    height: 348px;
+    width: 255px;
+    border: 1px solid #000;
 }
 
 .preview_qr img {
-    width: 100%;
+    width: 40%;
 }

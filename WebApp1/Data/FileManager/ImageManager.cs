@@ -5,8 +5,8 @@ namespace WebApp1.Data.FileManager;
 
 public class ImageManager : IImageManager
 {
-    private readonly ILogger _logger = Log.ForContext<IImageManager>();
     private readonly IFileManager _fileManager;
+    private readonly ILogger _logger = Log.ForContext<IImageManager>();
 
     public ImageManager(IFileManager fileManager)
     {
@@ -17,22 +17,20 @@ public class ImageManager : IImageManager
     {
         return options is null
             ? await _fileManager.SaveFile(image, imageName)
-            : await SaveImageWithResize(image, imageName, options.Width, options.Height);
+            : await SaveImageWithResize(image, imageName, options);
     }
 
-    public async Task<bool> UpdateImage(string path, Stream image, ImageSizeOptions? options = null)
+    public async Task<bool> UpdateImage(string imageName, Stream image, ImageSizeOptions? options = null)
     {
-        var fileName = Path.GetFileName(path);
-
         return options is null
-            ? await _fileManager.UpdateFile(fileName, image)
-            : await SaveImageWithResize(image, path, options.Width, options.Height, path) is not null;
+            ? await _fileManager.UpdateFile(imageName, image)
+            : await SaveImageWithResize(image, imageName, options, false) is not null;
     }
 
-    private async Task<string?> SaveImageWithResize(Stream stream, string imageName, int width, int height, string? path = null)
+    private async Task<string?> SaveImageWithResize(Stream stream, string imageName, ImageSizeOptions options, bool saveAsNew = true)
     {
         var ext = Path.GetExtension(imageName);
-        path ??= _fileManager.GeneratePathToSave(ext);
+        var savePath = saveAsNew ? _fileManager.GeneratePathToSave(ext) : _fileManager.GetFullPath(imageName);
 
         try
         {
@@ -42,19 +40,19 @@ public class ImageManager : IImageManager
             {
                 x.Resize(new ResizeOptions
                 {
-                    Size = new Size(width, height),
+                    Size = new Size(options.Width, options.Height),
                     Mode = ResizeMode.Crop,
                     Position = AnchorPositionMode.Center,
                 });
             });
 
-            await image.SaveAsync(path);
+            await image.SaveAsync(savePath);
 
-            return _fileManager.GetRelativePath(path);
+            return _fileManager.GetRelativePath(savePath);
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Cannot resize and save image to path {Path} with width {Width} and height {Height}", path, width, height);
+            _logger.Error(e, "Cannot resize and save image to path {Path} with width options {Options}", savePath, options);
             return null;
         }
     }

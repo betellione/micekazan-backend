@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using WebApp1.Data;
 using WebApp1.Extensions;
 using WebApp1.Models;
@@ -18,6 +19,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.Zero;   
 });
+builder.Services.Configure<JobOptions>(builder.Configuration.GetSection("JobOptions"));
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 builder.AddFileManagers();
@@ -39,6 +41,8 @@ builder.Services.AddMessageSenders();
 builder.AddMediaGenerationServices();
 builder.AddCustomServices();
 builder.SetupLogging();
+
+builder.AddJobs();
 
 builder.Services.AddDefaultIdentity<User>(options =>
     {
@@ -85,6 +89,10 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "wwwroot-user")),
+});
 app.UseRouting();
 
 app.UseAuthentication();
