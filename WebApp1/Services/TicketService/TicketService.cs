@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using WebApp1.Controllers;
 using WebApp1.Data;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
@@ -91,11 +92,23 @@ public class TicketService : ITicketService
         return pdf;
     }
 
-    public async Task<Ticket?> SetPassTimeOrFalse(string barcode)
+    public async Task<bool> SetPassTimeOrFalse(string barcode)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
         var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
-        return ticket;
+        if (ticket?.PassedAt is null)
+            return false;
+        ticket.PassedAt = DateTime.Now;
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while saving tickets in the DB");
+            return false;
+        }
+        return true;
     }
 
     public async Task<bool> ImportTickets(Guid userId)

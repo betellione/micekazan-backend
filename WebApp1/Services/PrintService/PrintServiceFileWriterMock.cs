@@ -16,4 +16,9 @@ public class PrintServiceFileWriterMock : IPrintService
             return false;
         }
     }
+
+    public Task<bool> PrintTicket(string code, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
 }

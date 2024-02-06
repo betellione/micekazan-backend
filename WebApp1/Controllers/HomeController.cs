@@ -5,6 +5,8 @@ using WebApp1.Data.Stores;
 using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
+using WebApp1.Services.PrintService;
+using WebApp1.Services.TicketService;
 using WebApp1.ViewModels.Event;
 using WebApp1.ViewModels.Home;
 
@@ -17,14 +19,17 @@ public class HomeController : Controller
     private readonly UserManager<User> _userManager;
     private readonly IScreenStore _screenStore;
     private readonly IScannerStore _scannerStore;
+    private readonly IPrintService _printService;
 
-    public HomeController(IEventService eventService, SignInManager<User> signInManager, UserManager<User> userManager, IScreenStore screenStore, IScannerStore scannerStore)
+    public HomeController(IEventService eventService, SignInManager<User> signInManager, UserManager<User> userManager,
+        IScreenStore screenStore, IScannerStore scannerStore, IPrintService printService)
     {
         _eventService = eventService;
         _signInManager = signInManager;
         _userManager = userManager;
         _screenStore = screenStore;
         _scannerStore = scannerStore;
+        _printService = printService;
     }
 
     [HttpGet]
@@ -48,11 +53,11 @@ public class HomeController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> Terminal()
+    public async Task<IActionResult> Terminal(ScreenTypes screenType = ScreenTypes.Waiting)
     {
         var scanner = await _scannerStore.FindScannerById(new Guid(_userManager.GetUserId(User)!));
         if (scanner is null) return NotFound();
-        var screen = await _screenStore.GetScreenByType(scanner.EventId, ScreenTypes.Waiting);
+        var screen = await _screenStore.GetScreenByType(scanner.EventId, screenType);
         if (screen is null) return View(new ScreenViewModel());
         return View(new ScreenViewModel
         {
@@ -62,5 +67,13 @@ public class HomeController : Controller
             LogoPath = screen.LogoUri,
             BackgroundPath = screen.BackgroundUri,
         });
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> PrintTerminal(string code)
+    {
+        var userId = new Guid(_userManager.GetUserId(User)!);
+        await _printService.PrintTicket(code, userId);
+        return RedirectToAction("Terminal");
     }
 }
