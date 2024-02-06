@@ -47,6 +47,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="WaitingDisplayViewModel.Logo" id="wait_logo_input">
                         <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
+                        
                     </label>
                 </td>
             </tr>
@@ -196,6 +197,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
                         <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
+                        <button type="button" onclick="clearFile()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -323,6 +325,12 @@
                     preview_wait.style.backgroundPosition = "center"; // Центрирование фона
                 }
             });
+            
+            function clearFile() {
+                if (fail_bg_input.files && fail_bg_input.files[0]) {
+                    fail_bg_input.files[0] = ''; // Очистить значение input
+                   }
+                }
             });
         </script>
 
