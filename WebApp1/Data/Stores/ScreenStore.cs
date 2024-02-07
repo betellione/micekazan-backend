@@ -39,7 +39,9 @@ public class ScreenStore : IScreenStore
     {
         screen.WelcomeText = vm.MainText ?? string.Empty;
         screen.Description = vm.Description ?? string.Empty;
-        screen.TextColor = vm.BackgroundColor;
+        screen.BackgroundColor = vm.BackgroundColor;
+        screen.TextColor = vm.TextColor;
+        screen.TextSize = vm.TextSize;
         
         if (vm.Logo is not null)
         {
@@ -89,7 +91,9 @@ public class ScreenStore : IScreenStore
             LogoUri = logoPath,
             WelcomeText = vm.MainText!,
             Description = vm.Description!,
-            TextColor = vm.BackgroundColor,
+            TextColor = vm.TextColor,
+            BackgroundColor = vm.BackgroundColor,
+            TextSize = vm.TextSize,
             Type = type,
             EventId = eventId,
         };

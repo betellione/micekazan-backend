@@ -31,7 +31,9 @@ public static class EventMapping
             Description = @screen.Description,
             LogoPath = @screen.LogoUri,
             BackgroundPath = @screen.BackgroundUri,
-            BackgroundColor = @screen.TextColor,
+            BackgroundColor = @screen.BackgroundColor,
+            TextColor = @screen.TextColor,
+            TextSize = @screen.TextSize,
         };
     }
     

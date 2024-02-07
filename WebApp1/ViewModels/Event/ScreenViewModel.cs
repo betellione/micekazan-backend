@@ -19,7 +19,9 @@ public class ScreenViewModel
     [DisplayName("Загрузить фон")]
     public IFormFile? Background { get; set; }
     
-    public string BackgroundColor { get; set; } = "#000000";
+    public string TextColor { get; set; } = "#000000";
+    public int TextSize { get; set; } = 70;
+    public string BackgroundColor { get; set; } = "#FFFFFF";
 
     public string? LogoPath { get; set; }
     public string? BackgroundPath { get; set; }

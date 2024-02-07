@@ -63,7 +63,9 @@ public class HomeController : Controller
         {
             MainText = screen.WelcomeText,
             Description = screen.Description,
-            BackgroundColor = screen.TextColor,
+            TextColor = screen.TextColor,
+            TextSize = screen.TextSize,
+            BackgroundColor = screen.BackgroundColor,
             LogoPath = screen.LogoUri,
             BackgroundPath = screen.BackgroundUri,
         });

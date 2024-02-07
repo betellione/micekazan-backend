@@ -199,6 +199,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(x => x.WelcomeText).HasMaxLength(32).HasColumnName("WelcomeText");
             entity.Property(x => x.Description).HasMaxLength(256).HasColumnName("Description");
             entity.Property(x => x.TextColor).HasMaxLength(7).IsFixedLength().HasColumnName("TextColor").HasDefaultValue("#000000");
+            entity.Property(x => x.BackgroundColor).HasMaxLength(7).IsFixedLength().HasColumnName("BackgroundColor").HasDefaultValue("#FFFFFF");
+            entity.Property(x => x.TextSize).HasColumnName("TextSize").HasDefaultValue(70);
 
             entity.Property(x => x.LogoUri).HasMaxLength(2048).HasColumnName("LogoUri");
             entity.Property(x => x.BackgroundUri).HasMaxLength(2048).HasColumnName("BackgroundUri");
