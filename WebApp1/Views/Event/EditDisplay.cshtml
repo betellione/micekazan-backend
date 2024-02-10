@@ -12,7 +12,8 @@
 <input asp-for="WaitingDisplayViewModel.Id" hidden/>
 <input asp-for="SuccessDisplayViewModel.Id" hidden/>
 <input asp-for="FailDisplayViewModel.Id" hidden/>
-
+@Html.HiddenFor(m => m.FailDisplayViewModel.LogoDeleted);
+@{ Model.FailDisplayViewModel.LogoDeleted = true;}
 <div class="content_block">
     <div class="content_row">
         <h1>Режим ожидания</h1>
@@ -47,7 +48,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="WaitingDisplayViewModel.Logo" id="wait_logo_input">
                         <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
-                        
+                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -59,6 +60,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="WaitingDisplayViewModel.Background" id="wait_bg_input">
                         <span asp-validation-for="WaitingDisplayViewModel.Background">Загрузить файл</span>
+                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -67,18 +69,39 @@
                     <p>Выберите цвет фона</p>
                 </td>
                 <td>
-                    <input asp-for="WaitingDisplayViewModel.BackgroundColor" type="color">
+                    <input asp-for="WaitingDisplayViewModel.BackgroundColor" id="wait-bg-color" type="color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет текста</p>
+                </td>
+                <td>
+                    <input asp-for="WaitingDisplayViewModel.TextColor" type="color" id="wait-color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите размер текста</p>
+                </td>
+                <td>
+                    <input asp-for="WaitingDisplayViewModel.TextSize" type="number" id="wait-size">
                 </td>
             </tr>
         </table>
     </div>
 
     <div class="content_row">
-        <div class="display-preview-block" id="preview_wait" style="background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.WaitingDisplayViewModel.BackgroundColor">
+        @{
+            double result = @Model.WaitingDisplayViewModel.TextSize / 5;
+            var size = result + "px";
+        }
+        <div class="display-preview-block" id="preview_wait" style="font-size: @size; color: @Model.WaitingDisplayViewModel.TextColor; background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.WaitingDisplayViewModel.BackgroundColor">
+
             <div class="display-preview">
-                <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait_logo" height="70">
-                <h1 id="waiting-display"></h1>
-                <h2 id="waiting-display-description"></h2>
+                <img alt="" src="/@Model.WaitingDisplayViewModel.LogoPath" id="wait_logo" height="40">
+                <div style="width: 100%" id="waiting-display"></div>
+                <div id="waiting-display-description"></div>
             </div>
         </div>
     </div>
@@ -87,7 +110,6 @@
 <div class="content_block">
     <div class="content_row">
         <h1>Успешное сканирования</h1>
-
         <table>
             <tr>
                 <td>
@@ -117,6 +139,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="SuccessDisplayViewModel.Logo" id="success_logo_input">
                         <span asp-validation-for="SuccessDisplayViewModel.Logo">Загрузить файл</span>
+                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -128,6 +151,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="SuccessDisplayViewModel.Background" id="success_bg_input">
                         <span asp-validation-for="SuccessDisplayViewModel.Background">Загрузить файл</span>
+                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -136,18 +160,38 @@
                     <p>Выберите цвет фона</p>
                 </td>
                 <td>
-                    <input asp-for="SuccessDisplayViewModel.BackgroundColor" type="color">
+                    <input asp-for="SuccessDisplayViewModel.BackgroundColor" id="success-bg-color" type="color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет текста</p>
+                </td>
+                <td>
+                    <input asp-for="SuccessDisplayViewModel.TextColor" type="color" id="success-color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите размер текста</p>
+                </td>
+                <td>
+                    <input asp-for="SuccessDisplayViewModel.TextSize" type="number" id="success-size">
                 </td>
             </tr>
         </table>
     </div>
 
     <div class="content_row">
-        <div class="display-preview-block" id="preview_success" style="background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.SuccessDisplayViewModel.BackgroundColor">
+        @{
+            double resultS = @Model.SuccessDisplayViewModel.TextSize / 5;
+            var sizeS = resultS + "px";
+        }
+        <div class="display-preview-block" id="preview_success" style="font-size: @sizeS; color: @Model.SuccessDisplayViewModel.TextColor; background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.SuccessDisplayViewModel.BackgroundColor">
             <div class="display-preview">
-                <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" id="success-logo" height="70">
-                <h1 id="success-display"></h1>
-                <h2 id="success-display-description"></h2>
+                <img alt="" src="/@Model.SuccessDisplayViewModel.LogoPath" id="success-logo" height="40">
+                <div id="success-display"></div>
+                <div id="success-display-description"></div>
             </div>
         </div>
     </div>
@@ -156,7 +200,6 @@
 <div class="content_block">
     <div class="content_row">
         <h1>Ошибка сканирования</h1>
-
         <table>
             <tr>
                 <td>
@@ -186,6 +229,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="FailDisplayViewModel.Logo" id="fail_logo_input">
                         <span asp-validation-for="FailDisplayViewModel.Logo">Загрузить файл</span>
+                        <button type="button" onclick="clearFileFL()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -197,7 +241,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
                         <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
-                        <button type="button" onclick="clearFile()">Очистить файл</button>
+                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
                     </label>
                 </td>
             </tr>
@@ -206,18 +250,39 @@
                     <p>Выберите цвет фона</p>
                 </td>
                 <td>
-                    <input asp-for="FailDisplayViewModel.BackgroundColor" type="color">
+                    <input asp-for="FailDisplayViewModel.BackgroundColor" id="fail-bg-color" type="color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите цвет текста</p>
+                </td>
+                <td>
+                    <input asp-for="FailDisplayViewModel.TextColor" type="color" id="fail-color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Выберите размер текста</p>
+                </td>
+                <td>
+                    <input asp-for="FailDisplayViewModel.TextSize" type="number" id="fail-size">
                 </td>
             </tr>
         </table>
     </div>
 
     <div class="content_row">
-        <div class="display-preview-block" id="preview-fail" style="background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.FailDisplayViewModel.BackgroundColor">
+        @{
+            double resultF = @Model.FailDisplayViewModel.TextSize / 5;
+            var sizeF = resultF + "px";
+        }
+        <div class="display-preview-block" id="preview-fail" style="font-size: @sizeF; color: @Model.FailDisplayViewModel.TextColor; background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.FailDisplayViewModel.BackgroundColor">
+
             <div class="display-preview">
-                <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" id="fail-logo" height="70">
-                <h1 id="fail-display"></h1>
-                <h2 id="fail-display-description"></h2>
+                <img alt="" src="/@Model.FailDisplayViewModel.LogoPath" id="fail-logo" height="40">
+                <div id="fail-display"></div>
+                <div id="fail-display-description"></div>
             </div>
         </div>
     </div>
@@ -249,6 +314,15 @@
             const wait_bg_input = document.getElementById("wait_bg_input");
             const wait_logo = document.getElementById("wait_logo");
             const preview_wait = document.getElementById("preview_wait");
+            const wait_color = document.getElementById("wait-color");
+            const wait_bg_color = document.getElementById("wait-bg-color");
+            const wait_size = document.getElementById("wait-size");
+            const success_color = document.getElementById("success-color");
+            const success_bg_color = document.getElementById("success-bg-color");
+            const success_size = document.getElementById("success-size");
+            const fail_color = document.getElementById("fail-color");
+            const fail_bg_color = document.getElementById("fail-bg-color");
+            const fail_size = document.getElementById("fail-size");
             setInitial();
             function setInitial() {
                 waiting.innerHTML = waiting_input.value;
@@ -258,6 +332,36 @@
                 fail.innerHTML = fail_input.value;
                 fail_description.innerHTML = fail_description_input.value;
             }
+            
+            wait_color.addEventListener("change", function () {
+                preview_wait.style.color = wait_color.value;
+            });
+            success_color.addEventListener("change", function () {
+                preview_success.style.color = success_color.value;
+            });
+            fail_color.addEventListener("change", function () {
+                preview_fail.style.color = fail_color.value;
+            });
+            
+            wait_bg_color.addEventListener("change", function () {
+                preview_wait.style.backgroundColor = wait_bg_color.value;
+            });
+            success_bg_color.addEventListener("change", function () {
+                preview_success.style.backgroundColor = success_bg_color.value;
+            });
+            fail_bg_color.addEventListener("change", function () {
+                preview_fail.style.backgroundColor = fail_bg_color.value;
+            });
+            
+            wait_size.addEventListener("change", function () {
+                preview_wait.style.fontSize = (wait_size.value / 5) + "px";
+            });
+            success_size.addEventListener("change", function () {
+                preview_success.style.fontSize = (success_size.value / 5) + "px";
+            });
+            fail_size.addEventListener("change", function () {
+                preview_fail.style.fontSize = (fail_size.value / 5) + "px";
+            });
             
             waiting_input.addEventListener("change", function () {
                 waiting.innerHTML = waiting_input.value;
@@ -326,11 +430,26 @@
                 }
             });
             
-            function clearFile() {
-                if (fail_bg_input.files && fail_bg_input.files[0]) {
-                    fail_bg_input.files[0] = ''; // Очистить значение input
-                   }
-                }
+            function clearFileWL() {
+                wait_logo.src = "/"
+                @Model.WaitingDisplayViewModel.LogoDeleted = true;
+            }
+            function clearFileWB() {
+                preview_wait.style.backgroundImage
+                @Model.WaitingDisplayViewModel.BackgroundDeleted = true;           
+            }
+            function clearFileSL() {
+                success_logo.src = "/"
+                @Model.SuccessDisplayViewModel.LogoDeleted = true;
+            }
+            function clearFileSB() {
+                preview_success.style.backgroundImage     
+                @Model.SuccessDisplayViewModel.BackgroundDeleted = true;   
+            }
+            function clearFileFB() {
+                preview_fail.style.backgroundImage 
+                @Model.FailDisplayViewModel.BackgroundDeleted = true;  
+            }
             });
         </script>
 
@@ -345,7 +464,14 @@
 
 @section Scripts
 {
-    <script>
+    <script>function clearFileFL() {
+        console.log("qweqwe")
+        document.getElementById("fail-logo").src = "/" 
+        @{
+            Model.FailDisplayViewModel.LogoDeleted = true;
+        } 
+    }
+    
         function PassSelectedValue(selectObject) {
             window.location.href = "Settings?templateId=" + selectObject.value;
         }

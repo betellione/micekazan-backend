@@ -25,4 +25,7 @@ public class ScreenViewModel
 
     public string? LogoPath { get; set; }
     public string? BackgroundPath { get; set; }
+    
+    public bool LogoDeleted { get; set; }
+    public bool BackgroundDeleted { get; set; } = false;
 }

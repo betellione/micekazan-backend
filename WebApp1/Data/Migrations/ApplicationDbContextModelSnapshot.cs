@@ -195,8 +195,9 @@ namespace WebApp1.Data.Migrations
                         .HasColumnType("character varying(64)")
                         .HasColumnName("Surname");
 
-                    b.HasKey("Id")
-                        .HasName("Client_pk");
+                    b.HasKey("Id");
+                    
+                    b.HasAlternateKey("Email");
 
                     b.HasIndex("Email")
                         .IsUnique();
