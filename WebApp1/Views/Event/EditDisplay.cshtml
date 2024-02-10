@@ -12,8 +12,12 @@
 <input asp-for="WaitingDisplayViewModel.Id" hidden/>
 <input asp-for="SuccessDisplayViewModel.Id" hidden/>
 <input asp-for="FailDisplayViewModel.Id" hidden/>
-@Html.HiddenFor(m => m.FailDisplayViewModel.LogoDeleted);
-@{ Model.FailDisplayViewModel.LogoDeleted = true;}
+<input asp-for="WaitingDisplayViewModel.DeleteLogo" id="wld" hidden/>
+<input asp-for="WaitingDisplayViewModel.DeleteBackground" id="wbd" hidden/>
+<input asp-for="SuccessDisplayViewModel.DeleteLogo" id="sld" hidden/>
+<input asp-for="SuccessDisplayViewModel.DeleteBackground" id="sbd" hidden/>
+<input asp-for="FailDisplayViewModel.DeleteLogo" id="fld" hidden/>
+<input asp-for="FailDisplayViewModel.DeleteBackground" id="fbd" hidden/>
 <div class="content_block">
     <div class="content_row">
         <h1>Режим ожидания</h1>
@@ -48,7 +52,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="WaitingDisplayViewModel.Logo" id="wait_logo_input">
                         <span asp-validation-for="WaitingDisplayViewModel.Logo">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
+                        <button type="button" onclick="clearFileWL()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -60,7 +64,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="WaitingDisplayViewModel.Background" id="wait_bg_input">
                         <span asp-validation-for="WaitingDisplayViewModel.Background">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
+                        <button type="button" onclick="clearFileWB()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -139,7 +143,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="SuccessDisplayViewModel.Logo" id="success_logo_input">
                         <span asp-validation-for="SuccessDisplayViewModel.Logo">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
+                        <button type="button" onclick="clearFileSL()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -151,7 +155,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="SuccessDisplayViewModel.Background" id="success_bg_input">
                         <span asp-validation-for="SuccessDisplayViewModel.Background">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
+                        <button type="button" onclick="clearFileSB()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -229,7 +233,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="FailDisplayViewModel.Logo" id="fail_logo_input">
                         <span asp-validation-for="FailDisplayViewModel.Logo">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFL()">Очистить файл</button>
+                        <button type="button" onclick="clearFileFL()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -241,7 +245,7 @@
                     <label class="custom-file-btm">
                         <input asp-for="FailDisplayViewModel.Background" id="fail_bg_input">
                         <span asp-validation-for="FailDisplayViewModel.Background">Загрузить файл</span>
-                        <button type="button" onclick="clearFileFB()">Очистить файл</button>
+                        <button type="button" onclick="clearFileFB()">✕</button>
                     </label>
                 </td>
             </tr>
@@ -384,6 +388,7 @@
             fail_logo_input.addEventListener("change", function () {
                 if (this.files && this.files[0]) {
                     fail_logo.src = URL.createObjectURL(this.files[0]);
+                    document.getElementById("fld").checked = ""
                     fail_logo.onload = function() {
                         URL.revokeObjectURL(fail_logo.src); // Освобождение памяти
                     };
@@ -395,11 +400,13 @@
                     preview_fail.style.backgroundImage = `url(${fileURL})`;
                     preview_fail.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
                     preview_fail.style.backgroundPosition = "center"; // Центрирование фона
+                    document.getElementById("fbd").checked = ""
                 }
             });
             success_logo_input.addEventListener("change", function () {
                 if (this.files && this.files[0]) {
                     success_logo.src = URL.createObjectURL(this.files[0]);
+                    document.getElementById("sld").checked = ""
                     success_logo.onload = function() {
                         URL.revokeObjectURL(success_logo.src); // Освобождение памяти
                     };
@@ -411,11 +418,13 @@
                     preview_success.style.backgroundImage = `url(${fileURL})`;
                     preview_success.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
                     preview_success.style.backgroundPosition = "center"; // Центрирование фона
+                    document.getElementById("sbd").checked = ""
                 }
             });
             wait_logo_input.addEventListener("change", function () {
                 if (this.files && this.files[0]) {
                     wait_logo.src = URL.createObjectURL(this.files[0]);
+                    document.getElementById("wld").checked = ""
                     wait_logo.onload = function() {
                         URL.revokeObjectURL(wait_logo.src); // Освобождение памяти
                     };
@@ -427,29 +436,9 @@
                     preview_wait.style.backgroundImage = `url(${fileURL})`;
                     preview_wait.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
                     preview_wait.style.backgroundPosition = "center"; // Центрирование фона
+                    document.getElementById("wbd").checked = ""
                 }
             });
-            
-            function clearFileWL() {
-                wait_logo.src = "/"
-                @Model.WaitingDisplayViewModel.LogoDeleted = true;
-            }
-            function clearFileWB() {
-                preview_wait.style.backgroundImage
-                @Model.WaitingDisplayViewModel.BackgroundDeleted = true;           
-            }
-            function clearFileSL() {
-                success_logo.src = "/"
-                @Model.SuccessDisplayViewModel.LogoDeleted = true;
-            }
-            function clearFileSB() {
-                preview_success.style.backgroundImage     
-                @Model.SuccessDisplayViewModel.BackgroundDeleted = true;   
-            }
-            function clearFileFB() {
-                preview_fail.style.backgroundImage 
-                @Model.FailDisplayViewModel.BackgroundDeleted = true;  
-            }
             });
         </script>
 
@@ -464,12 +453,35 @@
 
 @section Scripts
 {
-    <script>function clearFileFL() {
-        console.log("qweqwe")
+    <script>function clearFileWL() {
+        document.getElementById("wait_logo").src = "/" 
+        document.getElementById("wld").checked = "checked"
+        
+    }
+    function clearFileWB() {
+        document.getElementById("preview_wait").style.backgroundImage = `url(/)`; 
+        document.getElementById("wbd").checked = "checked"
+        
+    }
+    function clearFileSL() {
+        document.getElementById("success-logo").src = "/" 
+        document.getElementById("sld").checked = "checked"
+        
+    }
+    function clearFileSB() {
+        document.getElementById("preview_success").style.backgroundImage = `url(/)`;
+        document.getElementById("sbd").checked = "checked"
+        
+    }
+    function clearFileFL() {    
         document.getElementById("fail-logo").src = "/" 
-        @{
-            Model.FailDisplayViewModel.LogoDeleted = true;
-        } 
+        document.getElementById("fld").checked = "checked"
+        
+    }
+    function clearFileFB() {    
+        document.getElementById("preview-fail").style.backgroundImage = `url(/)`;
+        document.getElementById("fbd").checked = "checked"
+        
     }
     
         function PassSelectedValue(selectObject) {

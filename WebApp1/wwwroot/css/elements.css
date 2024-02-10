@@ -234,6 +234,10 @@ p {
     display: inline-block;
 }
 
+.custom-file-btm .button{
+    background-image: url("images/close.svg");
+}
+
 .custom-file-btm span {
 	position: relative;
 	display: inline-block;

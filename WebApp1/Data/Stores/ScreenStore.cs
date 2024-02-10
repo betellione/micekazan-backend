@@ -43,23 +43,23 @@ public class ScreenStore : IScreenStore
         screen.TextColor = vm.TextColor;
         screen.TextSize = vm.TextSize;
         
-        if (vm.Logo is not null && !vm.LogoDeleted)
+        if (vm.Logo is not null && !vm.DeleteLogo)
         {
             var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
             var logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
             screen.LogoUri = logoPath;
         }
         
-        if (vm.LogoDeleted) screen.LogoUri = string.Empty;
+        if (vm.DeleteLogo) screen.LogoUri = string.Empty;
 
-        if (vm.Background is not null && !vm.BackgroundDeleted)
+        if (vm.Background is not null && !vm.DeleteBackground)
         {
             var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
             var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
             screen.BackgroundUri = backgroundPath;
         }
 
-        if (vm.BackgroundDeleted) screen.BackgroundUri = string.Empty;
+        if (vm.DeleteBackground) screen.BackgroundUri = string.Empty;
 
         try
         {
