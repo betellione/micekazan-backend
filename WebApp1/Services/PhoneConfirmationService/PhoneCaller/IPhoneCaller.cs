@@ -12,5 +12,5 @@ public interface IPhoneCaller
     /// <returns>The last 4 digits of the number from which the call was made.</returns>
     /// <remarks>Not all providers support IP address so it is optional.</remarks>
     /// <exception cref="Exception">Phone call was not made due to provider's error or invalid input data.</exception>
-    public Task<string> MakePhoneCall(string phoneNumber, IPAddress? ipAddress = null);
+    Task<string> MakePhoneCall(string phoneNumber, IPAddress? ipAddress = null);
 }

@@ -5,9 +5,9 @@ namespace WebApp1.Services.TemplateService;
 
 public interface ITemplateService
 {
-    public Task<long> AddTemplate(Guid userId, TemplateViewModel vm);
-    public Task<TicketPdfTemplate?> GetTemplate(long id);
-    public Task<TicketPdfTemplate?> GetTemplateForScanner(Guid scannerId);
-    public Task<IEnumerable<long>> GetTemplateIds(Guid userId);
-    public Task UpdateTemplate(TemplateViewModel vm);
+    Task<long> AddTemplate(Guid userId, TemplateViewModel vm);
+    Task<TicketPdfTemplate?> GetTemplate(long id);
+    Task<TicketPdfTemplate?> GetTemplateForScanner(Guid scannerId);
+    Task<IEnumerable<long>> GetTemplateIds(Guid userId);
+    Task UpdateTemplate(TemplateViewModel vm);
 }

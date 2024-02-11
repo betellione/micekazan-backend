@@ -9,5 +9,5 @@ public interface ISmsSender
     /// <param name="message">Message to send.</param>
     /// <returns></returns>
     /// <exception cref="Exception">SMS was not sent due to provider's error or invalid input data.</exception>
-    public Task SendSmsAsync(string number, string message);
+    Task SendSmsAsync(string number, string message);
 }

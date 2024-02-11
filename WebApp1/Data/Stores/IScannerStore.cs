@@ -4,7 +4,7 @@ namespace WebApp1.Data.Stores;
 
 public interface IScannerStore
 {
-    public Task<string?> GetScannerPrintingToken(Guid scannerId);
-    public Task<EventScanner?> FindScannerById(Guid userId);
-    public Task<bool> SetClaimsForScanner(Guid userId, bool isAutomate);
+    Task<string?> GetScannerPrintingToken(Guid scannerId);
+    Task<EventScanner?> FindScannerById(Guid userId);
+    Task<bool> SetClaimsForScanner(Guid userId, bool isAutomate);
 }

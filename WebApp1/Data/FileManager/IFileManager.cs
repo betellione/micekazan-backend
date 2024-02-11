@@ -2,11 +2,11 @@ namespace WebApp1.Data.FileManager;
 
 public interface IFileManager
 {
-    public Task<string?> SaveFile(Stream file, string fileName);
-    public Stream? ReadFile(string fileName);
-    public bool DeleteFile(string fileName);
-    public Task<bool> UpdateFile(string fileName, Stream file);
-    public string GeneratePathToSave(string fileExtension);
-    public string GetFullPath(string fileName);
-    public string GetRelativePath(string path);
+    Task<string?> SaveFile(Stream file, string fileName);
+    Stream? ReadFile(string fileName);
+    bool DeleteFile(string fileName);
+    Task<bool> UpdateFile(string fileName, Stream file);
+    string GeneratePathToSave(string fileExtension);
+    string GetFullPath(string fileName);
+    string GetRelativePath(string path);
 }

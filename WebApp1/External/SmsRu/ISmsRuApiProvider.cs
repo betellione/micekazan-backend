@@ -4,6 +4,6 @@ namespace WebApp1.External.SmsRu;
 
 public interface ISmsRuApiProvider
 {
-    public Task<bool> SendSms(string phoneNumber, string message);
-    public Task<string?> MakePhoneCall(string phoneNumber, IPAddress? ip = null);
+    Task<bool> SendSms(string phoneNumber, string message);
+    Task<string?> MakePhoneCall(string phoneNumber, IPAddress? ip = null);
 }
