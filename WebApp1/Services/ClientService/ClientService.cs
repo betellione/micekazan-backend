@@ -30,7 +30,7 @@ public class ClientService : IClientService
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
-        var clients = _apiProvider.GetClients(token).Select(x => new Client
+        var clients = _apiProvider.GetClients(token, cancellationToken).Select(x => new Client
         {
             Email = x.Email,
             Name = x.Name,

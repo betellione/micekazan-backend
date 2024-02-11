@@ -409,7 +409,7 @@ public class EventController : Controller
     private UserViewModel FillUpMyViewModel(UserViewModel vm)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
-        var templates = _context.TicketPdfTemplate
+        var templates = _context.TicketPdfTemplates
             .Where(x => x.OrganizerId == userId)
             .Select(x => new SelectListItem($"Шаблон {x.Id}", x.Id.ToString()));
         vm.TemplateIds = templates;
@@ -419,7 +419,7 @@ public class EventController : Controller
     private EditScannerViewModel FillUpMyEditViewModel(EditScannerViewModel vm)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
-        var templates = _context.TicketPdfTemplate
+        var templates = _context.TicketPdfTemplates
             .Where(x => x.OrganizerId == userId)
             .Select(x => new SelectListItem($"Шаблон {x.Id}", x.Id.ToString()));
         vm.TemplateIds = templates;

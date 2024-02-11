@@ -6,7 +6,6 @@ using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
 using WebApp1.Services.PrintService;
-using WebApp1.Services.TicketService;
 using WebApp1.ViewModels.Event;
 using WebApp1.ViewModels.Home;
 
@@ -15,11 +14,11 @@ namespace WebApp1.Controllers;
 public class HomeController : Controller
 {
     private readonly IEventService _eventService;
+    private readonly IPrintService _printService;
+    private readonly IScannerStore _scannerStore;
+    private readonly IScreenStore _screenStore;
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
-    private readonly IScreenStore _screenStore;
-    private readonly IScannerStore _scannerStore;
-    private readonly IPrintService _printService;
 
     public HomeController(IEventService eventService, SignInManager<User> signInManager, UserManager<User> userManager,
         IScreenStore screenStore, IScannerStore scannerStore, IPrintService printService)
@@ -35,9 +34,8 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(string? returnUrl = null)
     {
-        if (!_signInManager.IsSignedIn(User)) return RedirectToAction("Login", "Account");
-
-        if (User.Claims.Any(x => x is { Type: ClaimTypes.Actor, Value: "Automate" })) return RedirectToAction("Terminal", "Home");
+        if (!_signInManager.IsSignedIn(User)) return RedirectToAction("Login", "Account", new { returnUrl, });
+        if (User.Claims.Any(x => x is { Type: ClaimTypes.Actor, Value: "Automate", })) return RedirectToAction("Terminal", "Home");
 
         return User.Claims.First(x => x.Type == ClaimTypes.Role).Value switch
         {
@@ -48,10 +46,10 @@ public class HomeController : Controller
                 AllTickets = await _eventService.GetAllTicketsNumber(new Guid(_userManager.GetUserId(User)!)),
                 ScannedTickets = await _eventService.GetScannedTicketsNumber(new Guid(_userManager.GetUserId(User)!)),
             }),
-            _ => _signInManager.IsSignedIn(User) ? View() : RedirectToAction("Login", "Account"),
+            _ => _signInManager.IsSignedIn(User) ? View() : RedirectToAction("Login", "Account", new { returnUrl, }),
         };
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Terminal(ScreenTypes screenType = ScreenTypes.Waiting)
     {
@@ -70,7 +68,7 @@ public class HomeController : Controller
             BackgroundPath = screen.BackgroundUri,
         });
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> PrintTerminal(string code)
     {

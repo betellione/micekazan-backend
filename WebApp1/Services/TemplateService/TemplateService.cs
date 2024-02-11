@@ -52,7 +52,7 @@ public class TemplateService : ITemplateService
 
         try
         {
-            _context.TicketPdfTemplate.Add(template);
+            _context.TicketPdfTemplates.Add(template);
             await _context.SaveChangesAsync();
             return template.Id;
         }
@@ -64,7 +64,7 @@ public class TemplateService : ITemplateService
 
     public async Task<TicketPdfTemplate?> GetTemplate(long id)
     {
-        var template = await _context.TicketPdfTemplate.FindAsync(id);
+        var template = await _context.TicketPdfTemplates.FindAsync(id);
         return template;
     }
 
@@ -85,7 +85,7 @@ public class TemplateService : ITemplateService
 
     public async Task<IEnumerable<long>> GetTemplateIds(Guid userId)
     {
-        var ids = await _context.TicketPdfTemplate.Where(x => x.OrganizerId == userId).OrderBy(x => x.Id).Select(x => x.Id).ToListAsync();
+        var ids = await _context.TicketPdfTemplates.Where(x => x.OrganizerId == userId).OrderBy(x => x.Id).Select(x => x.Id).ToListAsync();
         return ids;
     }
 
@@ -93,7 +93,7 @@ public class TemplateService : ITemplateService
     {
         if (vm.Id is null) return;
 
-        var template = await _context.TicketPdfTemplate.FindAsync(vm.Id.Value);
+        var template = await _context.TicketPdfTemplates.FindAsync(vm.Id.Value);
         if (template is null) return;
 
         template.IsHorizontal = vm.PageOrientation == PageOrientation.Horizontal;

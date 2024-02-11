@@ -44,15 +44,15 @@ public class PrintService : IPrintService
         }
     }
     
-    public async Task<bool> PrintTicket(string code, Guid userId)
+    public async Task<bool> PrintTicket(string barcode, Guid userId)
     {
         var printingToken = await _scannerStore.GetScannerPrintingToken(userId);
         if (printingToken is null) return false;
 
-        await using var pdf = await _ticketService.GetTicketPdf(userId, code);
+        await using var pdf = await _ticketService.GetTicketPdf(userId, barcode);
         if (pdf is null) return false;
 
-        await AddTicketToPrintQueue(pdf, printingToken, code);
+        await AddTicketToPrintQueue(pdf, printingToken, barcode);
 
         return true;
     }

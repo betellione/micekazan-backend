@@ -11,8 +11,8 @@ namespace WebApp1.Data.Stores;
 public class ScreenStore : IScreenStore
 {
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly IServiceProvider _sp;
     private readonly ILogger _logger = Log.ForContext<IScreenStore>();
+    private readonly IServiceProvider _sp;
 
     public ScreenStore(IDbContextFactory<ApplicationDbContext> contextFactory, IServiceProvider sp)
     {
@@ -23,43 +23,56 @@ public class ScreenStore : IScreenStore
     public async Task<Screen?> GetScreenByType(long eventId, ScreenTypes type)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        var screen = await context.Screen.FirstOrDefaultAsync(x => x.EventId == eventId && x.Type == type);
-        return screen;
+        return await GetScreenByType(context, eventId, type);
     }
 
     public async Task<Screen> AddOrUpdateScreen(long eventId, ScreenViewModel vm, ScreenTypes type)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        var screen = await context.Screen.FirstOrDefaultAsync(x => x.EventId == eventId && x.Type == type);
-        if (screen is null) return await AddScreen(context, eventId, vm, type);
-        return await UpdateScreen(context, screen, vm);
+        var screen = await GetScreenByType(context, eventId, type);
+        return screen is null ? await AddScreen(context, eventId, vm, type) : await UpdateScreen(context, screen, vm);
+    }
+
+    private static Task<Screen?> GetScreenByType(ApplicationDbContext context, long eventId, ScreenTypes type)
+    {
+        return context.Screens.FirstOrDefaultAsync(x => x.EventId == eventId && x.Type == type);
+    }
+
+    private async Task UpdateScreenImages(Screen screen, ScreenViewModel vm)
+    {
+        var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
+        var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
+
+        if (vm.DeleteLogo)
+        {
+            logoImageManager.DeleteImage(Path.GetFileName(screen.LogoUri)!);
+            screen.LogoUri = null;
+        }
+        else if (vm.Logo is not null)
+        {
+            await logoImageManager.UpdateImage(Path.GetFileName(screen.LogoUri)!, vm.Logo.OpenReadStream());
+        }
+
+        if (vm.DeleteBackground)
+        {
+            backgroundImageManager.DeleteImage(Path.GetFileName(screen.BackgroundUri)!);
+            screen.BackgroundUri = null;
+        }
+        else if (vm.Background is not null)
+        {
+            await backgroundImageManager.UpdateImage(Path.GetFileName(screen.BackgroundUri)!, vm.Background.OpenReadStream());
+        }
     }
 
     private async Task<Screen> UpdateScreen(ApplicationDbContext context, Screen screen, ScreenViewModel vm)
     {
-        screen.WelcomeText = vm.MainText ?? string.Empty;
-        screen.Description = vm.Description ?? string.Empty;
+        screen.WelcomeText = vm.MainText;
+        screen.Description = vm.Description;
         screen.BackgroundColor = vm.BackgroundColor;
         screen.TextColor = vm.TextColor;
         screen.TextSize = vm.TextSize;
-        
-        if (vm.Logo is not null && !vm.DeleteLogo)
-        {
-            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
-            var logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
-            screen.LogoUri = logoPath;
-        }
-        
-        if (vm.DeleteLogo) screen.LogoUri = string.Empty;
 
-        if (vm.Background is not null && !vm.DeleteBackground)
-        {
-            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
-            screen.BackgroundUri = backgroundPath;
-        }
-
-        if (vm.DeleteBackground) screen.BackgroundUri = string.Empty;
+        await UpdateScreenImages(screen, vm);
 
         try
         {
@@ -68,48 +81,45 @@ public class ScreenStore : IScreenStore
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Паша пидор потому что:");
+            _logger.Error(e, "Error while updating screen {Screen} in DB with view model {ViewModel}", screen, vm);
             throw;
         }
     }
 
     private async Task<Screen> AddScreen(ApplicationDbContext context, long eventId, ScreenViewModel vm, ScreenTypes type)
     {
-        string? logoPath = null, backgroundPath = null;
-
-        if (vm.Logo is not null)
-        {
-            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
-            logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
-        }
-
-        if (vm.Background is not null)
-        {
-            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
-        }
-
         var screen = new Screen
         {
-            BackgroundUri = backgroundPath,
-            LogoUri = logoPath,
-            WelcomeText = vm.MainText!,
-            Description = vm.Description!,
+            WelcomeText = vm.MainText,
+            Description = vm.Description,
             TextColor = vm.TextColor,
             BackgroundColor = vm.BackgroundColor,
             TextSize = vm.TextSize,
             Type = type,
             EventId = eventId,
         };
+
+        if (vm.Logo is not null)
+        {
+            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
+            screen.LogoUri = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
+        }
+
+        if (vm.Background is not null)
+        {
+            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
+            screen.BackgroundUri = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+        }
+
         try
         {
-            context.Screen.Add(screen);
+            context.Screens.Add(screen);
             await context.SaveChangesAsync();
             return screen;
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
-            _logger.Error(e, "Паша пидор потому что:");
+            _logger.Error(e, "Error while adding screen {Screen} in DB", screen);
             throw;
         }
     }

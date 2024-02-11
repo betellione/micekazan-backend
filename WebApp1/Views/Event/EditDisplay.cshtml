@@ -97,7 +97,7 @@
 
     <div class="content_row">
         @{
-            double result = @Model.WaitingDisplayViewModel.TextSize / 5;
+            var result = Model.WaitingDisplayViewModel.TextSize / 5;
             var size = result + "px";
         }
         <div class="display-preview-block" id="preview_wait" style="font-size: @size; color: @Model.WaitingDisplayViewModel.TextColor; background-image: url('../@Model.WaitingDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.WaitingDisplayViewModel.BackgroundColor">
@@ -188,7 +188,7 @@
 
     <div class="content_row">
         @{
-            double resultS = @Model.SuccessDisplayViewModel.TextSize / 5;
+            var resultS = Model.SuccessDisplayViewModel.TextSize / 5;
             var sizeS = resultS + "px";
         }
         <div class="display-preview-block" id="preview_success" style="font-size: @sizeS; color: @Model.SuccessDisplayViewModel.TextColor; background-image: url('../@Model.SuccessDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.SuccessDisplayViewModel.BackgroundColor">
@@ -278,7 +278,7 @@
 
     <div class="content_row">
         @{
-            double resultF = @Model.FailDisplayViewModel.TextSize / 5;
+            var resultF = Model.FailDisplayViewModel.TextSize / 5;
             var sizeF = resultF + "px";
         }
         <div class="display-preview-block" id="preview-fail" style="font-size: @sizeF; color: @Model.FailDisplayViewModel.TextColor; background-image: url('../@Model.FailDisplayViewModel.BackgroundPath'); background-size: cover; background-color: @Model.FailDisplayViewModel.BackgroundColor">

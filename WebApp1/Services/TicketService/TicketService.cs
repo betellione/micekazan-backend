@@ -59,7 +59,7 @@ public class TicketService : ITicketService
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
-        var tickets = _apiProvider.GetTickets(token);
+        var tickets = _apiProvider.GetTickets(token, cancellationToken);
 
         var batchCounter = 0;
         var existed = await context.Tickets.ToDictionaryAsync(x => x.Barcode, x => x.Id, cancellationToken);
@@ -113,6 +113,26 @@ public class TicketService : ITicketService
         return true;
     }
 
+    public async Task<bool> SetPassTime(string barcode)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
+        if (ticket is null || ticket.PassedAt is not null) return false;
+
+        ticket.PassedAt = DateTime.UtcNow;
+
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.Error(e, "Error while setting pass time for ticket with barcode {Barcode} in the DB", barcode);
+            return false;
+        }
+    }
+
     private Stream GetQrCode(string token)
     {
         var linkGenerator = _sp.GetRequiredService<LinkGenerator>();
@@ -150,24 +170,5 @@ public class TicketService : ITicketService
             BackgroundPath = template.BackgroundUri,
             LogoPath = template.LogoUri,
         };
-    }
-    
-    public async Task<bool> SetPassTimeOrFalse(string barcode)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var ticket = await context.Tickets.FirstOrDefaultAsync(x => x.Barcode == barcode);
-        if (ticket?.PassedAt is null)
-            return false;
-        ticket.PassedAt = DateTime.Now;
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Error while saving tickets in the DB");
-            return false;
-        }
-        return true;
     }
 }

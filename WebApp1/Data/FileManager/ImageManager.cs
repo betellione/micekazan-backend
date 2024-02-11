@@ -27,6 +27,11 @@ public class ImageManager : IImageManager
             : await SaveImageWithResize(image, imageName, options, false) is not null;
     }
 
+    public bool DeleteImage(string imageName)
+    {
+        return _fileManager.DeleteFile(imageName);
+    }
+
     private async Task<string?> SaveImageWithResize(Stream stream, string imageName, ImageSizeOptions options, bool saveAsNew = true)
     {
         var ext = Path.GetExtension(imageName);

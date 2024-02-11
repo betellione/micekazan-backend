@@ -4,8 +4,8 @@ namespace WebApp1.External.Qtickets;
 
 public interface IQticketsApiProvider
 {
-    public IAsyncEnumerable<Event> GetEvents(string token);
-    public IAsyncEnumerable<Client> GetClients(string token);
-    public IAsyncEnumerable<Ticket> GetTickets(string token);
-    public Task<ClientData?> GetTicketClientData(string barcode, string token);
+    IAsyncEnumerable<Event> GetEvents(string token, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Client> GetClients(string token, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Ticket> GetTickets(string token, CancellationToken cancellationToken = default);
+    Task<ClientData?> GetTicketClientData(string barcode, string token, CancellationToken cancellationToken = default);
 }

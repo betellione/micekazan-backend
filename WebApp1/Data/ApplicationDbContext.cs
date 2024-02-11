@@ -18,8 +18,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<EventScanner> EventScanners { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TokenUpdate> TokenUpdates { get; set; }
-    public DbSet<TicketPdfTemplate> TicketPdfTemplate { get; set; }
-    public DbSet<Screen> Screen { get; set; }
+    public DbSet<TicketPdfTemplate> TicketPdfTemplates { get; set; }
+    public DbSet<Screen> Screens { get; set; }
     public DbSet<InfoToShow> InfoToShow { get; set; }
     public DbSet<Client> Clients { get; set; }
     public DbSet<UserConfirmationPhoneCall> UserConfirmationPhoneCalls { get; set; }

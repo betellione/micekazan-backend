@@ -17,7 +17,7 @@ public class PrintServiceFileWriterMock : IPrintService
         }
     }
 
-    public Task<bool> PrintTicket(string code, Guid userId)
+    public Task<bool> PrintTicket(string barcode, Guid userId)
     {
         throw new NotImplementedException();
     }

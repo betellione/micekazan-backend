@@ -30,7 +30,7 @@ public class EventService : IEventService
         var token = await _tokenService.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
-        var events = _apiProvider.GetEvents(token)
+        var events = _apiProvider.GetEvents(token, cancellationToken)
             .Select(x => new Event
             {
                 Id = x.Id,
