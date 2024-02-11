@@ -50,7 +50,14 @@ public class ScreenStore : IScreenStore
         }
         else if (vm.Logo is not null)
         {
-            await logoImageManager.UpdateImage(Path.GetFileName(screen.LogoUri)!, vm.Logo.OpenReadStream());
+            if (screen.LogoUri is null)
+            {
+                screen.LogoUri = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
+            }
+            else
+            {
+                await logoImageManager.UpdateImage(Path.GetFileName(screen.LogoUri), vm.Logo.OpenReadStream());
+            }
         }
 
         if (vm.DeleteBackground && screen.BackgroundUri is not null)
@@ -60,7 +67,14 @@ public class ScreenStore : IScreenStore
         }
         else if (vm.Background is not null)
         {
-            await backgroundImageManager.UpdateImage(Path.GetFileName(screen.BackgroundUri)!, vm.Background.OpenReadStream());
+            if (screen.BackgroundUri is null)
+            {
+                screen.BackgroundUri = await logoImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+            }
+            else
+            {
+                await backgroundImageManager.UpdateImage(Path.GetFileName(screen.BackgroundUri), vm.Background.OpenReadStream());
+            }
         }
     }
 
