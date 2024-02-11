@@ -43,9 +43,9 @@ public class ScreenStore : IScreenStore
         var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
         var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
 
-        if (vm.DeleteLogo)
+        if (vm.DeleteLogo && screen.LogoUri is not null)
         {
-            logoImageManager.DeleteImage(Path.GetFileName(screen.LogoUri)!);
+            logoImageManager.DeleteImage(Path.GetFileName(screen.LogoUri));
             screen.LogoUri = null;
         }
         else if (vm.Logo is not null)
@@ -53,9 +53,9 @@ public class ScreenStore : IScreenStore
             await logoImageManager.UpdateImage(Path.GetFileName(screen.LogoUri)!, vm.Logo.OpenReadStream());
         }
 
-        if (vm.DeleteBackground)
+        if (vm.DeleteBackground && screen.BackgroundUri is not null)
         {
-            backgroundImageManager.DeleteImage(Path.GetFileName(screen.BackgroundUri)!);
+            backgroundImageManager.DeleteImage(Path.GetFileName(screen.BackgroundUri));
             screen.BackgroundUri = null;
         }
         else if (vm.Background is not null)
