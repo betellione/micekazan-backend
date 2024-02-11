@@ -69,7 +69,7 @@ public class ScreenStore : IScreenStore
         {
             if (screen.BackgroundUri is null)
             {
-                screen.BackgroundUri = await logoImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
+                screen.BackgroundUri = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName);
             }
             else
             {
