@@ -6,6 +6,8 @@
 
 <form asp-controller="Event" method="post" enctype="multipart/form-data">
     <input asp-for="Id" hidden/>
+    <input asp-for="DeleteLogo" id="ld" hidden/>
+    <input asp-for="DeleteBackground" id="bd" hidden/>
 
     <div class="content_block">
         <div class="content_row">
@@ -74,6 +76,7 @@
                         <label class="custom-file-btm">
                             <input asp-for="Logo" id="card_logo_input">
                             <span asp-validation-for="Logo">ЗАГРУЗИТЬ ФАЙЛ</span>
+                            <button type="button" onclick="clearFileL()">✕</button>
                         </label>
                     </td>
                 </tr>
@@ -86,6 +89,7 @@
                         <label class="custom-file-btm">
                             <input asp-for="Background" id="card_background_input">
                             <span asp-validation-for="Background">ЗАГРУЗИТЬ ФАЙЛ</span>
+                            <button type="button" onclick="clearFileB()">✕</button>
                         </label>
                     </td>
                 </tr>
@@ -215,6 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cardLogoInput.addEventListener("change", function () {
             if (this.files && this.files[0]) {
                 logoImage.src = URL.createObjectURL(this.files[0]);
+                document.getElementById("ld").checked = ""
                 logoImage.onload = function() {
                     URL.revokeObjectURL(logoImage.src); // Освобождение памяти
                 };
@@ -228,9 +233,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 print_card.style.backgroundImage = `url(${fileURL})`;
                 print_card.style.backgroundSize = "cover"; // Чтобы фон покрывал весь блок
                 print_card.style.backgroundPosition = "center"; // Центрирование фона
+                document.getElementById("bd").checked = ""
             }
         });
-
+    function clearFileL() {
+        logoImage.src = "/"
+        document.getElementById("ld").checked = "checked"
+    }
+    function clearFileB() {
+        print_card.style.backgroundImage = `url(/)`; 
+        document.getElementById("bd").checked = "checked"
+    }
     // Вызываем начальные установки при загрузке
     setInitialOrientation();
     setInitialVisibility();

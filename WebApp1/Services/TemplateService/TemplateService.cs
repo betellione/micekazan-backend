@@ -24,13 +24,13 @@ public class TemplateService : ITemplateService
     {
         string? logoPath = null, backgroundPath = null;
 
-        if (vm.Logo is not null)
+        if (vm is { DeleteLogo: false, Logo: not null })
         {
             var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
             logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
         }
 
-        if (vm.Background is not null)
+        if (vm is { DeleteBackground: false, Background: not null })
         {
             var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
             var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
@@ -102,19 +102,28 @@ public class TemplateService : ITemplateService
         template.HasQrCode = vm.DisplayQrCode;
         template.TextColor = vm.FontColor;
 
-        if (vm.Logo is not null)
+        if (vm is { DeleteLogo: false, Logo: not null })
         {
             var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
             var logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
             template.LogoUri = logoPath;
         }
 
-        if (vm.Background is not null)
+        if (vm is { DeleteBackground: false, Background: not null })
         {
             var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
             var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
             var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
             template.BackgroundUri = backgroundPath;
+        }
+
+        if (vm.DeleteLogo)
+        {
+            template.LogoUri = string.Empty;
+        }
+        if (vm.DeleteBackground)
+        {
+            template.BackgroundUri = string.Empty;
         }
 
         try

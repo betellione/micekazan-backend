@@ -53,5 +53,13 @@
         function PassSelectedValue(selectObject) {
             window.location.href = "Print?eventId=" + @Model.EventId + "&templateId=" + selectObject.value;
         }
+        function clearFileL() {
+            document.getElementById('print_card_component').querySelector("#card_logo").src = "/"
+            document.getElementById("ld").checked = "checked"
+        }
+        function clearFileB() {
+            document.getElementById('print_card_component').style.backgroundImage = `url(/)`; 
+            document.getElementById("bd").checked = "checked"
+        }
     </script>
 }
