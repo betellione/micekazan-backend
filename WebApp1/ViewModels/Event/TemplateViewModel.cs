@@ -29,5 +29,4 @@ public class TemplateViewModel
     public string? BackgroundPath { get; set; }
     public bool DeleteLogo { get; set; }
     public bool DeleteBackground { get; set; }
-    
 }

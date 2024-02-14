@@ -1,18 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using WebApp1.Data;
 using WebApp1.Data.FileManager;
 using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.ViewModels.Event;
+using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.TemplateService;
 
 public class TemplateService : ITemplateService
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IServiceProvider _sp;
     private static readonly ImageSizeOptions HorizontalImageSizeOptions = new(1500, 1125);
     private static readonly ImageSizeOptions VerticalImageSizeOptions = new(1125, 1500);
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger _logger = Log.ForContext<ITemplateService>();
+    private readonly IServiceProvider _sp;
 
     public TemplateService(ApplicationDbContext context, IServiceProvider sp)
     {
@@ -22,25 +25,8 @@ public class TemplateService : ITemplateService
 
     public async Task<long> AddTemplate(Guid userId, TemplateViewModel vm)
     {
-        string? logoPath = null, backgroundPath = null;
-
-        if (vm is { DeleteLogo: false, Logo: not null })
-        {
-            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
-            logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
-        }
-
-        if (vm is { DeleteBackground: false, Background: not null })
-        {
-            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
-            backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
-        }
-
         var template = new TicketPdfTemplate
         {
-            BackgroundUri = backgroundPath,
-            LogoUri = logoPath,
             OrganizerId = userId,
             HasName = vm.DisplayName,
             HasSurname = vm.DisplaySurname,
@@ -50,14 +36,28 @@ public class TemplateService : ITemplateService
             HasQrCode = vm.DisplayQrCode,
         };
 
+        if (vm is { DeleteLogo: false, Logo: not null, })
+        {
+            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
+            template.LogoUri = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
+        }
+
+        if (vm is { DeleteBackground: false, Background: not null, })
+        {
+            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
+            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
+            template.BackgroundUri = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
+        }
+
         try
         {
             _context.TicketPdfTemplates.Add(template);
             await _context.SaveChangesAsync();
             return template.Id;
         }
-        catch (Exception)
+        catch (DbUpdateException e)
         {
+            _logger.Error(e, "Error while adding template {Template} in DB", template);
             return 0;
         }
     }
@@ -102,37 +102,56 @@ public class TemplateService : ITemplateService
         template.HasQrCode = vm.DisplayQrCode;
         template.TextColor = vm.FontColor;
 
-        if (vm is { DeleteLogo: false, Logo: not null })
-        {
-            var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
-            var logoPath = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
-            template.LogoUri = logoPath;
-        }
-
-        if (vm is { DeleteBackground: false, Background: not null })
-        {
-            var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
-            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
-            var backgroundPath = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
-            template.BackgroundUri = backgroundPath;
-        }
-
-        if (vm.DeleteLogo)
-        {
-            template.LogoUri = string.Empty;
-        }
-        if (vm.DeleteBackground)
-        {
-            template.BackgroundUri = string.Empty;
-        }
+        await UpdateTemplateImages(template, vm);
 
         try
         {
             await _context.SaveChangesAsync();
         }
-        catch (Exception)
+        catch (DbUpdateException e)
         {
-            // ignored
+            _logger.Error(e, "Error while updating template {Template} in DB", template);
+        }
+    }
+
+    private async Task UpdateTemplateImages(TicketPdfTemplate template, TemplateViewModel vm)
+    {
+        var logoImageManager = _sp.GetRequiredKeyedService<IImageManager>("Logo");
+        var backgroundImageManager = _sp.GetRequiredKeyedService<IImageManager>("Background");
+
+        if (vm.DeleteLogo && template.LogoUri is not null)
+        {
+            logoImageManager.DeleteImage(Path.GetFileName(template.LogoUri));
+            template.LogoUri = null;
+        }
+        else if (vm.Logo is not null)
+        {
+            if (template.LogoUri is null)
+            {
+                template.LogoUri = await logoImageManager.SaveImage(vm.Logo.OpenReadStream(), vm.Logo.FileName);
+            }
+            else
+            {
+                await logoImageManager.UpdateImage(Path.GetFileName(template.LogoUri), vm.Logo.OpenReadStream());
+            }
+        }
+
+        if (vm.DeleteBackground && template.BackgroundUri is not null)
+        {
+            backgroundImageManager.DeleteImage(Path.GetFileName(template.BackgroundUri));
+            template.BackgroundUri = null;
+        }
+        else if (vm.Background is not null)
+        {
+            var options = vm.PageOrientation == PageOrientation.Horizontal ? HorizontalImageSizeOptions : VerticalImageSizeOptions;
+            if (template.BackgroundUri is null)
+            {
+                template.BackgroundUri = await backgroundImageManager.SaveImage(vm.Background.OpenReadStream(), vm.Background.FileName, options);
+            }
+            else
+            {
+                await backgroundImageManager.UpdateImage(Path.GetFileName(template.BackgroundUri), vm.Background.OpenReadStream(), options);
+            }
         }
     }
 }
