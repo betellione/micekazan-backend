@@ -48,6 +48,30 @@ public class QueryBuilder
         return this;
     }
 
+    public QueryBuilder OrderByAscending(string fieldName)
+    {
+        _query.OrderByRules ??= new Dictionary<string, string>();
+        _query.OrderByRules.TryAdd(fieldName, "asc");
+        return this;
+    }
+
+    public QueryBuilder OrderByDescending(string fieldName)
+    {
+        _query.OrderByRules ??= new Dictionary<string, string>();
+        _query.OrderByRules.TryAdd(fieldName, "desc");
+        return this;
+    }
+
+    public QueryBuilder OrderByAscending(params string[] fieldNames)
+    {
+        throw new NotImplementedException();
+    }
+
+    public QueryBuilder OrderByDescending(params string[] fieldNames)
+    {
+        throw new NotImplementedException();
+    }
+
     public string Build()
     {
         return JsonSerializer.Serialize(_query, Options);
@@ -66,6 +90,9 @@ public class QueryBuilder
 
         [JsonPropertyName("perPage")]
         public int? PerPage { get; set; }
+
+        [JsonPropertyName("orderBy")]
+        public Dictionary<string, string>? OrderByRules { get; set; }
     }
 
     private record WhereClause(

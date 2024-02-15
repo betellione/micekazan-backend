@@ -37,7 +37,9 @@ public class QticketsApiProvider : IQticketsApiProvider
 
     public IAsyncEnumerable<Client> GetClients(string token, CancellationToken cancellationToken = default)
     {
-        var builder = new QueryBuilder().Select("id", "email", "details.name", "details.middlename", "details.surname", "details.phone");
+        var builder = new QueryBuilder()
+            .Select("id", "email", "details.name", "details.middlename", "details.surname", "details.phone")
+            .OrderByAscending("id");
         return GetDataList<Client>("clients", token, builder, 50, null, cancellationToken);
     }
 
