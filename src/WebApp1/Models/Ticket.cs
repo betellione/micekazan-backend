@@ -7,6 +7,7 @@ public class Ticket
     public long EventId { get; set; }
     public long ClientId { get; set; }
     public DateTime? PassedAt { get; set; }
+    public long ForeignId { get; set; }
 
     public Event Event { get; set; } = null!;
     public Client Client { get; set; } = null!;

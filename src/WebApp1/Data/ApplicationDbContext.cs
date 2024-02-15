@@ -123,9 +123,13 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasKey(x => x.Id).HasName("Ticket_pk");
 
             entity.Property(x => x.Id).HasColumnName("Id");
+            entity.Property(x => x.ForeignId).HasColumnName("ForeignId");
             entity.Property(x => x.Barcode).HasMaxLength(16).HasColumnName("Barcode");
             entity.Property(x => x.PassedAt).HasColumnName("PassedAt");
             entity.Property(x => x.EventId).HasColumnName("EventId");
+
+            entity.HasIndex(x => x.ForeignId).HasDatabaseName("Ticket_ForeignId_ix");
+            entity.HasIndex(x => x.Barcode).HasDatabaseName("Ticket_Barcode_ix");
 
             entity.HasOne(x => x.Client).WithMany(x => x.Tickets)
                 .HasForeignKey(x => x.ClientId)
