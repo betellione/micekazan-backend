@@ -8,6 +8,7 @@
         height: 100%;
         margin: 0;
         background-color: @Model.BackgroundColor;
+        color: @Model.TextColor;
     }
 
     .background-image {
@@ -43,9 +44,13 @@
 </style>
 
 <div id="content" class="background-image">
+        @{
+            var result = Model.TextSize;
+            var size = result + "px";
+        }
     <img alt="Logo" id="logo" src="~/@Model.LogoPath">
-    <label asp-for="MainText" style="font-size: 100px">@Model.MainText</label>
-    <label asp-for="Description" style="font-size: 50px">@Model.Description</label>
+    <div  style="font-size: @size">@Model.MainText</div>
+    <div style="font-size: @size">@Model.Description</div>
 </div>
 
 
