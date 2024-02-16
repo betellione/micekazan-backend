@@ -60,8 +60,21 @@
 
 
 @section Scripts {
+    
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
     <script>
+        const screenType = '@ViewData["ScreenType"]';
+    
+        if (screenType !== '0') {
+            setTimeout(function() {
+                fetch('@Url.Action("Terminal", "Home")', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(response => response.text());
+            }, 4000);
+        }
         function startCamera() {
             const videoElement = document.getElementById('videoElement');
             let prevCode = '';
@@ -83,7 +96,7 @@
                     }
                     if (code.data.toString().length === 12 && code.data !== prevCode) {
                         prevCode = code.data
-                        fetch('@Url.Action("PrintTicket", "Ticket")?code=' + code.data, {
+                        fetch('@Url.Action("PrintTerminal", "Home")?code=' + code.data, {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json'
