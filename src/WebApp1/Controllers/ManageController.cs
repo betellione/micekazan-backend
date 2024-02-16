@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp1.Controllers.Types;
+using WebApp1.Data.Stores;
 using WebApp1.Models;
 using WebApp1.Services.ClientService;
 using WebApp1.Services.EventService;
 using WebApp1.Services.TicketService;
-using WebApp1.Services.TokenService;
 using WebApp1.ViewModels.Account.Manage;
 
 namespace WebApp1.Controllers;
@@ -19,10 +19,10 @@ namespace WebApp1.Controllers;
 [Authorize(Policy = "RegisterConfirmation")]
 public class ManageController : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly IEmailSender _emailSender;
+    private readonly SignInManager<User> _signInManager;
     private readonly IServiceProvider _sp;
+    private readonly UserManager<User> _userManager;
 
     public ManageController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
         IServiceProvider sp)
@@ -60,7 +60,7 @@ public class ManageController : Controller
             Patronymic = user.Patronymic,
             City = user.City,
 
-            ActivityTypes = user.Activity, 
+            ActivityTypes = user.Activity,
         };
 
         return View(vm);
@@ -198,9 +198,9 @@ public class ManageController : Controller
             return View(vm);
         }
 
-        var tokenService = _sp.GetRequiredService<ITokenService>();
+        var tokenStore = _sp.GetRequiredService<ITokenStore>();
         var userId = new Guid(_userManager.GetUserId(User)!);
-        var result = await tokenService.SetToken(userId, vm.Token);
+        var result = await tokenStore.SetOrganizerQticketsToken(userId, vm.Token);
 
         if (result)
         {
@@ -217,9 +217,9 @@ public class ManageController : Controller
 
     private async Task LoadToken()
     {
-        var tokenService = _sp.GetRequiredService<ITokenService>();
+        var tokenStore = _sp.GetRequiredService<ITokenStore>();
         var userId = new Guid(_userManager.GetUserId(User)!);
-        ViewData["CurrentToken"] = await tokenService.GetCurrentOrganizerToken(userId);
+        ViewData["CurrentToken"] = await tokenStore.GetCurrentOrganizerToken(userId);
     }
 
     #endregion

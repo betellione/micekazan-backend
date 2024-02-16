@@ -5,8 +5,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY WebApp1/WebApp1.csproj WebApp1/
+COPY Micekazan.Infrastructure/Micekazan.Infrastructure.csproj Micekazan.Infrastructure/
 
 COPY WebApp1/ WebApp1/
+COPY Micekazan.Infrastructure/ Micekazan.Infrastructure/
 
 RUN dotnet restore WebApp1/WebApp1.csproj
 WORKDIR /src/WebApp1

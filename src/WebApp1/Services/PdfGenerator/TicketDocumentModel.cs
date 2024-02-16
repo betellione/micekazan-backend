@@ -1,6 +1,8 @@
+using QuestPDF.Infrastructure;
+
 namespace WebApp1.Services.PdfGenerator;
 
-public sealed class TicketDocumentModel : IDisposable, IAsyncDisposable
+public sealed class TicketDocumentModel : IPdfDocumentModel, IDisposable, IAsyncDisposable
 {
     public string? Name { get; set; }
     public string? Surname { get; set; }
@@ -10,13 +12,18 @@ public sealed class TicketDocumentModel : IDisposable, IAsyncDisposable
     public Stream? QrStream { get; set; }
     public bool IsHorizontal { get; set; }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (QrStream != null) await QrStream.DisposeAsync();
+    }
+
     public void Dispose()
     {
         QrStream?.Dispose();
     }
 
-    public async ValueTask DisposeAsync()
+    public IDocument GetDocument()
     {
-        if (QrStream != null) await QrStream.DisposeAsync();
+        return new TicketDocument(this);
     }
 }

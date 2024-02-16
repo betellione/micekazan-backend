@@ -4,9 +4,9 @@ namespace WebApp1.Services.PdfGenerator;
 
 public class PdfGenerator : IPdfGenerator
 {
-    public Stream GenerateTicketPdf(TicketDocumentModel model)
+    public Stream GeneratePdfDocument(IPdfDocumentModel model)
     {
-        var document = new TicketDocument(model);
+        var document = model.GetDocument();
         var stream = new MemoryStream();
 
         document.GeneratePdf(stream);

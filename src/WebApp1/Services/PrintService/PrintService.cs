@@ -1,6 +1,4 @@
 using Serilog;
-using WebApp1.Data.Stores;
-using WebApp1.Services.TicketService;
 using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.PrintService;
@@ -9,14 +7,10 @@ public class PrintService : IPrintService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger = Log.ForContext<IPrintService>();
-    private readonly IScannerStore _scannerStore;
-    private readonly ITicketService _ticketService;
 
-    public PrintService(IHttpClientFactory httpClientFactory, IScannerStore scannerStore, ITicketService ticketService)
+    public PrintService(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
-        _scannerStore = scannerStore;
-        _ticketService = ticketService;
     }
 
     public async Task<bool> AddTicketToPrintQueue(Stream ticket, string printingToken, string barcode)
@@ -27,10 +21,10 @@ public class PrintService : IPrintService
         using var fileContent = new StreamContent(ticket);
         using var printingTokenContent = new StringContent(printingToken);
         using var barcodeContent = new StringContent(barcode);
-        
-        content.Add(fileContent, "file", "ticket.pdf");
-        content.Add(printingTokenContent, "printingToken");
+
         content.Add(barcodeContent, "barcode");
+        content.Add(printingTokenContent, "printingToken");
+        content.Add(fileContent, "file", "ticket.pdf");
 
         try
         {
@@ -42,18 +36,5 @@ public class PrintService : IPrintService
             _logger.Error(e, "Cannot add ticket to PDF queue with token {PrintingToken}", printingToken);
             return false;
         }
-    }
-    
-    public async Task<bool> PrintTicket(string barcode, Guid userId)
-    {
-        var printingToken = await _scannerStore.GetScannerPrintingToken(userId);
-        if (printingToken is null) return false;
-
-        await using var pdf = await _ticketService.GetTicketPdf(userId, barcode);
-        if (pdf is null) return false;
-
-        await AddTicketToPrintQueue(pdf, printingToken, barcode);
-
-        return true;
     }
 }

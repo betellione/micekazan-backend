@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using WebApp1.Data;
 using WebApp1.Models;
 
-namespace WebApp1.Services.TokenService;
+namespace WebApp1.Data.Stores;
 
-public class TokenService : ITokenService
+public class TokenStore : ITokenStore
 {
     private readonly ApplicationDbContext _context;
 
-    public TokenService(ApplicationDbContext context)
+    public TokenStore(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -29,15 +28,23 @@ public class TokenService : ITokenService
         return token;
     }
 
-    public async Task<bool> SetToken(Guid userId, string token)
+    public async Task<string?> GetScannerPrintingToken(Guid scannerId)
     {
-        var creatorToken = await _context.CreatorTokens.FirstOrDefaultAsync(x => x.CreatorId == userId);
+        return await _context.EventScanners
+            .Where(x => x.ScannerId == scannerId)
+            .Select(x => x.PrintingToken)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> SetOrganizerQticketsToken(Guid organizerId, string token)
+    {
+        var creatorToken = await _context.CreatorTokens.FirstOrDefaultAsync(x => x.CreatorId == organizerId);
 
         if (creatorToken is null)
         {
             creatorToken = new CreatorToken
             {
-                CreatorId = userId,
+                CreatorId = organizerId,
                 Token = token,
             };
 
@@ -50,7 +57,7 @@ public class TokenService : ITokenService
 
         var update = new TokenUpdate
         {
-            CreatorId = userId,
+            CreatorId = organizerId,
             Token = token,
             UpdatedAt = DateTime.UtcNow,
         };

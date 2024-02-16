@@ -21,13 +21,13 @@ var model = new TicketDocumentModel
 
 var pdfGenerator = new PdfGenerator();
 
-var horizontal = pdfGenerator.GenerateTicketPdf(model);
+var horizontal = pdfGenerator.GeneratePdfDocument(model);
 var horizontalFile = File.OpenWrite("horizontal.pdf");
 horizontal.CopyTo(horizontalFile);
 
 model.IsHorizontal = false;
 qrStream.Position = 0;
 
-var vertical = pdfGenerator.GenerateTicketPdf(model);
+var vertical = pdfGenerator.GeneratePdfDocument(model);
 var verticalFile = File.OpenWrite("vertical.pdf");
 vertical.CopyTo(verticalFile);

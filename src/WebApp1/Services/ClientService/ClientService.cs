@@ -2,9 +2,9 @@ using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
+using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
-using WebApp1.Services.TokenService;
 using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.ClientService;
@@ -14,13 +14,13 @@ public class ClientService : IClientService
     private readonly IQticketsApiProvider _apiProvider;
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ILogger _logger = Log.ForContext<IClientService>();
-    private readonly ITokenService _tokenService;
+    private readonly ITokenStore _tokenStore;
 
-    public ClientService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
+    public ClientService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenStore tokenStore,
         IQticketsApiProvider apiProvider)
     {
         _contextFactory = contextFactory;
-        _tokenService = tokenService;
+        _tokenStore = tokenStore;
         _apiProvider = apiProvider;
     }
 
@@ -28,7 +28,7 @@ public class ClientService : IClientService
     {
         const int batchSize = 100;
 
-        var token = await _tokenService.GetCurrentOrganizerToken(userId);
+        var token = await _tokenStore.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var batchWorker = new ClientBatchWorker(_contextFactory, batchSize);
@@ -99,7 +99,7 @@ public class ClientService : IClientService
 
     public async Task<InfoToShow?> AddClientData(string ticketBarcode)
     {
-        var token = await _tokenService.GetTicketToken(ticketBarcode);
+        var token = await _tokenStore.GetTicketToken(ticketBarcode);
         if (token is null) return null;
 
         var data = await _apiProvider.GetTicketClientData(ticketBarcode, token);

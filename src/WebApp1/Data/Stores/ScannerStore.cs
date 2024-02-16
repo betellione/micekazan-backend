@@ -16,12 +16,6 @@ public class ScannerStore : IScannerStore
         _userManager = userManager;
     }
 
-    public async Task<string?> GetScannerPrintingToken(Guid scannerId)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.EventScanners.Where(x => x.ScannerId == scannerId).Select(x => x.PrintingToken).FirstOrDefaultAsync();
-    }
-    
     public async Task<EventScanner?> FindScannerById(Guid userId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -33,11 +27,10 @@ public class ScannerStore : IScannerStore
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         var claimIsAutomate = (await _userManager.GetClaimsAsync(user!)).Any(x => x.Value == "Automate");
-        
+
         if (isAutomate == claimIsAutomate) return false;
         if (isAutomate && !claimIsAutomate) await _userManager.AddClaimAsync(user!, new Claim(ClaimTypes.Actor, "Automate"));
         else await _userManager.RemoveClaimAsync(user!, new Claim(ClaimTypes.Actor, "Automate"));
         return true;
-
     }
 }

@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Micekazan.Infrastructure\Micekazan.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="7.3.0" />
         <PackageReference Include="MailKit" Version="4.3.0" />
         <PackageReference Include="MimeKit" Version="4.3.0" />
@@ -26,7 +30,6 @@
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-        <PackageReference Include="QRCoder" Version="1.4.3" />
         <PackageReference Include="QuestPDF" Version="2023.10.2" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />

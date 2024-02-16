@@ -97,7 +97,7 @@
                         }
                         if (code.data.toString().length === 12 && code.data !== prevCode) {
                             prevCode = code.data
-                            fetch('@Url.Action("PrintTerminal", "Home")?code=' + code.data, {
+                            fetch('@Url.Action("PrintTicket", "Ticket")?code=' + code.data, {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json'

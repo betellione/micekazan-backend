@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
+using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
-using WebApp1.Services.TokenService;
 using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.EventService;
@@ -13,13 +13,13 @@ public class EventService : IEventService
     private readonly IQticketsApiProvider _apiProvider;
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ILogger _logger = Log.ForContext<IEventService>();
-    private readonly ITokenService _tokenService;
+    private readonly ITokenStore _tokenStore;
 
-    public EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
+    public EventService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenStore tokenStore,
         IQticketsApiProvider apiProvider)
     {
         _contextFactory = contextFactory;
-        _tokenService = tokenService;
+        _tokenStore = tokenStore;
         _apiProvider = apiProvider;
     }
 
@@ -27,7 +27,7 @@ public class EventService : IEventService
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        var token = await _tokenService.GetCurrentOrganizerToken(userId);
+        var token = await _tokenStore.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var events = _apiProvider.GetEvents(token, cancellationToken)

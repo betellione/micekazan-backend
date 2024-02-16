@@ -2,5 +2,5 @@ namespace WebApp1.Services.PdfGenerator;
 
 public interface IPdfGenerator
 {
-    Stream GenerateTicketPdf(TicketDocumentModel model);
+    Stream GeneratePdfDocument(IPdfDocumentModel model);
 }

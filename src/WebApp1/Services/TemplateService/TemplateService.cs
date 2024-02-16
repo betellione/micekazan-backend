@@ -85,7 +85,11 @@ public class TemplateService : ITemplateService
 
     public async Task<IEnumerable<long>> GetTemplateIds(Guid userId)
     {
-        var ids = await _context.TicketPdfTemplates.Where(x => x.OrganizerId == userId).OrderBy(x => x.Id).Select(x => x.Id).ToListAsync();
+        var ids = await _context.TicketPdfTemplates
+            .Where(x => x.OrganizerId == userId)
+            .OrderBy(x => x.Id)
+            .Select(x => x.Id)
+            .ToListAsync();
         return ids;
     }
 

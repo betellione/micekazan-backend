@@ -15,11 +15,9 @@ using WebApp1.Services.PdfGenerator;
 using WebApp1.Services.PhoneConfirmationService;
 using WebApp1.Services.PhoneConfirmationService.PhoneCaller;
 using WebApp1.Services.PrintService;
-using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.SmsSender;
 using WebApp1.Services.TemplateService;
 using WebApp1.Services.TicketService;
-using WebApp1.Services.TokenService;
 
 namespace WebApp1.Extensions;
 
@@ -85,7 +83,6 @@ public static class WebApplicationBuilderExtensions
     {
         Settings.License = LicenseType.Community;
         builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
-        builder.Services.AddTransient<IQrCodeGenerator, QrCodeGenerator>();
 
         try
         {
@@ -105,13 +102,13 @@ public static class WebApplicationBuilderExtensions
     {
         builder.Services.AddScoped<IScannerStore, ScannerStore>();
         builder.Services.AddScoped<IScreenStore, ScreenStore>();
+        builder.Services.AddScoped<ITokenStore, TokenStore>();
 
         return builder;
     }
 
     public static WebApplicationBuilder AddCustomServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IEventService, EventService>();
         builder.Services.AddScoped<ITicketService, TicketService>();
         builder.Services.AddScoped<IClientService, ClientService>();

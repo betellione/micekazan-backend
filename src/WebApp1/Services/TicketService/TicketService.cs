@@ -1,13 +1,14 @@
+using System.Runtime.CompilerServices;
+using Micekazan.Infrastructure.MediaGenerators;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
+using WebApp1.Data.Batching;
+using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
-using WebApp1.Services.ClientService;
 using WebApp1.Services.PdfGenerator;
-using WebApp1.Services.QrCodeGenerator;
 using WebApp1.Services.TemplateService;
-using WebApp1.Services.TokenService;
 using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Services.TicketService;
@@ -15,48 +16,27 @@ namespace WebApp1.Services.TicketService;
 public class TicketService : ITicketService
 {
     private readonly IQticketsApiProvider _apiProvider;
-    private readonly IClientService _clientService;
     private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ILogger _logger = Log.ForContext<ITicketService>();
     private readonly IPdfGenerator _pdfGenerator;
-    private readonly IQrCodeGenerator _qrCodeGenerator;
-    private readonly IServiceProvider _sp;
     private readonly ITemplateService _templateService;
-    private readonly ITokenService _tokenService;
+    private readonly ITokenStore _tokenStore;
 
-    public TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenService tokenService,
-        IQticketsApiProvider apiProvider, IClientService clientService, IServiceProvider sp, IPdfGenerator pdfGenerator,
-        IQrCodeGenerator qrCodeGenerator, ITemplateService templateService)
+    public TicketService(IDbContextFactory<ApplicationDbContext> contextFactory, ITokenStore tokenStore,
+        IQticketsApiProvider apiProvider, IPdfGenerator pdfGenerator, ITemplateService templateService)
     {
         _contextFactory = contextFactory;
-        _tokenService = tokenService;
+        _tokenStore = tokenStore;
         _apiProvider = apiProvider;
-        _clientService = clientService;
         _pdfGenerator = pdfGenerator;
-        _qrCodeGenerator = qrCodeGenerator;
         _templateService = templateService;
-        _sp = sp;
-    }
-
-    public async Task<Stream?> GetTicketPdf(Guid scannerId, string barcode)
-    {
-        var info = await _clientService.AddClientData(barcode);
-        if (info is null) return null;
-
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var template = await _templateService.GetTemplateForScanner(scannerId);
-        await using var model = template is null ? CreateDefaultDocumentModel(info) : CreateDocumentModelFromTemplate(info, template);
-
-        var pdf = _pdfGenerator.GenerateTicketPdf(model);
-
-        return pdf;
     }
 
     public async Task<bool> ImportTickets(Guid userId, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        var token = await _tokenService.GetCurrentOrganizerToken(userId);
+        var token = await _tokenStore.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
         var tickets = _apiProvider.GetTickets(token, cancellationToken);
@@ -113,6 +93,18 @@ public class TicketService : ITicketService
         return true;
     }
 
+    public async Task<Stream?> CreateTicketPdf(Guid scannerId, string qrCodeData, InfoToShow info)
+    {
+        var printingToken = await _tokenStore.GetScannerPrintingToken(scannerId);
+        if (printingToken is null) return null;
+
+        var template = await _templateService.GetTemplateForScanner(scannerId);
+        await using var model = CreateDocumentModel(info, qrCodeData, template);
+        var document = _pdfGenerator.GeneratePdfDocument(model);
+
+        return document;
+    }
+
     public async Task<bool> SetPassTime(string barcode)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -133,24 +125,13 @@ public class TicketService : ITicketService
         }
     }
 
-    private Stream GetQrCode(string token)
-    {
-        var linkGenerator = _sp.GetRequiredService<LinkGenerator>();
-        var accessor = _sp.GetRequiredService<IHttpContextAccessor>();
-
-        var qrContent = linkGenerator.GetUriByAction(accessor.HttpContext!, "InfoToShow", "Client", new { token, }) ?? string.Empty;
-        var qr = _qrCodeGenerator.GenerateQrCode(qrContent);
-
-        return qr;
-    }
-
-    private TicketDocumentModel CreateDefaultDocumentModel(InfoToShow info)
+    private static TicketDocumentModel CreateDefaultDocumentModel(InfoToShow info, string qrData)
     {
         return new TicketDocumentModel
         {
             Name = info.ClientName,
             Surname = info.ClientSurname,
-            QrStream = GetQrCode(info.Token),
+            QrStream = QrCodeGenerator.GenerateQrCode(qrData),
             FontColor = "#000000",
             IsHorizontal = true,
             BackgroundPath = null,
@@ -158,13 +139,15 @@ public class TicketService : ITicketService
         };
     }
 
-    private TicketDocumentModel CreateDocumentModelFromTemplate(InfoToShow info, TicketPdfTemplate template)
+    private static TicketDocumentModel CreateDocumentModel(InfoToShow info, string qrData, TicketPdfTemplate? template = null)
     {
+        if (template is null) return CreateDefaultDocumentModel(info, qrData);
+
         return new TicketDocumentModel
         {
             Name = template.HasName ? info.ClientName : null,
             Surname = template.HasSurname ? info.ClientSurname : null,
-            QrStream = template.HasQrCode ? GetQrCode(info.Token) : null,
+            QrStream = template.HasQrCode ? QrCodeGenerator.GenerateQrCode(qrData) : null,
             FontColor = template.TextColor,
             IsHorizontal = template.IsHorizontal,
             BackgroundPath = template.BackgroundUri,

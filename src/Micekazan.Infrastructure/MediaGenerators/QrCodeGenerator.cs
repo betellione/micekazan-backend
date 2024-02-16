@@ -1,10 +1,10 @@
 using QRCoder;
 
-namespace WebApp1.Services.QrCodeGenerator;
+namespace Micekazan.Infrastructure.MediaGenerators;
 
-public class QrCodeGenerator : IQrCodeGenerator
+public static class QrCodeGenerator
 {
-    public Stream GenerateQrCode(string data)
+    public static Stream GenerateQrCode(string data)
     {
         using var qrGenerator = new QRCodeGenerator();
         using var qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.M);

@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F671ED43
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfGeneratorTest", "tests\PdfGeneratorTest\PdfGeneratorTest.csproj", "{F85873A8-C0C2-4C7D-A166-10B345EC2BB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.Infrastructure", "Micekazan.Infrastructure\Micekazan.Infrastructure.csproj", "{EFAE7295-E2D0-4366-BE80-067C691F48E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{F85873A8-C0C2-4C7D-A166-10B345EC2BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F85873A8-C0C2-4C7D-A166-10B345EC2BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F85873A8-C0C2-4C7D-A166-10B345EC2BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EAD8EE00-5A24-4D10-86CC-D0E537450E62} = {8C2A1204-D0F2-46EC-8B2C-4F8E5FCAFF32}
