@@ -36,19 +36,22 @@
         max-height: 100px;
         max-width: 100px;
     }
+    img[src="/"] {
+        display: none;
+    }
 
     label {
         display: block; /* Make labels stack on top of each other */
         margin: 20px 0; /* Add some space around them */
     }
 </style>
-
+<video id="videoElement" autoplay playsinline hidden="hidden" style="position: absolute"></video>
 <div id="content" class="background-image">
         @{
             var result = Model.TextSize;
             var size = result + "px";
         }
-    <img alt="Logo" id="logo" src="~/@Model.LogoPath">
+    <img  id="logo" src="~/@Model.LogoPath">
     <div  style="font-size: @size">@Model.MainText</div>
     <div style="font-size: @size">@Model.Description</div>
 </div>
