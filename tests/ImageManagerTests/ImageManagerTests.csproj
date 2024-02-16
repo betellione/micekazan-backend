@@ -8,10 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WebApp1\WebApp1.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="image.png" />
       <Content Include="image.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

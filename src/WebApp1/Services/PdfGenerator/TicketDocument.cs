@@ -76,10 +76,13 @@ public class TicketDocument : IDocument
                     .AlignMiddle()
                     .AlignCenter()
                     .MaxWidth(80, Unit.Millimetre)
-                    .Text(FullName())
-                    .LineHeight(1)
-                    .Style(InitialsStyle)
-                    .FontColor(_model.FontColor);
+                    .Text(text =>
+                    {
+                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor));
+                        text.AlignCenter();
+                        text.Span(FullName());
+                        text.ParagraphSpacing(1);
+                    });
             });
         });
     }
@@ -128,12 +131,15 @@ public class TicketDocument : IDocument
 
                 layers.PrimaryLayer()
                     .AlignMiddle()
-                    .AlignRight()
+                    .AlignLeft()
                     .MaxWidth(75, Unit.Millimetre)
-                    .Text(FullName())
-                    .LineHeight(1)
-                    .Style(InitialsStyle)
-                    .FontColor(_model.FontColor);
+                    .Text(text =>
+                    {
+                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor));
+                        text.AlignRight();
+                        text.Span(FullName());
+                        text.ParagraphSpacing(1);
+                    });
             });
         });
     }
