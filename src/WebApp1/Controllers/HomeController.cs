@@ -60,7 +60,25 @@ public class HomeController : Controller
         if (scanner is null) return NotFound();
         var screen = await _screenStore.GetScreenByType(scanner.EventId, screenType);
         if (screen is null) return View(new ScreenViewModel());
-        ViewData["ScreenType"] = screenType;
+        return View(new ScreenViewModel
+        {
+            MainText = screen.WelcomeText,
+            Description = screen.Description,
+            TextColor = screen.TextColor,
+            TextSize = screen.TextSize,
+            BackgroundColor = screen.BackgroundColor,
+            LogoPath = screen.LogoUri,
+            BackgroundPath = screen.BackgroundUri,
+        });
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> TerminalSecond(ScreenTypes screenType = ScreenTypes.Waiting)
+    {
+        var scanner = await _scannerStore.FindScannerById(new Guid(_userManager.GetUserId(User)!));
+        if (scanner is null) return NotFound();
+        var screen = await _screenStore.GetScreenByType(scanner.EventId, screenType);
+        if (screen is null) return View(new ScreenViewModel());
         return View(new ScreenViewModel
         {
             MainText = screen.WelcomeText,
@@ -82,13 +100,14 @@ public class HomeController : Controller
         if (printingToken is null) return BadRequest();
 
         await using var pdf = await _ticketService.GetTicketPdf(userId, code);
-        if (pdf is null) return RedirectToAction("Terminal", new {screenType = ScreenTypes.Fail});
+        if (pdf is null) return BadRequest();
 
         if (!await _ticketService.SetPassTime(code))
-            return RedirectToAction("Terminal", new {screenType = ScreenTypes.Fail});
+            return BadRequest();
 
         await _printService.AddTicketToPrintQueue(pdf, printingToken, code);
 
-        return RedirectToAction("Terminal", new {screenType = ScreenTypes.Success});
+        return Ok();
     }
+    
 }

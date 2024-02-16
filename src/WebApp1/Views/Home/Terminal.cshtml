@@ -1,6 +1,6 @@
 ﻿@model ScreenViewModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Terminal";
 }
 
 <style>
@@ -60,7 +60,7 @@
 
 
 @section Scripts {
-    
+
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
     <script>
         const screenType = '@ViewData["ScreenType"]';
@@ -84,29 +84,35 @@
                 const canvasElement = document.createElement('canvas');
                 const canvasContext = canvasElement.getContext('2d');
 
-                setInterval(async function () {
-                    canvasElement.width = videoElement.videoWidth;
-                    canvasElement.height = videoElement.videoHeight;
-                    canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-
-                    const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    if (code === null) {
-                        return;
-                    }
-                    if (code.data.toString().length === 12 && code.data !== prevCode) {
-                        prevCode = code.data
-                        fetch('@Url.Action("PrintTerminal", "Home")?code=' + code.data, {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json'
-                          },
-                        })
-                          .then(response => response.json())
-                          .then(data => console.log(data))
-                          .catch(error => console.error(error));
-                    }
-                }, 1000 / 30);
+                videoElement.addEventListener('loadedmetadata', function() {
+                    setInterval(async function () {
+                        canvasElement.width = videoElement.videoWidth;
+                        canvasElement.height = videoElement.videoHeight;
+                        canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    
+                        const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+                        if (code === null) {
+                            return;
+                        }
+                        if (code.data.toString().length === 12 && code.data !== prevCode) {
+                            prevCode = code.data
+                            fetch('@Url.Action("PrintTerminal", "Home")?code=' + code.data, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              },
+                            })
+                            .then(response =>  {
+                                if (response.ok) {
+                                    window.location.href = '@Url.Action("TerminalSecond", "Home")?screenType=Success';
+                                } else {
+                                    window.location.href = '@Url.Action("TerminalSecond", "Home")?screenType=Fail';
+                                }
+                            })
+                        }
+                    }, 1000 / 30);
+                });
             })
                 .catch(function (error) {
                     console.error('Ошибка при получении доступа к камере:', error);
