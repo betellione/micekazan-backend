@@ -38,6 +38,9 @@ public class TicketController : ControllerBase
         await using var pdf = await _ticketService.GetTicketPdf(userId, code);
         if (pdf is null) return BadRequest();
 
+        if (!await _ticketService.SetPassTime(code))
+            return BadRequest();
+
         await _printService.AddTicketToPrintQueue(pdf, printingToken, code);
 
         return Ok();

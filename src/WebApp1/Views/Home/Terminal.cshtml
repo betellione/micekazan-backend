@@ -1,6 +1,6 @@
 ﻿@model ScreenViewModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Terminal";
 }
 
 <style>
@@ -8,6 +8,7 @@
         height: 100%;
         margin: 0;
         background-color: @Model.BackgroundColor;
+        color: @Model.TextColor;
     }
 
     .background-image {
@@ -35,25 +36,45 @@
         max-height: 100px;
         max-width: 100px;
     }
+    img[src="/"] {
+        display: none;
+    }
 
     label {
         display: block; /* Make labels stack on top of each other */
         margin: 20px 0; /* Add some space around them */
     }
 </style>
-
+<video id="videoElement" autoplay playsinline hidden="hidden" style="position: absolute"></video>
 <div id="content" class="background-image">
-    <img alt="Logo" id="logo" src="~/@Model.LogoPath">
-    <label asp-for="MainText" style="font-size: 100px">@Model.MainText</label>
-    <label asp-for="Description" style="font-size: 50px">@Model.Description</label>
+        @{
+            var result = Model.TextSize;
+            var size = result + "px";
+        }
+    <img  id="logo" src="~/@Model.LogoPath">
+    <div  style="font-size: @size">@Model.MainText</div>
+    <div style="font-size: @size">@Model.Description</div>
 </div>
 
 
 
 
 @section Scripts {
+
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
     <script>
+        const screenType = '@ViewData["ScreenType"]';
+    
+        if (screenType !== '0') {
+            setTimeout(function() {
+                fetch('@Url.Action("Terminal", "Home")', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(response => response.text());
+            }, 4000);
+        }
         function startCamera() {
             const videoElement = document.getElementById('videoElement');
             let prevCode = '';
@@ -63,29 +84,35 @@
                 const canvasElement = document.createElement('canvas');
                 const canvasContext = canvasElement.getContext('2d');
 
-                setInterval(async function () {
-                    canvasElement.width = videoElement.videoWidth;
-                    canvasElement.height = videoElement.videoHeight;
-                    canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-
-                    const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    if (code === null) {
-                        return;
-                    }
-                    if (code.data.toString().length === 12 && code.data !== prevCode) {
-                        prevCode = code.data
-                        fetch('@Url.Action("PrintTicket", "Ticket")?code=' + code.data, {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json'
-                          },
-                        })
-                          .then(response => response.json())
-                          .then(data => console.log(data))
-                          .catch(error => console.error(error));
-                    }
-                }, 1000 / 30);
+                videoElement.addEventListener('loadedmetadata', function() {
+                    setInterval(async function () {
+                        canvasElement.width = videoElement.videoWidth;
+                        canvasElement.height = videoElement.videoHeight;
+                        canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    
+                        const imageData = canvasContext.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+                        if (code === null) {
+                            return;
+                        }
+                        if (code.data.toString().length === 12 && code.data !== prevCode) {
+                            prevCode = code.data
+                            fetch('@Url.Action("PrintTerminal", "Home")?code=' + code.data, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              },
+                            })
+                            .then(response =>  {
+                                if (response.ok) {
+                                    window.location.href = '@Url.Action("TerminalSecond", "Home")?screenType=Success';
+                                } else {
+                                    window.location.href = '@Url.Action("TerminalSecond", "Home")?screenType=Fail';
+                                }
+                            })
+                        }
+                    }, 1000 / 30);
+                });
             })
                 .catch(function (error) {
                     console.error('Ошибка при получении доступа к камере:', error);

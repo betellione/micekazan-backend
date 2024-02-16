@@ -1,0 +1,64 @@
+﻿@model ScreenViewModel
+@{
+    ViewData["Title"] = "Terminal";
+}
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        background-color: @Model.BackgroundColor;
+        color: @Model.TextColor;
+    }
+
+    .background-image {
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        min-width: 100%; 
+        min-height: 100%;
+        background-image: url('../@Model.BackgroundPath');
+        background-size: cover;
+        background-position: center;
+    }
+
+    #content {
+        display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+        position: relative;
+        z-index: 2;
+        text-align: center; /* Center the content */
+    }
+
+    #logo {
+        max-height: 100px;
+        max-width: 100px;
+    }
+    img[src="/"] {
+        display: none;
+    }
+
+    label {
+        display: block; /* Make labels stack on top of each other */
+        margin: 20px 0; /* Add some space around them */
+    }
+</style>
+<div id="content" class="background-image">
+        @{
+            var result = Model.TextSize;
+            var size = result + "px";
+        }
+    <img  id="logo" src="~/@Model.LogoPath">
+    <div  style="font-size: @size">@Model.MainText</div>
+    <div style="font-size: @size">@Model.Description</div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            window.location.href = '@Url.Action("Terminal", "Home")';
+        }, 4000);
+    </script>
+}

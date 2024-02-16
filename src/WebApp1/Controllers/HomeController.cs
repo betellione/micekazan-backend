@@ -6,6 +6,7 @@ using WebApp1.Enums;
 using WebApp1.Models;
 using WebApp1.Services.EventService;
 using WebApp1.Services.PrintService;
+using WebApp1.Services.TicketService;
 using WebApp1.ViewModels.Event;
 using WebApp1.ViewModels.Home;
 
@@ -19,9 +20,10 @@ public class HomeController : Controller
     private readonly IScreenStore _screenStore;
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
+    private readonly ITicketService _ticketService;
 
     public HomeController(IEventService eventService, SignInManager<User> signInManager, UserManager<User> userManager,
-        IScreenStore screenStore, IScannerStore scannerStore, IPrintService printService)
+        IScreenStore screenStore, IScannerStore scannerStore, IPrintService printService, ITicketService ticketService)
     {
         _eventService = eventService;
         _signInManager = signInManager;
@@ -29,6 +31,7 @@ public class HomeController : Controller
         _screenStore = screenStore;
         _scannerStore = scannerStore;
         _printService = printService;
+        _ticketService = ticketService;
     }
 
     [HttpGet]
@@ -68,12 +71,43 @@ public class HomeController : Controller
             BackgroundPath = screen.BackgroundUri,
         });
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> TerminalSecond(ScreenTypes screenType = ScreenTypes.Waiting)
+    {
+        var scanner = await _scannerStore.FindScannerById(new Guid(_userManager.GetUserId(User)!));
+        if (scanner is null) return NotFound();
+        var screen = await _screenStore.GetScreenByType(scanner.EventId, screenType);
+        if (screen is null) return View(new ScreenViewModel());
+        return View(new ScreenViewModel
+        {
+            MainText = screen.WelcomeText,
+            Description = screen.Description,
+            TextColor = screen.TextColor,
+            TextSize = screen.TextSize,
+            BackgroundColor = screen.BackgroundColor,
+            LogoPath = screen.LogoUri,
+            BackgroundPath = screen.BackgroundUri,
+        });
+    }
 
     [HttpPost]
     public async Task<IActionResult> PrintTerminal(string code)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
-        await _printService.PrintTicket(code, userId);
-        return RedirectToAction("Terminal");
+
+        var printingToken = await _scannerStore.GetScannerPrintingToken(userId);
+        if (printingToken is null) return BadRequest();
+
+        await using var pdf = await _ticketService.GetTicketPdf(userId, code);
+        if (pdf is null) return BadRequest();
+
+        if (!await _ticketService.SetPassTime(code))
+            return BadRequest();
+
+        await _printService.AddTicketToPrintQueue(pdf, printingToken, code);
+
+        return Ok();
     }
+    
 }
