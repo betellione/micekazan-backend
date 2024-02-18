@@ -2,10 +2,10 @@ using Micekazan.PrintService;
 using Micekazan.PrintService.PrintProvider.File;
 
 var printProvider = new FilePrintProvider();
-var printService = new PrintServiceApplication(args);
+var builder = new PrintServiceApplicationBuilder(args);
 
-await printService.Configure(printProvider);
+await builder.Configure(printProvider);
 
-var app = printService.Build();
+var app = builder.Build();
 
 app.Run();

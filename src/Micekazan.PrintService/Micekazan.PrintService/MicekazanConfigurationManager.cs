@@ -29,13 +29,14 @@ public class MicekazanConfigurationManager
 
     private static async Task<MicekazanConfiguration> NewConfiguration()
     {
-        var config = new MicekazanConfiguration { Token = GenerateToken(TokenBytes), };
-        var json = JsonSerializer.Serialize(config, Options);
+        var configuration = new MicekazanConfiguration { Token = GenerateToken(TokenBytes), };
+        var json = JsonSerializer.Serialize(configuration, Options);
         await File.WriteAllTextAsync(FileName, json);
 
-        PrintNewConfigurationMessage();
+        Console.WriteLine("Не было найдено существующей конфигурации.");
+        Console.WriteLine("Был сгенерирован токен сервиса.");
 
-        return config;
+        return configuration;
     }
 
     private static async Task<MicekazanConfiguration> ExistingConfiguration()
@@ -46,6 +47,10 @@ public class MicekazanConfigurationManager
             var configuration = JsonSerializer.Deserialize<MicekazanConfiguration>(json, Options);
             if (configuration is null) throw new Exception();
             configuration.Validate();
+
+            Console.WriteLine("Была найдена существующая конфигурация.");
+            Console.WriteLine("Будет использован найденный токен сервиса.");
+
             return configuration;
         }
         catch
@@ -61,42 +66,9 @@ public class MicekazanConfigurationManager
 
     public async Task Configure()
     {
-        PrintWelcomeMessage();
-
-        if (!File.Exists(FileName))
-        {
-            _configuration = await NewConfiguration();
-        }
-
-        _configuration = await ExistingConfiguration();
-
-        PrintConfigurationMessage();
-        PrintReadyMessage();
-    }
-
-    #region PrintingMessages
-
-    private static void PrintWelcomeMessage()
-    {
         Console.WriteLine($"Micekazan {DateTime.Now.Year} Сервис печати.");
-    }
 
-    private static void PrintNewConfigurationMessage()
-    {
-        Console.WriteLine("Не было найдено существующей конфигурации.");
-        Console.WriteLine("Был сгенерирован токен сервиса.");
+        if (File.Exists(FileName)) _configuration = await ExistingConfiguration();
+        else _configuration = await NewConfiguration();
     }
-
-    private static void PrintConfigurationMessage()
-    {
-        Console.WriteLine("Найти токен этого сервиса печати вы можете по адресу http://localhost:5038");
-    }
-
-    private static void PrintReadyMessage()
-    {
-        Console.WriteLine("Сервис печати готов и может принимать входящие запросы на печать.");
-        Console.WriteLine("Будет использован принтер по умолчанию.");
-    }
-
-    #endregion
 }
