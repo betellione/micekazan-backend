@@ -155,3 +155,162 @@ public class TicketService : ITicketService
         };
     }
 }
+
+file class BatchWorker<T> where T : class, IBatchable
+{
+    private readonly int _batchSize;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ILogger _logger = Log.ForContext<BatchWorker<T>>();
+    private readonly List<T> _toAdd;
+    private readonly Dictionary<long, T> _toUpdate;
+    private readonly Action<T, T> _updateAction;
+
+    public BatchWorker(IDbContextFactory<ApplicationDbContext> contextFactory, Action<T, T> updateAction, int batchSize)
+    {
+        _contextFactory = contextFactory;
+        _batchSize = batchSize;
+        _updateAction = updateAction;
+        _toAdd = new List<T>(batchSize);
+        _toUpdate = new Dictionary<long, T>(batchSize);
+    }
+
+    public async Task Batch(IAsyncEnumerable<T> newEntities, CancellationToken cancellationToken = default)
+    {
+        await using var oldEnumerator = RetrieveOldIds(cancellationToken).GetAsyncEnumerator(cancellationToken);
+        await using var newEnumerator = newEntities.GetAsyncEnumerator(cancellationToken);
+
+        if (!await oldEnumerator.MoveNextAsync())
+        {
+            await ProcessRemainingEntities(newEnumerator, cancellationToken);
+        }
+        else
+        {
+            if (!await newEnumerator.MoveNextAsync()) return;
+            while (true)
+            {
+                var oldForeignId = oldEnumerator.Current;
+                var newEntity = newEnumerator.Current;
+
+                if (oldForeignId == newEntity.ForeignId)
+                {
+                    await UpdateEntity(newEntity, cancellationToken);
+                    if (!await oldEnumerator.MoveNextAsync())
+                    {
+                        await ProcessRemainingEntities(newEnumerator, cancellationToken);
+                        break;
+                    }
+
+                    if (!await newEnumerator.MoveNextAsync()) break;
+                }
+                else if (oldForeignId > newEntity.ForeignId)
+                {
+                    await AddEntity(newEntity, cancellationToken);
+                    if (!await newEnumerator.MoveNextAsync()) break;
+                }
+                else
+                {
+                    if (!await oldEnumerator.MoveNextAsync())
+                    {
+                        await AddEntity(newEntity, cancellationToken);
+                        await ProcessRemainingEntities(newEnumerator, cancellationToken);
+                        break;
+                    }
+                }
+            }
+        }
+
+        await ForceSaveBatched(cancellationToken);
+    }
+
+    private async Task ProcessRemainingEntities(IAsyncEnumerator<T> enumerator, CancellationToken cancellationToken)
+    {
+        while (await enumerator.MoveNextAsync()) await AddEntity(enumerator.Current, cancellationToken);
+    }
+
+    private async ValueTask UpdateEntity(T newEntity, CancellationToken cancellationToken)
+    {
+        _toUpdate.TryAdd(newEntity.ForeignId, newEntity);
+        if (_toUpdate.Count != _batchSize) return;
+        await UpdateSave(cancellationToken);
+    }
+
+    private async ValueTask AddEntity(T entity, CancellationToken cancellationToken)
+    {
+        _toAdd.Add(entity);
+        if (_toAdd.Count != _batchSize) return;
+        await AddSave(cancellationToken);
+    }
+
+    private async Task ForceSaveBatched(CancellationToken cancellationToken)
+    {
+        await AddSave(cancellationToken);
+        await UpdateSave(cancellationToken);
+    }
+
+    private async Task UpdateSave(CancellationToken cancellationToken)
+    {
+        if (_toUpdate.Count == 0) return;
+
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        var foreignIds = _toUpdate.Keys.ToArray();
+        var oldEntities = await context.Set<T>()
+            .Where(x => foreignIds.Contains(x.ForeignId))
+            .ToDictionaryAsync(x => x.ForeignId, x => x, cancellationToken);
+
+        foreach (var (foreignId, newData) in _toUpdate)
+        {
+            if (oldEntities.TryGetValue(foreignId, out var oldData)) _updateAction(oldData, newData);
+        }
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.Error(e, $"Error while updating entities in the DB Set of {nameof(T)}");
+        }
+
+        _toUpdate.Clear();
+    }
+
+    private async Task AddSave(CancellationToken cancellationToken)
+    {
+        if (_toAdd.Count == 0) return;
+
+        try
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            context.Set<T>().AddRange(_toAdd);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.Error(e, $"Error while saving entities in the DB Set of {nameof(T)}");
+        }
+
+        _toAdd.Clear();
+    }
+
+    private async IAsyncEnumerable<long> RetrieveOldIds([EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var lastMaxForeignId = 0L;
+
+        while (true)
+        {
+            var max = lastMaxForeignId;
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            var ids = await context.Set<T>()
+                .Where(x => x.ForeignId > max)
+                .OrderBy(x => x.ForeignId)
+                .Select(x => x.ForeignId)
+                .Take(_batchSize)
+                .ToListAsync(cancellationToken);
+
+            if (ids.Count == 0) yield break;
+            lastMaxForeignId = ids[^1];
+
+            foreach (var id in ids) yield return id;
+        }
+    }
+}
