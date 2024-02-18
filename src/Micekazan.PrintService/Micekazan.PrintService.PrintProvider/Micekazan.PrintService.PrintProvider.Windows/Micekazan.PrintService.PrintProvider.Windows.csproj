@@ -8,10 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PublishReadyToRunExclude Include="IronPdf.dll" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj"/>
     </ItemGroup>
 
@@ -20,7 +16,11 @@
     </ItemGroup>-->
 
     <ItemGroup>
-        <Reference Include="IronPdf.dll"/>
+        <Reference Include="lib/*.dll"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PublishReadyToRunExclude Include="lib/*.dll"/>
     </ItemGroup>
 
 </Project>
