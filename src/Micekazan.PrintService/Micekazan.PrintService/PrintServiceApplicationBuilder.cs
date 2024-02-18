@@ -1,6 +1,4 @@
-﻿using System.Net.Mime;
-using System.Text;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using Micekazan.PrintDispatcher.Domain.Contracts;
 using Micekazan.PrintService.PrintProvider;
 
@@ -29,6 +27,10 @@ public class PrintServiceApplicationBuilder
     public PrintServiceApplicationBuilder(string[] args)
     {
         _builder = WebApplication.CreateSlimBuilder(args);
+        _builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.TypeInfoResolverChain.Insert(0, GlobalJsonSerializerContext.Default);
+        });
     }
 
     public async Task Configure(IPrintProvider printProvider)
@@ -56,26 +58,9 @@ public class PrintServiceApplicationBuilder
         app.MapGet("/", (MicekazanConfigurationManager configurationManager) =>
         {
             var html = string.Format(TokenHtml, configurationManager.Configuration.Token);
-            return new HtmlResult(html);
+            return Results.Text(html, "text/html");
         });
 
         return new PrintServiceApplication(app);
-    }
-
-    private class HtmlResult : IResult
-    {
-        private readonly string _html;
-
-        public HtmlResult(string html)
-        {
-            _html = html;
-        }
-
-        public Task ExecuteAsync(HttpContext httpContext)
-        {
-            httpContext.Response.ContentType = MediaTypeNames.Text.Html;
-            httpContext.Response.ContentLength = Encoding.UTF8.GetByteCount(_html);
-            return httpContext.Response.WriteAsync(_html);
-        }
     }
 }

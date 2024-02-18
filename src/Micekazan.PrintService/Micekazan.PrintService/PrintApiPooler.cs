@@ -5,13 +5,15 @@ namespace Micekazan.PrintService;
 
 public class PrintApiPooler : BackgroundService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly Channel<Document> _ch;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<PrintApiPooler> _logger;
 
-    public PrintApiPooler(IHttpClientFactory httpClientFactory, Channel<Document> ch)
+    public PrintApiPooler(IHttpClientFactory httpClientFactory, Channel<Document> ch, ILogger<PrintApiPooler> logger)
     {
         _httpClientFactory = httpClientFactory;
         _ch = ch;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -26,7 +28,8 @@ public class PrintApiPooler : BackgroundService
 
                     var httpClient = _httpClientFactory.CreateClient("PrintApi");
                     using var response = await httpClient.GetAsync("update", stoppingToken);
-                    var update = await response.Content.ReadFromJsonAsync<Update>(stoppingToken);
+                    var update = await response.Content.ReadFromJsonAsync(
+                        GlobalJsonSerializerContext.Default.Update, stoppingToken);
 
                     switch (update!.Kind)
                     {
@@ -36,25 +39,28 @@ public class PrintApiPooler : BackgroundService
                         case UpdateKind.NoContent:
                             continue;
                         default:
-                            throw new Exception();
+                            throw new Exception("Unknown Update Kind");
                     }
 
-                    using var ack = JsonContent.Create(new Acknowledgement { UpdateId = update.Id, });
-                    using var ackResponse = await httpClient.PostAsync("ack", ack, stoppingToken);
+                    var ack = new Acknowledgement { UpdateId = update.Id, };
+                    using var ackResponse = await httpClient.PostAsJsonAsync(
+                        "ack", ack, GlobalJsonSerializerContext.Default.Acknowledgement, stoppingToken);
                 }
-                catch (Exception)
+                catch (OperationCanceledException)
                 {
-                    // ignored
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Error: {ErrorMessage}", e.Message);
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            // ignored
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            _logger.LogError("Error: {ErrorMessage}", e.Message);
         }
     }
 }

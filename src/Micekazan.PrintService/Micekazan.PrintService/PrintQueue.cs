@@ -10,19 +10,22 @@ public class PrintQueue : BackgroundService
     {
         PaperWidth = 297,
         PaperHeight = 210,
-        Margins = new[] { 10, 10, 10, 10, },
+        Margins = [10, 10, 10, 10,],
         StartPoint = (10, 10),
     };
 
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IPrintProvider _printProvider;
     private readonly Channel<Document> _ch;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<PrintQueue> _logger;
+    private readonly IPrintProvider _printProvider;
 
-    public PrintQueue(IHttpClientFactory httpClientFactory, IPrintProvider printProvider, Channel<Document> ch)
+    public PrintQueue(IHttpClientFactory httpClientFactory, IPrintProvider printProvider, Channel<Document> ch,
+        ILogger<PrintQueue> logger)
     {
         _httpClientFactory = httpClientFactory;
         _printProvider = printProvider;
         _ch = ch;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,19 +44,21 @@ public class PrintQueue : BackgroundService
 
                     await _printProvider.PrintDocument(stream, PrintSettings);
                 }
-                catch (Exception)
+                catch (OperationCanceledException)
                 {
-                    // ignored
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Error: {ErrorMessage}", e.Message);
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            // ignored
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            _logger.LogError("Error: {ErrorMessage}", e.Message);
         }
     }
 }

@@ -7,7 +7,6 @@ public class MicekazanConfigurationManager
 {
     private const string FileName = ".micekazanConfig.json";
     private const int TokenBytes = 32;
-    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web) { WriteIndented = true, };
     private MicekazanConfiguration? _configuration;
 
     public MicekazanConfiguration Configuration => _configuration ?? throw new Exception("App has not been configured.");
@@ -30,7 +29,8 @@ public class MicekazanConfigurationManager
     private static async Task<MicekazanConfiguration> NewConfiguration()
     {
         var configuration = new MicekazanConfiguration { Token = GenerateToken(TokenBytes), };
-        var json = JsonSerializer.Serialize(configuration, Options);
+        var json = JsonSerializer.Serialize(
+            configuration, MicekazanConfigurationJsonSerializerContext.Default.MicekazanConfiguration);
         await File.WriteAllTextAsync(FileName, json);
 
         Console.WriteLine("Не было найдено существующей конфигурации.");
@@ -44,7 +44,8 @@ public class MicekazanConfigurationManager
         try
         {
             var json = await File.ReadAllTextAsync(FileName);
-            var configuration = JsonSerializer.Deserialize<MicekazanConfiguration>(json, Options);
+            var configuration = JsonSerializer.Deserialize(
+                json, MicekazanConfigurationJsonSerializerContext.Default.MicekazanConfiguration);
             if (configuration is null) throw new Exception();
             configuration.Validate();
 
