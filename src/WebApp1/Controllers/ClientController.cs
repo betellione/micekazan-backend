@@ -11,9 +11,9 @@ namespace WebApp1.Controllers;
 [Authorize(Roles = "Organizer", Policy = "RegisterConfirmation")]
 public class ClientController : Controller
 {
+    private readonly IClientService _clientService;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
-    private readonly IClientService _clientService;
 
     public ClientController(ApplicationDbContext context, UserManager<User> userManager, IClientService clientService)
     {

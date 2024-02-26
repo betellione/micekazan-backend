@@ -7,14 +7,15 @@
 }
 
 <form asp-controller="Manage" asp-action="Token" method="post">
-    <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>    
-    
-    @if (ViewData.TryGetValue("CurrentToken", out var token) && !string.IsNullOrEmpty((string?)token)) {
+    <partial name="_StatusMessage" for="@TempData["StatusMessage"]"/>
+
+    @if (ViewData.TryGetValue("CurrentToken", out var token) && !string.IsNullOrEmpty((string?)token))
+    {
         var tokenString = (string)token;
         var secured = new string('*', 12);
         if (tokenString.Length < 4) secured += new string('*', 4 - tokenString.Length) + token;
         else secured += tokenString[^4..];
-        
+
         <div class="tabcontent">
             <div class="content_block black">
                 <div class="custom-text black">
@@ -31,7 +32,9 @@
                 </div>
             </div>
         </div>
-    } else {
+    }
+    else
+    {
         <div class="tabcontent">
             <div class="content_block black">
                 <h1>Для того чтобы пользоваться данным сервисом введите свой авторизационный токен</h1>

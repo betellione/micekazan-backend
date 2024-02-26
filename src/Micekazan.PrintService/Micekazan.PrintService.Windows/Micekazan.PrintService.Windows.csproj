@@ -11,8 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Micekazan.PrintService\Micekazan.PrintService.csproj" />
-      <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.Windows\Micekazan.PrintService.PrintProvider.Windows.csproj" />
+        <ProjectReference Include="..\Micekazan.PrintService\Micekazan.PrintService.csproj"/>
+        <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.Windows\Micekazan.PrintService.PrintProvider.Windows.csproj"/>
     </ItemGroup>
 
 </Project>

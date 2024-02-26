@@ -5,6 +5,13 @@ namespace WebApp1.Models;
 
 public class User : IdentityUser<Guid>
 {
+    private List<UserConfirmationPhoneCall>? _confirmationPhoneCalls;
+    private List<Event>? _eventsCreated;
+    private List<EventScanner>? _eventsToCollect;
+    private List<TicketPdfTemplate>? _ticketPdfTemplates;
+    private List<CreatorToken>? _tokens;
+    private List<TokenUpdate>? _tokenUpdates;
+
     public string? Name { get; set; }
     public string? Surname { get; set; }
     public string? Patronymic { get; set; }
@@ -19,11 +26,4 @@ public class User : IdentityUser<Guid>
     public IEnumerable<TicketPdfTemplate> TicketPdfTemplates => _ticketPdfTemplates ??= new List<TicketPdfTemplate>();
     public IEnumerable<EventScanner> EventsToCollect => _eventsToCollect ??= new List<EventScanner>();
     public IEnumerable<UserConfirmationPhoneCall> ConfirmationPhoneCalls => _confirmationPhoneCalls ??= new List<UserConfirmationPhoneCall>();
-
-    private List<CreatorToken>? _tokens;
-    private List<TokenUpdate>? _tokenUpdates;
-    private List<Event>? _eventsCreated;
-    private List<TicketPdfTemplate>? _ticketPdfTemplates;
-    private List<EventScanner>? _eventsToCollect;
-    private List<UserConfirmationPhoneCall>? _confirmationPhoneCalls;
 }

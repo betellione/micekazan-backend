@@ -1,22 +1,22 @@
 @font-face {
-  font-family: TildaSansBlack;
-  src: url("/fonts/TildaSans-Black.ttf");
+    font-family: TildaSansBlack;
+    src: url("/fonts/TildaSans-Black.ttf");
 }
 
 @font-face {
-  font-family: TildaSansBold;
-  src: url("/fonts/TildaSans-Bold.ttf");
+    font-family: TildaSansBold;
+    src: url("/fonts/TildaSans-Bold.ttf");
 }
 
 @font-face {
-  font-family: TildaSansLight;
-  src: url("/fonts/TildaSans-Light.ttf");
+    font-family: TildaSansLight;
+    src: url("/fonts/TildaSans-Light.ttf");
 }
 
 :root {
-	--main-color: #ffca2c;
-	--secondary-color: #ffcf3e;
-	--bs-link-hover-color: white;
+    --main-color: #ffca2c;
+    --secondary-color: #ffcf3e;
+    --bs-link-hover-color: white;
 }
 
 .content_header {
@@ -39,7 +39,7 @@
     color: #fff;
 }
 
-.content_block.black hr{
+.content_block.black hr {
     width: 100%;
     color: #fff;
 }
@@ -86,7 +86,7 @@
     left: 0;
     right: 0;
     height: 70px;
-    
+
 }
 
 .preview_logo img {
@@ -132,22 +132,23 @@
     flex-direction: row-reverse;
 }
 
-.preview_info.vertical .preview_name  {
-    display: block;
-    flex-direction: row;
-}
-.preview_info.vertical .preview_surname  {
+.preview_info.vertical .preview_name {
     display: block;
     flex-direction: row;
 }
 
-.preview_qr.horizon  {
+.preview_info.vertical .preview_surname {
+    display: block;
+    flex-direction: row;
+}
+
+.preview_qr.horizon {
     grid-column-start: 2;
     grid-row-start: 1;
     grid-row-end: 3;
-    
+
     align-self: flex-end;
-    
+
 }
 
 .preview_qr.horizon img {
@@ -185,9 +186,11 @@
     margin-top: 100px;
     vertical-align: middle;
 }
-.display-preview .img{
+
+.display-preview .img {
     width: auto;
 }
+
 .display-preview .text {
     font-size: 15px;
 }

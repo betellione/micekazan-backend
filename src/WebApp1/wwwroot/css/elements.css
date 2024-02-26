@@ -1,22 +1,22 @@
 @font-face {
-  font-family: TildaSansBlack;
-  src: url("/fonts/TildaSans-Black.ttf");
+    font-family: TildaSansBlack;
+    src: url("/fonts/TildaSans-Black.ttf");
 }
 
 @font-face {
-  font-family: TildaSansBold;
-  src: url("/fonts/TildaSans-Bold.ttf");
+    font-family: TildaSansBold;
+    src: url("/fonts/TildaSans-Bold.ttf");
 }
 
 @font-face {
-  font-family: TildaSansLight;
-  src: url("/fonts/TildaSans-Light.ttf");
+    font-family: TildaSansLight;
+    src: url("/fonts/TildaSans-Light.ttf");
 }
 
 :root {
-	--main-color: #ffca2c;
-	--secondary-color: #ffcf3e;
-	--bs-link-hover-color: white;
+    --main-color: #ffca2c;
+    --secondary-color: #ffcf3e;
+    --bs-link-hover-color: white;
 }
 
 /* Шрифты */
@@ -91,7 +91,7 @@ p {
 
 /* Выпадающий список */
 .custom-select {
-  display: contents;
+    display: contents;
 }
 
 .custom-select select {
@@ -156,13 +156,13 @@ p {
 }
 
 .custom-radio-btm .point:after {
- 	top: 2px;
-	left: 2px;
+    top: 2px;
+    left: 2px;
 
-	width: 17px;
-	height: 17px;
+    width: 17px;
+    height: 17px;
 
-	background: #000;
+    background: #000;
 }
 
 /* Checkbox button */
@@ -219,13 +219,13 @@ p {
 }
 
 .custom-checkbox-btm .point:after {
- 	top: 2px;
-	left: 2px;
+    top: 2px;
+    left: 2px;
 
-	width: 17px;
-	height: 17px;
+    width: 17px;
+    height: 17px;
 
-	background: #000;
+    background: #000;
 }
 
 /* File button */
@@ -234,45 +234,45 @@ p {
     display: inline-block;
 }
 
-.custom-file-btm .button{
+.custom-file-btm .button {
     background-image: url("images/close.svg");
 }
 
 .custom-file-btm span {
-	position: relative;
-	display: inline-block;
+    position: relative;
+    display: inline-block;
 
-	background-color: #000;
-	color: #fff;
+    background-color: #000;
+    color: #fff;
 
-	cursor: pointer;
-	outline: 0;
-	text-decoration: none;
+    cursor: pointer;
+    outline: 0;
+    text-decoration: none;
 
     padding: 5px 20px;
     margin: 0;
 
-	font-family: TildaSansBold;
+    font-family: TildaSansBold;
     font-size: 20px;
 
-	box-sizing: border-box;
-	border: none;
+    box-sizing: border-box;
+    border: none;
 }
 
 .custom-file-btm input[type=file] {
-	position: absolute;
+    position: absolute;
 
-	z-index: -1;
-	opacity: 0;
-	width: 0;
-	height: 0;
+    z-index: -1;
+    opacity: 0;
+    width: 0;
+    height: 0;
 
-	display: block;
+    display: block;
 }
 
 .custom-file-btm:hover span {
     color: #000;
-	background-color: var(--main-color);
+    background-color: var(--main-color);
 }
 
 /* Кнопки */

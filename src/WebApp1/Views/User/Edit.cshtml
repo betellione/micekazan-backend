@@ -1,4 +1,4 @@
-@model WebApp1.ViewModels.UserViewModel
+@model UserViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -11,16 +11,16 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label">Почта</label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ExpiresAt" class="control-label">Истекает</label>
-                <input asp-for="ExpiresAt" class="form-control" />
+                <input asp-for="ExpiresAt" class="form-control"/>
                 <span asp-validation-for="ExpiresAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-primary w-100" />
+                <input type="submit" value="Сохранить" class="btn btn-primary w-100"/>
             </div>
         </form>
     </div>
@@ -28,7 +28,6 @@
         <a asp-action="Index">Вернуться к списку</a>
     </div>
 </div>
-
 
 
 @section Scripts {

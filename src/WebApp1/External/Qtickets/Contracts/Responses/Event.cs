@@ -12,7 +12,7 @@ public class Event
 
     [JsonPropertyName("city")]
     public City City { get; set; } = null!;
-    
+
     [JsonPropertyName("shows")]
     public IEnumerable<Show> Shows { get; set; } = Enumerable.Empty<Show>();
 

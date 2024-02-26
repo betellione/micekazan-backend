@@ -2,6 +2,10 @@
 
 public class Event
 {
+    private List<EventScanner>? _collectors;
+    private List<Screen>? _screens;
+    private List<Ticket>? _tickets;
+
     public long Id { get; set; }
     public string Name { get; set; } = null!;
     public string City { get; set; } = null!;
@@ -15,8 +19,4 @@ public class Event
     public IEnumerable<EventScanner> Collectors => _collectors ??= new List<EventScanner>();
     public IEnumerable<Ticket> Tickets => _tickets ??= new List<Ticket>();
     public IEnumerable<Screen> Screens => _screens ??= new List<Screen>();
-
-    private List<EventScanner>? _collectors;
-    private List<Ticket>? _tickets;
-    private List<Screen>? _screens;
 }

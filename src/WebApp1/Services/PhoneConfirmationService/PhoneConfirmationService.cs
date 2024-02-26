@@ -10,9 +10,9 @@ namespace WebApp1.Services.PhoneConfirmationService;
 
 public class PhoneConfirmationService : IPhoneConfirmationService
 {
+    private readonly ApplicationDbContext _dbContext;
     private readonly ILogger _logger = Log.ForContext<IPhoneConfirmationService>();
     private readonly IPhoneCaller _phoneCaller;
-    private readonly ApplicationDbContext _dbContext;
 
     public PhoneConfirmationService(IPhoneCaller phoneCaller, ApplicationDbContext dbContext)
     {

@@ -13,7 +13,7 @@ public class LoginWith2FaViewModel
     public string TwoFactorCode { get; set; } = null!;
 
     public bool RememberMe { get; set; }
-    
+
     [Display(Name = "Remember machine")]
     public bool RememberMachine { get; set; }
 }

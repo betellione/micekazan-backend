@@ -15,10 +15,10 @@ namespace WebApp1.Controllers;
 [Authorize]
 public class AccountController : Controller
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
     private readonly IEmailSender _emailSender;
     private readonly IPhoneConfirmationService _phoneService;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
     public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender,
         IPhoneConfirmationService phoneService)

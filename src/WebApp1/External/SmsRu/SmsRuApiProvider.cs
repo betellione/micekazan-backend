@@ -9,9 +9,9 @@ namespace WebApp1.External.SmsRu;
 
 public class SmsRuApiProvider : ISmsRuApiProvider
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger = Log.ForContext<ISmsRuApiProvider>();
     private readonly SmsOptions _options;
-    private readonly IHttpClientFactory _httpClientFactory;
 
     public SmsRuApiProvider(IHttpClientFactory httpClientFactory, IOptions<SmsOptions> optionsAccessor)
     {

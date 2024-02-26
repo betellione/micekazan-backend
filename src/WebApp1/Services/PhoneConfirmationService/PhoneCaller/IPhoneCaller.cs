@@ -5,7 +5,7 @@ namespace WebApp1.Services.PhoneConfirmationService.PhoneCaller;
 public interface IPhoneCaller
 {
     /// <summary>
-    /// Make a call to the given phone number.
+    ///     Make a call to the given phone number.
     /// </summary>
     /// <param name="phoneNumber">Phone number to call.</param>
     /// <param name="ipAddress">IP address of the remote client to prevent multiple calls in a short time.</param>

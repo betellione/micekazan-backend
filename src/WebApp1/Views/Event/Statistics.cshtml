@@ -1,6 +1,5 @@
-@model Tickets
-
 @using WebApp1.Views.Event
+@model Tickets
 @{
     Layout = "_Layout";
     ViewData["ActivePage"] = EventNavPages.Statistics;
@@ -18,9 +17,9 @@
                 <div class="table-responsive custom-table mb-3">
                     <table class="table table-dark table-hover align-middle">
                         <thead>
-                            <th>
-                                <div class="table-col-header">Билеты</div>
-                            </th>
+                        <th>
+                            <div class="table-col-header">Билеты</div>
+                        </th>
                         </thead>
                         <tbody>
                         @foreach (var tickets in Model.PassedTickets)

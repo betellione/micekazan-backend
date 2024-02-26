@@ -52,12 +52,11 @@
             <a asp-controller="Manage" asp-action="EnableAuthenticator" id="enable-authenticator" class="btn btn-primary">Добавить приложение для аутентификации</a>
         }
         else
-        {   
+        {
             <div class="d-flex flex-column gap-2">
                 <a asp-controller="Manage" asp-action="EnableAuthenticator" id="enable-authenticator" class="btn btn-primary">Настройте приложение для аутентификации</a>
                 <a asp-controller="Manage" asp-action="ResetAuthenticatorKey" id="reset-authenticator" class="btn btn-primary">Сбросить приложение аутентификации</a>
             </div>
-            
         }
     }
     else

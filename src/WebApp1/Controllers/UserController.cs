@@ -14,8 +14,8 @@ namespace WebApp1.Controllers;
 public class UserController : Controller
 {
     private readonly ApplicationDbContext _context;
-    private readonly IUserStore<User> _userStore;
     private readonly UserManager<User> _userManager;
+    private readonly IUserStore<User> _userStore;
 
     public UserController(ApplicationDbContext context, IUserStore<User> userStore, UserManager<User> userManager)
     {
@@ -91,8 +91,7 @@ public class UserController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
         Guid id,
-        [Bind(
-            "CreatedAt,ExpiresAt,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")]
+        [Bind("CreatedAt,ExpiresAt,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")]
         User user)
     {
         if (id != user.Id) return NotFound();

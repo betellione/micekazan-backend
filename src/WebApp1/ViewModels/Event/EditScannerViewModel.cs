@@ -16,11 +16,12 @@ public class EditScannerViewModel
 
     [Display(Name = "Шаблон печати")]
     public IEnumerable<SelectListItem> TemplateIds { get; set; } = Enumerable.Empty<SelectListItem>();
+
     public string? SelectedTemplateId { get; set; }
 
     [DisplayName("Является ли постаматом?")]
     public bool IsAutomate { get; set; }
-    
+
     public DateTime? ExpiresAt { get; set; }
     public string? EventName { get; set; }
     public long? EventId { get; set; }

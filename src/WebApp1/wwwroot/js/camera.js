@@ -2,7 +2,7 @@
     const videoElement = document.getElementById('videoElement');
     const resultElement = document.getElementById('result');
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+    navigator.mediaDevices.getUserMedia({video: {facingMode: 'user'}})
         .then(function (mediaStream) {
             videoElement.srcObject = mediaStream;
 

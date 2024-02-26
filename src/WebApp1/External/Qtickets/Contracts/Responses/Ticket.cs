@@ -12,7 +12,7 @@ public class Ticket
 
     [JsonPropertyName("client_email")]
     public string ClientEmail { get; set; } = null!;
-    
+
     [JsonPropertyName("show_id")]
     public long ShowId { get; set; }
 }

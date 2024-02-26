@@ -20,12 +20,12 @@ namespace WebApp1.Controllers;
 public class EventController : Controller
 {
     private readonly ApplicationDbContext _context;
-    private readonly IScreenStore _screenStore;
-    private readonly IScannerStore _scannerStore;
     private readonly IEventService _eventService;
-    private readonly IUserStore<User> _userStore;
-    private readonly UserManager<User> _userManager;
+    private readonly IScannerStore _scannerStore;
+    private readonly IScreenStore _screenStore;
     private readonly ITemplateService _templateService;
+    private readonly UserManager<User> _userManager;
+    private readonly IUserStore<User> _userStore;
 
     public EventController(ApplicationDbContext context, IScreenStore screenStore, IScannerStore scannerStore, IEventService eventService, IUserStore<User> userStore,
         UserManager<User> userManager, ITemplateService templateService)
@@ -56,7 +56,7 @@ public class EventController : Controller
             "city" => applicationDbContext.OrderBy(x => x.City),
             "start" => applicationDbContext.OrderBy(x => x.StartedAt),
             "finish" => applicationDbContext.OrderBy(x => x.FinishedAt),
-            _ => applicationDbContext.OrderByDescending(x => x.StartedAt)
+            _ => applicationDbContext.OrderByDescending(x => x.StartedAt),
         };
 
         return View(await orderedQueryable.ToListAsync());
@@ -93,9 +93,9 @@ public class EventController : Controller
 
         return vm is null ? NotFound() : View(vm);
     }
-    
+
     [HttpGet]
-    public async Task<IActionResult>Scanners(long? id)
+    public async Task<IActionResult> Scanners(long? id)
     {
         if (id is null) return BadRequest();
 
@@ -114,9 +114,9 @@ public class EventController : Controller
 
         return vm is null ? NotFound() : View(vm);
     }
-    
+
     [HttpGet]
-    public async Task<IActionResult>Statistics(long? id)
+    public async Task<IActionResult> Statistics(long? id)
     {
         if (id is null) return BadRequest();
 
@@ -251,7 +251,7 @@ public class EventController : Controller
     [HttpGet]
     public IActionResult AddScanner(long? eventId, string? eventName)
     {
-        var vm = new UserViewModel { EventId = eventId, EventName = eventName};
+        var vm = new UserViewModel { EventId = eventId, EventName = eventName, };
         vm = FillUpMyViewModel(vm);
         return View(vm);
     }
@@ -285,7 +285,7 @@ public class EventController : Controller
             ScannerId = user.Id,
             EventId = vm.EventId!.Value,
             PrintingToken = vm.Token,
-            TicketPdfTemplateId = ticketPdfTemplateId
+            TicketPdfTemplateId = ticketPdfTemplateId,
         };
 
         _context.EventScanners.Add(eventCollector);
@@ -294,11 +294,10 @@ public class EventController : Controller
         await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Scanner"));
         if (vm.IsAutomate)
             await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Actor, "Automate"));
-        
 
         return RedirectToAction("Details", new { id = vm.EventId, });
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> EditScanner(long? eventId, string? eventName, Guid userId)
     {
@@ -314,29 +313,29 @@ public class EventController : Controller
             SelectedTemplateId = scanner.TicketPdfTemplateId.ToString(),
             IsAutomate = isAutomate,
             EventId = eventId,
-            EventName = eventName
+            EventName = eventName,
         };
         vm = FillUpMyEditViewModel(vm);
         return View(vm);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> EditScanner(EditScannerViewModel vm)
     {
         var user = await _userManager.FindByIdAsync(vm.Id.ToString());
         var scanner = await _context.EventScanners.FirstOrDefaultAsync(x => x.ScannerId == vm.Id);
         if (user is null || scanner is null) return NotFound();
-        
+
         _ = long.TryParse(vm.SelectedTemplateId, out var ticketPdfTemplateId);
         scanner.TicketPdfTemplateId = ticketPdfTemplateId;
         scanner.PrintingToken = vm.Token;
         if (await _scannerStore.SetClaimsForScanner(vm.Id, vm.IsAutomate))
             await _userManager.UpdateSecurityStampAsync(user);
-        
+
         await _context.SaveChangesAsync();
         return RedirectToAction("Details", new { id = vm.EventId, });
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> EditDisplay(long eventId)
     {
@@ -352,7 +351,7 @@ public class EventController : Controller
         };
         return View(vm);
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditDisplay(DisplayViewModel vm)
@@ -363,25 +362,24 @@ public class EventController : Controller
         await _screenStore.AddOrUpdateScreen(vm.EventId, vm.FailDisplayViewModel, ScreenTypes.Fail);
         return RedirectToAction("Details", new { id = vm.EventId, });
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Print(long eventId, long? templateId)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
         var template = templateId is null
-            ? new TemplateViewModel{EventId = eventId}
+            ? new TemplateViewModel { EventId = eventId, }
             : (await _templateService.GetTemplate(templateId.Value))?.MapToViewModel();
 
         var vm = new PrintViewModel
         {
             EventId = eventId,
-            TemplateViewModel = template ?? new TemplateViewModel{EventId = eventId},
+            TemplateViewModel = template ?? new TemplateViewModel { EventId = eventId, },
             TemplateIds = await _templateService.GetTemplateIds(userId),
             SelectedTemplateId = templateId,
         };
         return View(vm);
     }
-    
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -415,7 +413,7 @@ public class EventController : Controller
         vm.TemplateIds = templates;
         return vm;
     }
-    
+
     private EditScannerViewModel FillUpMyEditViewModel(EditScannerViewModel vm)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);

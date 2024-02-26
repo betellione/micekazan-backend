@@ -29,7 +29,7 @@ public static class EventNavPages
     {
         return PageNavClass(viewContext, EditDisplay);
     }
-    
+
     public static string EditPrintNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, EditPrint);

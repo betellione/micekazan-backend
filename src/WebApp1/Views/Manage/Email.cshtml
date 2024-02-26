@@ -10,13 +10,16 @@
 
 <div class="tabcontent">
     <div class="content_block black">
-        @if (Model.IsEmailConfirmed ?? false) {
+        @if (Model.IsEmailConfirmed ?? false)
+        {
             <div class="custom-text black">
                 <label asp-for="Email">Текущая почта</label>
-                <input asp-for="Email" disabled/>                        
-                
+                <input asp-for="Email" disabled/>
+
             </div>
-        } else {            
+        }
+        else
+        {
             <div class="custom-text black">
                 <label asp-for="Email">Текущая почта</label>
                 <input asp-for="Email" disabled/>
@@ -24,12 +27,12 @@
 
             <form asp-controller="Manage" asp-action="SendVerificationEmail" method="post">
                 <button type="submit">Отправить письмо с подтверждением</button>
-            </form>         
+            </form>
         }
     </div>
-                
+
     <form asp-controller="Manage" asp-action="ChangeEmail" method="post">
-        
+
         <div class="content_block black">
             <div class="custom-text black">
                 <label asp-for="NewEmail">Новая почта</label>

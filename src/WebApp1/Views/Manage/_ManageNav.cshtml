@@ -1,12 +1,12 @@
 @using WebApp1.Views.Manage
-
 <div class="tab">
     <a asp-controller="Manage" asp-action="Index" class="tablinks @ManageNavPages.ProfileNavClass(ViewContext)" id="profile">Профиль</a>
     <a asp-controller="Manage" asp-action="Email" class="tablinks @ManageNavPages.EmailNavClass(ViewContext)" id="email">Почта</a>
     <a asp-controller="Manage" asp-action="ChangePassword" class="tablinks @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password">Пароль</a>
     <a sp-controller="Manage" asp-action="TwoFactorAuthentication" class="tablinks @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor">Двухфакторная аутентификация</a>
 
-    @if (User.IsInRole("Organizer")) {
+    @if (User.IsInRole("Organizer"))
+    {
         <a asp-controller="Manage" asp-action="Token" class="tablinks @ManageNavPages.ChangeTokenNavClass(ViewContext)" id="change-token">Токен</a>
     }
 </div>

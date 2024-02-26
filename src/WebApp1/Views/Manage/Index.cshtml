@@ -1,5 +1,5 @@
-﻿@using WebApp1.Views.Manage
-@using static WebApp1.Enums.ActivityTypes
+﻿@using static WebApp1.Enums.ActivityTypes
+@using WebApp1.Views.Manage
 
 @model IndexViewModel
 @{
@@ -12,29 +12,48 @@
     <div class="content_block black">
         <table class="details left">
             <tr>
-                <td><p>Почта:</p></td>
-                <td><p>@Model.Username</p></td>
-            </tr>
-            <tr>
-                <td><p>ФИО:</p></td>
-                <td><p>@Model.Surname @Model.Name @Model.Patronymic</p></td>
-            </tr>
-            <tr>
-                <td><p>Город:</p></td>
-                <td><p>@Model.City</p></td>
-            </tr>
-            <tr>
-                <td><p>Тип</p></td>
                 <td>
-                    @if (@Model.ActivityTypes == Individual) {
+                    <p>Почта:</p>
+                </td>
+                <td>
+                    <p>@Model.Username</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>ФИО:</p>
+                </td>
+                <td>
+                    <p>@Model.Surname @Model.Name @Model.Patronymic</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Город:</p>
+                </td>
+                <td>
+                    <p>@Model.City</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Тип</p>
+                </td>
+                <td>
+                    @if (Model.ActivityTypes == Individual)
+                    {
                         <p>Физическое лицо</p>
-                    } else if (@Model.ActivityTypes == Entrepreneur) {
+                    }
+                    else if (Model.ActivityTypes == Entrepreneur)
+                    {
                         <p>ИП/Самозанятый</p>
-                    } else if (@Model.ActivityTypes == Business) {
+                    }
+                    else if (Model.ActivityTypes == Business)
+                    {
                         <p>Юридическое лицо</p>
                     }
                 </td>
             </tr>
-        </table>        
+        </table>
     </div>
 </div>

@@ -1,33 +1,47 @@
 @using WebApp1.Views.Event
-
 <div class="tab">
-    @if (Model.GetType().GetProperty("EventId") != null) {
+    @if (Model.GetType().GetProperty("EventId") != null)
+    {
         <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
-    } else {
+    }
+    else
+    {
         <a asp-controller="Event" asp-action="Details" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.DetailsNavClass(ViewContext)">Описание</a>
     }
 
-    @if (Model.GetType().GetProperty("EventId") != null) {
+    @if (Model.GetType().GetProperty("EventId") != null)
+    {
         <a asp-controller="Event" asp-action="Scanners" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.TicketsNavClass(ViewContext)">Билетеры</a>
-    } else {
+    }
+    else
+    {
         <a asp-controller="Event" asp-action="Scanners" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.TicketsNavClass(ViewContext)">Билетеры</a>
     }
 
-    @if (Model.GetType().GetProperty("EventId") != null) {
+    @if (Model.GetType().GetProperty("EventId") != null)
+    {
         <a asp-controller="Event" asp-action="Statistics" asp-route-Id="@Model.EventId" class="tablinks @EventNavPages.StatisticsNavClass(ViewContext)">Статистика</a>
-    } else {
+    }
+    else
+    {
         <a asp-controller="Event" asp-action="Statistics" asp-route-Id="@Model.Id" class="tablinks @EventNavPages.StatisticsNavClass(ViewContext)">Статистика</a>
     }
-    
-    @if (Model.GetType().GetProperty("EventId") != null) {
+
+    @if (Model.GetType().GetProperty("EventId") != null)
+    {
         <a asp-controller="Event" asp-action="Print" asp-route-eventId="@Model.EventId" class="tablinks @EventNavPages.EditPrintNavClass(ViewContext)">Настройка печати</a>
-    } else {
+    }
+    else
+    {
         <a asp-controller="Event" asp-action="Print" asp-route-eventId="@Model.Id" class="tablinks @EventNavPages.EditPrintNavClass(ViewContext)">Настройка печати</a>
     }
 
-    @if (Model.GetType().GetProperty("EventId") != null) {
+    @if (Model.GetType().GetProperty("EventId") != null)
+    {
         <a asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.EventId" class="tablinks @EventNavPages.EditDisplayNavClass(ViewContext)">Настройка экрана</a>
-    } else {
+    }
+    else
+    {
         <a asp-controller="Event" asp-action="EditDisplay" asp-route-eventId="@Model.Id" class="tablinks @EventNavPages.EditDisplayNavClass(ViewContext)">Настройка экрана</a>
     }
 </div>

@@ -2,6 +2,8 @@
 
 public class Client
 {
+    private List<Ticket>? _tickets;
+
     public long Id { get; set; }
     public long ForeignId { get; set; }
     public string? Name { get; set; }
@@ -11,6 +13,4 @@ public class Client
     public string? PhoneNumber { get; set; }
 
     public IEnumerable<Ticket> Tickets => _tickets ??= new List<Ticket>();
-
-    private List<Ticket>? _tickets;
 }

@@ -5,8 +5,8 @@ namespace Micekazan.PrintDispatcher;
 
 public class PrinterQueuesManager
 {
-    private readonly Dictionary<string, Channel<Document>> _channels = new();
     private static readonly object LockObj = new();
+    private readonly Dictionary<string, Channel<Document>> _channels = new();
 
     public Channel<Document> this[string printingToken]
     {

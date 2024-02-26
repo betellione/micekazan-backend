@@ -1,4 +1,4 @@
-@model IEnumerable<WebApp1.ViewModels.UserViewModel>
+@model IEnumerable<UserViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,43 +13,41 @@
 <div class="table-responsive custom-table mb-5">
     <table class="table table-dark table-hover align-middle">
         <thead>
-            <tr>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.Email) *@
-                        Почта
-                    </div>
+        <tr>
+            <th>
+                <div class="table-col-header">
+                    Почта
+                </div>
 
-                </th>
-                <th>
-                    <div class="table-col-header">
-                        @* @Html.DisplayNameFor(model => model.ExpiresAt) *@
-                        Срок действия истекает
-                    </div>
-                </th>
-                <th></th>
-            </tr>
+            </th>
+            <th>
+                <div class="table-col-header">
+                    Срок действия истекает
+                </div>
+            </th>
+            <th></th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr onclick="location.href='@Url.Action("Edit", new { id = item.Id })';">
-                    <td>
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </div>
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href='@Url.Action("Edit", new { id = item.Id, })';">
+                <td>
+                    <div class="table-col">
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </div>
 
-                    </td>
-                    <td>
-                        <div class="table-col">
-                            @Html.DisplayFor(modelItem => item.ExpiresAt)
-                        </div>
-                    </td>
-                    <td>
-                        <a class="btn btn-outline-primary w-100" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                    </td>
-                </tr>
-            }
+                </td>
+                <td>
+                    <div class="table-col">
+                        @Html.DisplayFor(modelItem => item.ExpiresAt)
+                    </div>
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary w-100" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>

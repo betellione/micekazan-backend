@@ -2,6 +2,8 @@
 
 public class TicketPdfTemplate
 {
+    private List<EventScanner>? _scannersWithTemplate;
+
     public long Id { get; set; }
     public string TemplateName { get; set; } = null!;
     public string TextColor { get; set; } = "#000000";
@@ -15,6 +17,4 @@ public class TicketPdfTemplate
 
     public User Organizer { get; set; } = null!;
     public IEnumerable<EventScanner> ScannersWithTemplate => _scannersWithTemplate ??= new List<EventScanner>();
-
-    private List<EventScanner>? _scannersWithTemplate;
 }

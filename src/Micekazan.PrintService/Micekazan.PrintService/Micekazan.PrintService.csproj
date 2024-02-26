@@ -11,8 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Micekazan.PrintDispatcher.Domain\Micekazan.PrintDispatcher.Domain.csproj" />
-      <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj" />
+        <ProjectReference Include="..\..\Micekazan.PrintDispatcher.Domain\Micekazan.PrintDispatcher.Domain.csproj"/>
+        <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -46,12 +46,12 @@
     }
 </style>
 <div id="content" class="background-image">
-        @{
-            var result = Model.TextSize;
-            var size = result + "px";
-        }
-    <img  id="logo" src="~/@Model.LogoPath">
-    <div  style="font-size: @size">@Model.MainText</div>
+    @{
+        var result = Model.TextSize;
+        var size = result + "px";
+    }
+    <img id="logo" src="~/@Model.LogoPath">
+    <div style="font-size: @size">@Model.MainText</div>
     <div style="font-size: @size">@Model.Description</div>
 </div>
 

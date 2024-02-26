@@ -29,7 +29,7 @@ public static class ManageNavPages
     {
         return PageNavClass(viewContext, TwoFactorAuthentication);
     }
-    
+
     public static string ChangeTokenNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, ChangeToken);

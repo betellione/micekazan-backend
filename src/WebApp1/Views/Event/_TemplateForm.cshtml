@@ -13,33 +13,47 @@
         <div class="content_row">
             <table>
                 <tr>
-                    <td><p>Цвет шрифта<p></td>
+                    <td>
+                        <p>Цвет шрифта<p>
+                    </td>
                     <td colspan="3">
                         <input asp-for="FontColor" type="color" id="card_color_input">
                     </td>
                 </tr>
-                
+
                 <tr>
-                    <td><p>Вертикальная</p></td>
+                    <td>
+                        <p>Вертикальная</p>
+                    </td>
                     <td>
                         <label class="custom-radio-btm">
-                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new { @class = "ticket-orientation-vertical",
-                                @checked = Model.PageOrientation == PageOrientation.Vertical ? "checked" : ""})
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Vertical, new
+                            {
+                                @class = "ticket-orientation-vertical",
+                                @checked = Model.PageOrientation == PageOrientation.Vertical ? "checked" : "",
+                            })
                             <span class="point"></span>
                         </label>
                     </td>
-                    <td><p>Горизонтальная</p></td>
+                    <td>
+                        <p>Горизонтальная</p>
+                    </td>
                     <td>
                         <label class="custom-radio-btm">
-                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new { @class = "ticket-orientation-horizontal",
-                                @checked = Model.PageOrientation == PageOrientation.Horizontal ? "" : "checked"})
+                            @Html.RadioButtonFor(m => m.PageOrientation, PageOrientation.Horizontal, new
+                            {
+                                @class = "ticket-orientation-horizontal",
+                                @checked = Model.PageOrientation == PageOrientation.Horizontal ? "" : "checked",
+                            })
                             <span class="point"></span>
                         </label>
                     </td>
                 </tr>
 
                 <tr>
-                    <td><p>Имя</p></td>
+                    <td>
+                        <p>Имя</p>
+                    </td>
                     <td>
                         <label asp-for="DisplayName" class="custom-checkbox-btm">
                             <input asp-for="DisplayName" id="card_firstname_input"/>
@@ -47,7 +61,9 @@
                             <span class="point"></span>
                         </label>
                     </td>
-                    <td><p>Фамилия</p></td>
+                    <td>
+                        <p>Фамилия</p>
+                    </td>
                     <td>
                         <label asp-for="DisplaySurname" class="custom-checkbox-btm">
                             <input asp-for="DisplaySurname" id="card_lastname_input"/>
@@ -58,7 +74,9 @@
                 </tr>
 
                 <tr>
-                    <td><p>QR код</p></td>
+                    <td>
+                        <p>QR код</p>
+                    </td>
                     <td>
                         <label asp-for="DisplayQrCode" class="custom-checkbox-btm">
                             <input asp-for="DisplayQrCode" id="card_qr_input"/>
@@ -70,7 +88,9 @@
 
                 <tr>
                     <td>
-                        <p><label asp-for="Logo"></label></p>
+                        <p>
+                            <label asp-for="Logo"></label>
+                        </p>
                     </td>
                     <td>
                         <label class="custom-file-btm">
@@ -83,7 +103,9 @@
 
                 <tr>
                     <td>
-                        <p><label asp-for="Background"></label></p>
+                        <p>
+                            <label asp-for="Background"></label>
+                        </p>
                     </td>
                     <td>
                         <label class="custom-file-btm">
