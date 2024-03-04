@@ -78,16 +78,6 @@ public class EventController : Controller
                 FinishedAt = x.FinishedAt,
                 CreatorId = x.CreatorId,
                 CreatorUsername = x.Creator.UserName!,
-                AllTickets = _context.Tickets.Where(q => q.PassedAt != null)
-                    .Count(t => t.Event == _context.Events.FirstOrDefault(e => e.Id == id)),
-                Scanners = x.Collectors.Select(y => new Scanner
-                {
-                    Id = y.ScannerId, Username = y.Scanner.UserName!,
-                }),
-                PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
-                {
-                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
-                }),
             })
             .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -127,7 +117,7 @@ public class EventController : Controller
                 EventId = x.Id,
                 PassedTickets = x.Tickets.Where(t => t.PassedAt != null).Select(y => new PassedTickets
                 {
-                    Id = y.Id, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
+                    Id = y.ForeignId, Name = y.Client.Name, Surname = y.Client.Surname, Patronymic = y.Client.Patronymic, PassedAt = y.PassedAt!.Value,
                 }),
             })
             .FirstOrDefaultAsync(x => x.Id == id);

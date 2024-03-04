@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfGeneratorTest", "tests\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micekazan.Infrastructure", "Micekazan.Infrastructure\Micekazan.Infrastructure.csproj", "{EFAE7295-E2D0-4366-BE80-067C691F48E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronPdfFork", "Micekazan.PrintService\Micekazan.PrintService.PrintProvider\IronPdfFork\IronPdfFork.csproj", "{3C6F69BB-77C9-4401-B01B-51ABC5523DC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFAE7295-E2D0-4366-BE80-067C691F48E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C6F69BB-77C9-4401-B01B-51ABC5523DC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C6F69BB-77C9-4401-B01B-51ABC5523DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C6F69BB-77C9-4401-B01B-51ABC5523DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C6F69BB-77C9-4401-B01B-51ABC5523DC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EAD8EE00-5A24-4D10-86CC-D0E537450E62} = {8C2A1204-D0F2-46EC-8B2C-4F8E5FCAFF32}
@@ -98,5 +104,6 @@ Global
 		{2C8E1D60-9878-4F43-8AFA-26156D4DD3E3} = {8C2A1204-D0F2-46EC-8B2C-4F8E5FCAFF32}
 		{9388C991-E363-4959-91F7-9D0BB873AC5D} = {8C2A1204-D0F2-46EC-8B2C-4F8E5FCAFF32}
 		{F85873A8-C0C2-4C7D-A166-10B345EC2BB6} = {F671ED43-BEAB-4A5C-AAF4-273BDDA310D0}
+		{3C6F69BB-77C9-4401-B01B-51ABC5523DC4} = {3045CE9B-AB94-4744-B862-FEEA1172701E}
 	EndGlobalSection
 EndGlobal
