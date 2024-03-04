@@ -1,9 +1,7 @@
-using System.Runtime.CompilerServices;
 using Micekazan.Infrastructure.MediaGenerators;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebApp1.Data;
-using WebApp1.Data.Batching;
 using WebApp1.Data.Stores;
 using WebApp1.External.Qtickets;
 using WebApp1.Models;
@@ -39,31 +37,32 @@ public class TicketService : ITicketService
         var token = await _tokenStore.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
-        var tickets = _apiProvider.GetTickets(token, cancellationToken);
-
         var batchCounter = 0;
-        var existed = await context.Tickets.ToDictionaryAsync(x => x.Barcode, x => x.Id, cancellationToken);
-        var clientEmailIdPairs = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id, cancellationToken);
-        var eventShowIdPairs = await context.Events.Select(x => new { x.Id, x.ForeignShowIds, }).ToListAsync(cancellationToken);
+        var foreignTickets = _apiProvider.GetTickets(token, cancellationToken);
+        var oldTicketBarcodes = (await context.Tickets.Select(x => x.Barcode).ToListAsync(cancellationToken)).ToHashSet();
+        var clientEmails = await context.Clients.Select(x => new { x.Id, x.Email, }).ToListAsync(cancellationToken);
+        var eventShowIds = await context.Events.Select(x => new { x.Id, x.ForeignShowIds, }).ToListAsync(cancellationToken);
 
-        await foreach (var ticketForeign in tickets)
+        await foreach (var foreignTicket in foreignTickets)
         {
             try
             {
-                if (!clientEmailIdPairs.TryGetValue(ticketForeign.ClientEmail, out var clientId))
+                var client = clientEmails.FirstOrDefault(x => x.Email == foreignTicket.ClientEmail);
+                if (client is null) continue;
+                var @event = eventShowIds.FirstOrDefault(x => x.ForeignShowIds.Contains(foreignTicket.ShowId));
+                if (@event is null) continue;
+
+                var ticket = new Ticket
                 {
-                    throw new Exception($"Client with email {ticketForeign.ClientEmail} not found");
-                }
+                    Barcode = foreignTicket.Barcode,
+                    ClientId = client.Id,
+                    EventId = @event.Id,
+                    ForeignId = foreignTicket.Id,
+                };
 
-                var @event = eventShowIdPairs.FirstOrDefault(x => x.ForeignShowIds.Contains(ticketForeign.ShowId));
-                if (@event is null) throw new Exception($"Event with show with ID {ticketForeign.ShowId} not found");
-
-                var ticket = new Ticket { Barcode = ticketForeign.Barcode, ClientId = clientId, EventId = @event.Id, };
-
-                if (existed.TryGetValue(ticketForeign.Barcode, out var ticketId))
+                if (oldTicketBarcodes.Contains(foreignTicket.Barcode))
                 {
-                    ticket.Id = ticketId;
-                    context.Tickets.Update(ticket);
+                    await UpdateTicket(ticket, context, cancellationToken);
                 }
                 else
                 {
@@ -71,13 +70,15 @@ public class TicketService : ITicketService
                 }
 
                 if (++batchCounter < 100) continue;
-                batchCounter = 0;
 
+                batchCounter = 0;
                 await context.SaveChangesAsync(cancellationToken);
+                context.ChangeTracker.Clear();
             }
             catch (Exception e)
             {
                 _logger.Error(e, "Error while saving tickets in the DB");
+                context.ChangeTracker.Clear();
             }
         }
 
@@ -125,6 +126,21 @@ public class TicketService : ITicketService
         }
     }
 
+    private static async Task UpdateTicket(Ticket ticket, ApplicationDbContext context, CancellationToken cancellationToken)
+    {
+        var toUpdate = await context.Tickets
+            .Where(x => x.Barcode == ticket.Barcode)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (toUpdate is null) return;
+
+        context.Tickets.Update(toUpdate);
+
+        toUpdate.EventId = ticket.EventId;
+        toUpdate.ClientId = ticket.ClientId;
+        toUpdate.ForeignId = ticket.ForeignId;
+    }
+
     private static TicketDocumentModel CreateDefaultDocumentModel(InfoToShow info, string qrData)
     {
         return new TicketDocumentModel
@@ -153,164 +169,5 @@ public class TicketService : ITicketService
             BackgroundPath = template.BackgroundUri,
             LogoPath = template.LogoUri,
         };
-    }
-}
-
-file class BatchWorker<T> where T : class, IBatchable
-{
-    private readonly int _batchSize;
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly ILogger _logger = Log.ForContext<BatchWorker<T>>();
-    private readonly List<T> _toAdd;
-    private readonly Dictionary<long, T> _toUpdate;
-    private readonly Action<T, T> _updateAction;
-
-    public BatchWorker(IDbContextFactory<ApplicationDbContext> contextFactory, Action<T, T> updateAction, int batchSize)
-    {
-        _contextFactory = contextFactory;
-        _batchSize = batchSize;
-        _updateAction = updateAction;
-        _toAdd = new List<T>(batchSize);
-        _toUpdate = new Dictionary<long, T>(batchSize);
-    }
-
-    public async Task Batch(IAsyncEnumerable<T> newEntities, CancellationToken cancellationToken = default)
-    {
-        await using var oldEnumerator = RetrieveOldIds(cancellationToken).GetAsyncEnumerator(cancellationToken);
-        await using var newEnumerator = newEntities.GetAsyncEnumerator(cancellationToken);
-
-        if (!await oldEnumerator.MoveNextAsync())
-        {
-            await ProcessRemainingEntities(newEnumerator, cancellationToken);
-        }
-        else
-        {
-            if (!await newEnumerator.MoveNextAsync()) return;
-            while (true)
-            {
-                var oldForeignId = oldEnumerator.Current;
-                var newEntity = newEnumerator.Current;
-
-                if (oldForeignId == newEntity.ForeignId)
-                {
-                    await UpdateEntity(newEntity, cancellationToken);
-                    if (!await oldEnumerator.MoveNextAsync())
-                    {
-                        await ProcessRemainingEntities(newEnumerator, cancellationToken);
-                        break;
-                    }
-
-                    if (!await newEnumerator.MoveNextAsync()) break;
-                }
-                else if (oldForeignId > newEntity.ForeignId)
-                {
-                    await AddEntity(newEntity, cancellationToken);
-                    if (!await newEnumerator.MoveNextAsync()) break;
-                }
-                else
-                {
-                    if (!await oldEnumerator.MoveNextAsync())
-                    {
-                        await AddEntity(newEntity, cancellationToken);
-                        await ProcessRemainingEntities(newEnumerator, cancellationToken);
-                        break;
-                    }
-                }
-            }
-        }
-
-        await ForceSaveBatched(cancellationToken);
-    }
-
-    private async Task ProcessRemainingEntities(IAsyncEnumerator<T> enumerator, CancellationToken cancellationToken)
-    {
-        while (await enumerator.MoveNextAsync()) await AddEntity(enumerator.Current, cancellationToken);
-    }
-
-    private async ValueTask UpdateEntity(T newEntity, CancellationToken cancellationToken)
-    {
-        _toUpdate.TryAdd(newEntity.ForeignId, newEntity);
-        if (_toUpdate.Count != _batchSize) return;
-        await UpdateSave(cancellationToken);
-    }
-
-    private async ValueTask AddEntity(T entity, CancellationToken cancellationToken)
-    {
-        _toAdd.Add(entity);
-        if (_toAdd.Count != _batchSize) return;
-        await AddSave(cancellationToken);
-    }
-
-    private async Task ForceSaveBatched(CancellationToken cancellationToken)
-    {
-        await AddSave(cancellationToken);
-        await UpdateSave(cancellationToken);
-    }
-
-    private async Task UpdateSave(CancellationToken cancellationToken)
-    {
-        if (_toUpdate.Count == 0) return;
-
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        var foreignIds = _toUpdate.Keys.ToArray();
-        var oldEntities = await context.Set<T>()
-            .Where(x => foreignIds.Contains(x.ForeignId))
-            .ToDictionaryAsync(x => x.ForeignId, x => x, cancellationToken);
-
-        foreach (var (foreignId, newData) in _toUpdate)
-        {
-            if (oldEntities.TryGetValue(foreignId, out var oldData)) _updateAction(oldData, newData);
-        }
-
-        try
-        {
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateException e)
-        {
-            _logger.Error(e, $"Error while updating entities in the DB Set of {nameof(T)}");
-        }
-
-        _toUpdate.Clear();
-    }
-
-    private async Task AddSave(CancellationToken cancellationToken)
-    {
-        if (_toAdd.Count == 0) return;
-
-        try
-        {
-            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            context.Set<T>().AddRange(_toAdd);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateException e)
-        {
-            _logger.Error(e, $"Error while saving entities in the DB Set of {nameof(T)}");
-        }
-
-        _toAdd.Clear();
-    }
-
-    private async IAsyncEnumerable<long> RetrieveOldIds([EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        var lastMaxForeignId = 0L;
-
-        while (true)
-        {
-            var max = lastMaxForeignId;
-            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            var ids = await context.Set<T>()
-                .Where(x => x.ForeignId > max)
-                .OrderBy(x => x.ForeignId)
-                .Select(x => x.ForeignId)
-                .Take(_batchSize)
-                .ToListAsync(cancellationToken);
-
-            if (ids.Count == 0) yield break;
-            lastMaxForeignId = ids[^1];
-
-            foreach (var id in ids) yield return id;
-        }
     }
 }
