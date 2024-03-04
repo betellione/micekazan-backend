@@ -9,5 +9,8 @@ public class EventDetails
     public DateTime StartedAt { get; set; }
     public DateTime FinishedAt { get; set; }
     public Guid CreatorId { get; set; }
+    public int AllTickets { get; set; }
     public string CreatorUsername { get; set; } = null!;
+    public IEnumerable<Scanner> Scanners { get; set; } = Enumerable.Empty<Scanner>();
+    public IEnumerable<PassedTickets> PassedTickets { get; set; } = Enumerable.Empty<PassedTickets>();
 }

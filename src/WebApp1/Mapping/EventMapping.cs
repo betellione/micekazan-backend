@@ -6,6 +6,22 @@ namespace WebApp1.Mapping;
 
 public static class EventMapping
 {
+    public static EventDetails MapToEventDetails(this Event @event, IEnumerable<User> scanners)
+    {
+        return new EventDetails
+        {
+            Id = @event.Id,
+            Name = @event.Name,
+            City = @event.City,
+            CreatedAt = @event.CreatedAt,
+            StartedAt = @event.StartedAt,
+            FinishedAt = @event.FinishedAt,
+            CreatorId = @event.CreatorId,
+            CreatorUsername = @event.Creator.UserName!,
+            Scanners = scanners.Select(x => x.MapToScanner()),
+        };
+    }
+
     public static ScreenViewModel MapToEventDisplay(this Screen screen)
     {
         return new ScreenViewModel

@@ -15,7 +15,4 @@ public class Ticket
 
     [JsonPropertyName("show_id")]
     public long ShowId { get; set; }
-
-    public long? ClientId { get; set; }
-    public long? EventId { get; set; }
 }

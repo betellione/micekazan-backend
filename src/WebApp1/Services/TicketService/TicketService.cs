@@ -39,25 +39,58 @@ public class TicketService : ITicketService
         var token = await _tokenStore.GetCurrentOrganizerToken(userId);
         if (token is null) return false;
 
-        var tickets = _apiProvider.GetTickets(token, cancellationToken).Select(x => new Ticket
-        {
-            ForeignId = x.Id,
-            Barcode = x.Barcode,
-            EventId = x.EventId!.Value,
-            ClientId = x.ClientId!.Value,
-        });
+        var tickets = _apiProvider.GetTickets(token, cancellationToken);
 
-        var batchWorker = new BatchWorker<Ticket>(_contextFactory, UpdateAction, 100);
-        await batchWorker.Batch(tickets, cancellationToken);
+        var batchCounter = 0;
+        var existed = await context.Tickets.ToDictionaryAsync(x => x.Barcode, x => x.Id, cancellationToken);
+        var clientEmailIdPairs = await context.Clients.ToDictionaryAsync(x => x.Email, x => x.Id, cancellationToken);
+        var eventShowIdPairs = await context.Events.Select(x => new { x.Id, x.ForeignShowIds, }).ToListAsync(cancellationToken);
+
+        await foreach (var ticketForeign in tickets)
+        {
+            try
+            {
+                if (!clientEmailIdPairs.TryGetValue(ticketForeign.ClientEmail, out var clientId))
+                {
+                    throw new Exception($"Client with email {ticketForeign.ClientEmail} not found");
+                }
+
+                var @event = eventShowIdPairs.FirstOrDefault(x => x.ForeignShowIds.Contains(ticketForeign.ShowId));
+                if (@event is null) throw new Exception($"Event with show with ID {ticketForeign.ShowId} not found");
+
+                var ticket = new Ticket { Barcode = ticketForeign.Barcode, ClientId = clientId, EventId = @event.Id, };
+
+                if (existed.TryGetValue(ticketForeign.Barcode, out var ticketId))
+                {
+                    ticket.Id = ticketId;
+                    context.Tickets.Update(ticket);
+                }
+                else
+                {
+                    context.Tickets.Add(ticket);
+                }
+
+                if (++batchCounter < 100) continue;
+                batchCounter = 0;
+
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Error while saving tickets in the DB");
+            }
+        }
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e, "Error while saving tickets in the DB");
+        }
 
         return true;
-
-        static void UpdateAction(Ticket oldTicket, Ticket newTicket)
-        {
-            oldTicket.Barcode = newTicket.Barcode;
-            oldTicket.ClientId = newTicket.ClientId;
-            oldTicket.EventId = newTicket.EventId;
-        }
     }
 
     public async Task<Stream?> CreateTicketPdf(Guid scannerId, string qrCodeData, InfoToShow info)

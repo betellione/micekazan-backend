@@ -43,29 +43,10 @@ public class QticketsApiProvider : IQticketsApiProvider
         return GetDataList<Client>("clients", token, builder, 50, null, cancellationToken);
     }
 
-    public async IAsyncEnumerable<Ticket> GetTickets(string token,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<Ticket> GetTickets(string token, CancellationToken cancellationToken = default)
     {
-        var builder = new QueryBuilder()
-            .Select("id", "barcode", "client_email", "show_id")
-            .Where("barcode", null, "not null")
-            .OrderByAscending("id");
-
-        var orders = GetDataList<Order>("orders", token, builder, 50, null, cancellationToken);
-
-        await foreach (var order in orders)
-        {
-            var clientId = order.ClientId;
-            var eventId = order.EventId;
-
-            foreach (var basket in order.Baskets)
-            {
-                basket.ClientId = clientId;
-                basket.EventId = eventId;
-
-                yield return basket;
-            }
-        }
+        var builder = new QueryBuilder().Select("id", "barcode", "client_email", "show_id").Where("barcode", null, "not null");
+        return GetDataList<Ticket>("baskets", token, builder, 50, null, cancellationToken);
     }
 
     public async Task<ClientData?> GetTicketClientData(string barcode, string token, CancellationToken cancellationToken = default)
