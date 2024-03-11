@@ -42,7 +42,9 @@ public class PrintQueue : BackgroundService
 
                     await using var stream = await response.Content.ReadAsStreamAsync(stoppingToken);
 
+                    _logger.LogInformation("Printing of ticket with ID {Id} started", doc.Id);
                     await _printProvider.PrintDocument(stream, PrintSettings);
+                    _logger.LogInformation("Printing of ticket with ID {Id} completed successfully", doc.Id);
                 }
                 catch (OperationCanceledException)
                 {
