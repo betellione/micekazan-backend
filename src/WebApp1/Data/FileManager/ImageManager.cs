@@ -1,4 +1,6 @@
 using Serilog;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using ILogger = Serilog.ILogger;
 
 namespace WebApp1.Data.FileManager;
