@@ -11,16 +11,8 @@
         <ProjectReference Include="..\Micekazan.PrintService.PrintProvider\Micekazan.PrintService.PrintProvider.csproj"/>
     </ItemGroup>
 
-    <!--<ItemGroup>
-      <PackageReference Include="IronPdf" Version="2024.2.2" />
-    </ItemGroup>-->
-
     <ItemGroup>
-        <Reference Include="lib/*.dll"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PublishReadyToRunExclude Include="lib/*.dll"/>
+        <PackageReference Include="IronPdf" Version="2024.3.4" />
     </ItemGroup>
 
 </Project>

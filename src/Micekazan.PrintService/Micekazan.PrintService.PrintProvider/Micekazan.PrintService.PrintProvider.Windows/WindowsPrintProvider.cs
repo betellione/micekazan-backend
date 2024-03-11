@@ -1,6 +1,4 @@
-﻿using IronPdf;
-
-namespace Micekazan.PrintService.PrintProvider.Windows;
+﻿namespace Micekazan.PrintService.PrintProvider.Windows;
 
 public class WindowsPrintProvider : IPrintProvider
 {
