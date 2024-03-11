@@ -96,9 +96,6 @@ public class TicketService : ITicketService
 
     public async Task<Stream?> CreateTicketPdf(Guid scannerId, string qrCodeData, InfoToShow info)
     {
-        var printingToken = await _tokenStore.GetScannerPrintingToken(scannerId);
-        if (printingToken is null) return null;
-
         var template = await _templateService.GetTemplateForScanner(scannerId);
         await using var model = CreateDocumentModel(info, qrCodeData, template);
         var document = _pdfGenerator.GeneratePdfDocument(model);
