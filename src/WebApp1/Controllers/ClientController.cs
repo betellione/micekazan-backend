@@ -178,7 +178,7 @@ public class ClientController : Controller
         
         var vCardBytes = Encoding.UTF8.GetBytes(vCardText.ToString());
         
-        return File(vCardBytes, "text/vcard", "contact.vcf");
+        return File(vCardBytes, "text/vcard", "contact.vcf", true);
     }
 
     private bool ClientExists(long id)
