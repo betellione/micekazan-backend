@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -161,6 +162,22 @@ public class ClientController : Controller
     {
         var data = await _clientService.GetClientData(token);
         return View(data);
+    }
+    
+    public IActionResult DownloadVCard(string fullName, string phone, string organization, string position)
+    {
+        var vCardText = new StringBuilder();
+        vCardText.AppendLine("BEGIN:VCARD");
+        vCardText.AppendLine("VERSION:3.0");
+        vCardText.AppendLine($"FN:{fullName}");
+        vCardText.AppendLine($"TEL:{phone}");
+        vCardText.AppendLine($"ORG:{organization}");
+        vCardText.AppendLine($"TITLE:{position}");
+        vCardText.AppendLine("END:VCARD");
+        
+        var vCardBytes = Encoding.UTF8.GetBytes(vCardText.ToString());
+        
+        return File(vCardBytes, "text/vcard", "contact.vcf");
     }
 
     private bool ClientExists(long id)
