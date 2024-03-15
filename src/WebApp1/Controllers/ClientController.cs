@@ -164,6 +164,7 @@ public class ClientController : Controller
         return View(data);
     }
     
+    [AllowAnonymous]
     public IActionResult DownloadVCard(string fullName, string phone, string organization, string position)
     {
         var vCardText = new StringBuilder();
