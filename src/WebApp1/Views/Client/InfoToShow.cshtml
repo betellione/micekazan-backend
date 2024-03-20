@@ -30,6 +30,7 @@
 <form method="post" asp-action="DownloadVCard">
     <input type="hidden" name="FullName" value="@($"{Model.ClientName} {Model.ClientSurname}")" />
     <input type="hidden" name="Phone" value="@Model.Phone" />
+    <input type="hidden" name="Email" value="@Model.Email" />
     <input type="hidden" name="Organization" value="@Model.OrganizationName" />
     <input type="hidden" name="Position" value="@Model.WorkPosition" />
     <button type="submit" class="btn btn-primary">Скачать vCard</button>
