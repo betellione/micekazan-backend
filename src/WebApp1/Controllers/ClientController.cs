@@ -165,13 +165,18 @@ public class ClientController : Controller
     }
     
     [AllowAnonymous]
-    public IActionResult DownloadVCard(string fullName, string phone, string organization, string position)
+    public IActionResult DownloadVCard(string name, string surname, string middlename, string phone, string email,
+        string organization, string position)
     {
+        
+        var fullName = $"{surname};{name};{middlename}";
         var vCardText = new StringBuilder();
         vCardText.AppendLine("BEGIN:VCARD");
         vCardText.AppendLine("VERSION:3.0");
-        vCardText.AppendLine($"FN:{fullName}");
+        vCardText.AppendLine($"N:{fullName}");
+        vCardText.AppendLine($"FN:{name} {middlename} {surname}");
         vCardText.AppendLine($"TEL:{phone}");
+        vCardText.AppendLine($"EMAIL:{email}");
         vCardText.AppendLine($"ORG:{organization}");
         vCardText.AppendLine($"TITLE:{position}");
         vCardText.AppendLine("END:VCARD");
