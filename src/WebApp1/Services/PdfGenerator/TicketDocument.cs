@@ -78,7 +78,7 @@ public class TicketDocument : IDocument
                     .MaxWidth(80, Unit.Millimetre)
                     .Text(text =>
                     {
-                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor).FontSize(10));
+                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor));
                         text.AlignCenter();
                         text.Span(FullName());
                         text.ParagraphSpacing(1);
@@ -135,7 +135,7 @@ public class TicketDocument : IDocument
                     .MaxWidth(75, Unit.Millimetre)
                     .Text(text =>
                     {
-                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor));
+                        text.DefaultTextStyle(InitialsStyle.FontColor(_model.FontColor).FontSize(10));
                         text.AlignRight();
                         text.Span(FullName());
                         text.ParagraphSpacing(1);
