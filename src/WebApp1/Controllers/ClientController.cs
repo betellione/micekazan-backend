@@ -24,7 +24,7 @@ public class ClientController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string sortOrder)
     {
         var userId = new Guid(_userManager.GetUserId(User)!);
 
@@ -32,8 +32,19 @@ public class ClientController : Controller
         {
             return RedirectToAction("Token", "Manage");
         }
+        
+        var applicationDbContext = _context.Clients;
+        var orderedQueryable = sortOrder switch
+        {
+            "name" => applicationDbContext.OrderBy(x => x.Name),
+            "surname" => applicationDbContext.OrderBy(x => x.Surname),
+            "patronymic" => applicationDbContext.OrderBy(x => x.Patronymic),
+            "email" => applicationDbContext.OrderBy(x => x.Email),
+            "phone" => applicationDbContext.OrderBy(x => x.PhoneNumber),
+            _ => applicationDbContext.OrderByDescending(x => x.Id),
+        };
 
-        return View(await _context.Clients.ToListAsync());
+        return View(await orderedQueryable.ToListAsync());
     }
 
     [HttpGet]

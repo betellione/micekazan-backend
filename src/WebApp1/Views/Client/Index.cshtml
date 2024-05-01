@@ -10,24 +10,19 @@
         <thead>
         <tr>
             <th class="table-col-header">
-                @*@Html.DisplayNameFor(model => model.Name)*@
-                <div class="table-col-header">Имя</div>
+                <div onclick="location.href='@Url.Action("Index", new { sortOrder = "name", })';" class="table-col-header">⇅Имя</div>
             </th>
             <th class="table-col-header">
-                @*@Html.DisplayNameFor(model => model.Surname)*@
-                <div class="table-col-header">Фамилия</div>
+                <div onclick="location.href='@Url.Action("Index", new { sortOrder = "surname", })';" class="table-col-header">⇅Фамилия</div>
             </th>
             <th class="table-col-header">
-                @*@Html.DisplayNameFor(model => model.Patronymic)*@
-                <div class="table-col-header">Отчество</div>
+                <div onclick="location.href='@Url.Action("Index", new { sortOrder = "patronymic", })';" class="table-col-header">⇅Отчество</div>
             </th>
             <th class="table-col-header">
-                @*@Html.DisplayNameFor(model => model.Email)*@
-                <div class="table-col-header">Почта</div>
+                <div onclick="location.href='@Url.Action("Index", new { sortOrder = "email", })';" class="table-col-header">⇅Почта</div>
             </th>
             <th class="table-col-header">
-                @*@Html.DisplayNameFor(model => model.PhoneNumber)*@
-                <div class="table-col-header">Номер телефона</div>
+                <div onclick="location.href='@Url.Action("Index", new { sortOrder = "phone", })';" class="table-col-header">⇅Номер телефона</div>
             </th>
         </tr>
         </thead>
